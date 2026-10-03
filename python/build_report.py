@@ -86,6 +86,51 @@ def group_of(pep, hla):
     return "control"
 
 
+def minify_pdb(s, src_dir="outputs/report/structures"):
+    """
+    Read a PDB file and reduce it to just what the viewer draws, so the
+    coordinates can be EMBEDDED in the page.
+
+    This has to be embedded rather than fetched: Chrome refuses a file:// page
+    permission to read sibling file:// resources, so `loadFile("structures/X.pdb")`
+    fails silently with a blank panel when the report is opened by double-click.
+    Embedding removes the fetch entirely.
+
+    Kept: ATOM records for the three chains actually rendered, plus the TER/END
+    framing. Dropped: every other chain (TCR chains and the second copy in the
+    asymmetric unit), ANISOU (which roughly doubles the size of a high-resolution
+    file and is never drawn), waters, and all header/remark metadata.
+    """
+    path = os.path.join(src_dir, f"{s['pdb_id']}.pdb")
+    if not os.path.isfile(path):
+        return None
+    keep_chains = {c for c in (s.get("chain_hla"), s.get("chain_b2m"),
+                               s.get("chain_peptide")) if c}
+    out, seen_model = [], False
+    with open(path, "r", errors="replace") as f:
+        for line in f:
+            rec = line[:6]
+            if rec == "ENDMDL":
+                break               # first model only
+            if rec == "MODEL ":
+                if seen_model:
+                    break
+                seen_model = True
+                continue
+            if rec not in ("ATOM  ", "HETATM"):
+                continue
+            if line[17:20].strip() in ("HOH", "DOD"):
+                continue
+            if line[21] not in keep_chains:
+                continue
+            # Keep only the primary altloc so the viewer does not draw doubles.
+            if line[16] not in (" ", "A"):
+                continue
+            out.append(line.rstrip("\n").rstrip())
+    out.append("END")
+    return "\n".join(out)
+
+
 def load_per_allele(pep, hla, split, variant):
     """Average the per-allele CSVs for one arm across seeds."""
     if variant != BASE_VARIANT:
@@ -182,6 +227,8 @@ def build_payload(results_path, noise_path, struct_path):
         }
 
     structures = json.load(open(struct_path)) if os.path.isfile(struct_path) else []
+    for s in structures:
+        s["pdb_text"] = minify_pdb(s)
     noise = json.load(open(noise_path)) if os.path.isfile(noise_path) else {}
 
     variants = [BASE_VARIANT] + sorted(

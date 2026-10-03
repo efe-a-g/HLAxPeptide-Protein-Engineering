@@ -905,7 +905,13 @@
       const dark = () => getComputedStyle(document.documentElement)
         .getPropertyValue("color-scheme").indexOf("dark") >= 0;
       stage.setParameters({ backgroundColor: dark() ? "#232322" : "#f0efec" });
-      stage.loadFile("structures/" + s.pdb_id + ".pdb", { defaultRepresentation: false })
+      // Load from an in-memory Blob, never a URL: a file:// page is not allowed
+      // to read sibling file:// resources, so fetching structures/<id>.pdb fails
+      // silently and leaves the panel blank when the report is double-clicked.
+      const src = s.pdb_text
+        ? new Blob([s.pdb_text], { type: "text/plain" })
+        : "structures/" + s.pdb_id + ".pdb";
+      stage.loadFile(src, { ext: "pdb", name: s.pdb_id, defaultRepresentation: false })
         .then(comp => {
           const ph = holder.querySelector(".ph"); if (ph) ph.remove();
           const pep = s.chain_peptide ? (":" + s.chain_peptide) : "";
