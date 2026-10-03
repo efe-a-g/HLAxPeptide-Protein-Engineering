@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Peptide-HLA Stability</title>
+<style>
+  :root {
+    color-scheme: light;
+    --bg:            #f6f5f2;
+    --surface-1:     #fcfcfb;
+    --surface-2:     #f0efec;
+    --border:        #dcdbd6;
+    --text-primary:  #0b0b0b;
+    --text-secondary:#52514e;
+    --text-muted:    #7a7975;
+    --series-1:      #2a78d6;  /* foundation-model arms */
+    --series-2:      #eb6834;  /* published baseline */
+    --series-3:      #1baf7a;  /* controls / ablations */
+    --pos:           #2a78d6;
+    --neg:           #e34948;
+    --grid:          #e6e5e1;
+    --band:          #e9e8e4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --bg:            #121211;
+      --surface-1:     #1a1a19;
+      --surface-2:     #232322;
+      --border:        #383835;
+      --text-primary:  #ffffff;
+      --text-secondary:#c3c2b7;
+      --text-muted:    #918f86;
+      --series-1:      #3987e5;
+      --series-2:      #d95926;
+      --series-3:      #199e70;
+      --pos:           #3987e5;
+      --neg:           #e66767;
+      --grid:          #2c2c2a;
+      --band:          #2a2a28;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg:#121211; --surface-1:#1a1a19; --surface-2:#232322; --border:#383835;
+    --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#918f86;
+    --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70;
+    --pos:#3987e5; --neg:#e66767; --grid:#2c2c2a; --band:#2a2a28;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text-primary);
+    font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px 96px; }
+  header { padding: 48px 0 24px; }
+  h1 { font-size: clamp(26px, 4vw, 40px); line-height: 1.15; margin: 0 0 12px; letter-spacing: -0.02em; }
+  .sub { color: var(--text-secondary); font-size: 17px; max-width: 72ch; margin: 0; }
+  h2 { font-size: clamp(20px, 2.6vw, 26px); margin: 56px 0 6px; letter-spacing: -0.01em; }
+  h3 { font-size: 16px; margin: 28px 0 6px; }
+  p { color: var(--text-secondary); max-width: 78ch; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.9em;
+         background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+  a { color: var(--series-1); }
+  .lede { font-size: 16px; color: var(--text-secondary); max-width: 80ch; }
+  .card { background: var(--surface-1); border: 1px solid var(--border);
+          border-radius: 12px; padding: 20px; margin: 16px 0; }
+  .muted { color: var(--text-muted); font-size: 13px; }
+
+  /* verdict tiles */
+  .tiles { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); margin: 20px 0 8px; }
+  .tile { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+  .tile .k { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--text-muted); }
+  .tile .v { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .tile .n { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* controls */
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 20px 0 4px; }
+  button.seg { background: var(--surface-1); color: var(--text-secondary);
+    border: 1px solid var(--border); border-radius: 999px; padding: 6px 13px;
+    font: inherit; font-size: 13px; cursor: pointer; }
+  button.seg[aria-pressed="true"] { background: var(--text-primary); color: var(--bg); border-color: var(--text-primary); }
+  .spacer { flex: 1 1 auto; }
+
+  /* legend */
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 10px 0 2px; font-size: 13px; color: var(--text-secondary); }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+
+  /* charts */
+  .facets { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  figure { margin: 0; background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  figcaption { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  figcaption + .cap { font-size: 13px; color: var(--text-secondary); margin: 0 0 10px; max-width: 70ch; }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .tick { font-size: 11px; fill: var(--text-muted); }
+  .lab  { font-size: 12px; fill: var(--text-secondary); }
+  .val  { font-size: 11.5px; fill: var(--text-primary); font-variant-numeric: tabular-nums; }
+  .axis { stroke: var(--border); stroke-width: 1; }
+  .gridline { stroke: var(--grid); stroke-width: 1; }
+  .bar { transition: opacity .12s; }
+  .bar:hover { opacity: .78; }
+  .err { stroke: var(--text-primary); stroke-width: 1.4; opacity: .55; }
+
+  /* tooltip */
+  #tip { position: fixed; pointer-events: none; opacity: 0; transition: opacity .1s;
+    background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px; font-size: 12.5px; line-height: 1.45;
+    box-shadow: 0 6px 20px rgba(0,0,0,.18); z-index: 50; max-width: 300px; }
+  #tip b { font-weight: 600; }
+
+  /* tables */
+  details { margin: 12px 0; }
+  summary { cursor: pointer; font-size: 13.5px; color: var(--series-1); }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; margin-top: 10px; }
+  th, td { text-align: right; padding: 6px 8px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+  th:first-child, td:first-child { text-align: left; font-variant-numeric: normal; }
+  th { color: var(--text-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+  tbody tr:hover { background: var(--surface-2); }
+  .scroll { overflow-x: auto; }
+
+  /* structures */
+  .structs { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  @media (min-width: 760px) { .structs { grid-template-columns: 1fr 1fr; } }
+  .viewer { width: 100%; height: 320px; border-radius: 10px; background: var(--surface-2);
+            border: 1px solid var(--border); position: relative; }
+  .viewer .ph { position: absolute; inset: 0; display: grid; place-items: center;
+                font-size: 13px; color: var(--text-muted); text-align: center; padding: 16px; }
+  .meta { font-size: 12.5px; color: var(--text-secondary); margin-top: 8px; }
+  .meta dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 6px 0 0; }
+  .meta dt { color: var(--text-muted); }
+  .meta dd { margin: 0; }
+  .pill { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 999px;
+          background: var(--surface-2); border: 1px solid var(--border); color: var(--text-secondary); }
+  .chainkey { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; margin-top: 8px; color: var(--text-secondary); }
+  footer { margin-top: 72px; padding-top: 20px; border-top: 1px solid var(--border);
+           color: var(--text-muted); font-size: 13px; }
+  .warn { border-left: 3px solid var(--series-2); padding-left: 14px; }
+</style>
+</head>
+<body>
+<div id="tip" role="status" aria-live="polite"></div>
+<div class="wrap">
+
+<header>
+  <div class="controls" style="margin:0 0 18px">
+    <span class="pill" id="runstamp">local report</span>
+    <div class="spacer"></div>
+    <button class="seg" id="themebtn" aria-pressed="false">Toggle theme</button>
+  </div>
+  <h1>Do protein foundation models help predict peptide-HLA stability?</h1>
+  <p class="sub">An ablation study on 28,166 peptide-HLA class&nbsp;I half-life
+  measurements (Rasmussen et al. 2016). The question asked was <em>are they
+  useful for this problem</em> — not <em>prove they are useful</em>. This page
+  reports what the experiments actually showed, including where the foundation
+  models lose.</p>
+</header>
+
+<section id="verdict">
+  <h2>Verdict</h2>
+  <p class="lede" id="verdict-text"></p>
+  <div class="tiles" id="verdict-tiles"></div>
+  <p class="muted" id="verdict-note"></p>
+</section>
+
+<section id="noise">
+  <h2>The noise floor comes first</h2>
+  <p class="lede">No difference below this threshold counts as a result. The
+  published baseline script seeds NumPy but never calls
+  <code>torch.manual_seed</code>, so its <code>--seed</code> fixes the data split
+  while leaving weight initialisation and batch shuffling free. Repeat runs at a
+  <em>fixed seed and fixed split</em> therefore still disagree — and that
+  disagreement is the floor every comparison on this page must clear.</p>
+  <div class="card" id="noise-card"></div>
+</section>
+
+<section id="ablation">
+  <h2>Which part helps?</h2>
+  <p class="lede">The Boltz-2 embeddings are <strong>per-allele</strong>: 75
+  distinct vectors across 28,166 rows, carrying zero peptide information. They can
+  only replace the HLA side, so the peptide side needs its own representation and
+  the two sides are varied independently. Every arm uses an identical 60-unit
+  sigmoid MLP, identical target transform <code>s = 2^(-t0/thalf)</code>, identical
+  loss, epochs and optimiser — only the input features change.</p>
+
+  <div class="controls" role="group" aria-label="Metric">
+    <span class="muted" style="margin-right:4px">Metric</span>
+    <button class="seg" data-metric="global_pcc_score" aria-pressed="true">Global PCC</button>
+    <button class="seg" data-metric="mean_allele_pcc" aria-pressed="false">Mean per-allele PCC</button>
+    <button class="seg" data-metric="auc_1h" aria-pressed="false">AUC (t½ ≥ 1h)</button>
+    <button class="seg" data-metric="rmse_hours" aria-pressed="false">RMSE (hours)</button>
+  </div>
+  <div class="legend" id="legend"></div>
+  <div class="facets" id="facets"></div>
+  <details>
+    <summary>Table view — all configurations, all splits (mean ± SD over seeds)</summary>
+    <div class="scroll" id="summary-table"></div>
+  </details>
+</section>
+
+<section id="deltas">
+  <h2>Paired difference from the baseline</h2>
+  <p class="lede">Each arm is compared with the baseline <em>at the same seed</em>,
+  so both see the same split; the per-seed differences are then averaged. This
+  removes split-to-split variance, which is far larger than the effects being
+  chased. The shaded band is the noise floor — anything inside it is not a
+  result. Bars show mean ± SD of the paired difference.</p>
+  <div class="facets" id="delta-facets"></div>
+</section>
+
+<section id="perallele">
+  <h2>Per-allele performance</h2>
+  <p class="lede">A global correlation hides which alleles a model fails on.
+  Each dot is one HLA allele; position is its per-allele Pearson correlation,
+  averaged over seeds. Alleles are ordered by baseline performance.</p>
+  <div class="controls" role="group" aria-label="Split" id="pa-controls"></div>
+  <div class="facets" id="pa-facets"></div>
+</section>
+
+<section id="structures">
+  <h2>What the model is actually looking at</h2>
+  <p class="lede">Experimental peptide-HLA class&nbsp;I complexes from the PDB.
+  The peptide sits in a groove formed by the HLA α1/α2 domains — the same 182
+  residues the dataset supplies as <code>hla_seq</code>. The <strong>B
+  pocket</strong> anchors peptide position&nbsp;2 and the <strong>F pocket</strong>
+  anchors the C-terminus; those two pockets are what the Boltz-2 pocket
+  embeddings were pooled over. Drag to rotate, scroll to zoom.</p>
+  <div class="chainkey" id="chainkey"></div>
+  <div class="structs" id="structs"></div>
+  <p class="muted" id="struct-note"></p>
+</section>
+
+<section id="methods">
+  <h2>Methods and honest caveats</h2>
+  <div class="card" id="methods-card"></div>
+</section>
+
+<footer>
+  <p>Generated locally from <code>outputs/ablation/results.jsonl</code>. Not published anywhere.
+  Dataset: Rasmussen et al. (2016), <em>Pan-specific prediction of peptide-MHC class I complex
+  stability, a correlate of T cell immunogenicity</em>, J Immunol 197(4):1517–1524.
+  Structures rendered with <a href="https://nglviewer.org/">NGL</a>; coordinates fetched live from
+  the RCSB PDB.</p>
+</footer>
+</div>
+
+<script type="application/json" id="payload">{"summary":[{"config":"BLOSUM-pep + BLOSUM-HLA","split":"allele","group":"baseline","n_features":860,"n_seeds":5,"runtime_s":8.52,"mean_allele_pcc":0.3115443497896194,"mean_allele_pcc_sd":0.07125339558851239,"global_pcc_score":0.46246864199638366,"global_pcc_score_sd":0.08123804801469654,"global_scc_score":0.4736600826569661,"global_scc_score_sd":0.06511509416107614,"auc_1h":0.7357456630584271,"auc_1h_sd":0.04857232294848123,"auc_2h":0.7409565371841678,"auc_2h_sd":0.03424069556251471,"rmse_hours":10.872103313048116,"rmse_hours_sd":3.546949325273777,"mae_hours":4.490916493097631,"mae_hours_sd":1.0453580704572976},{"config":"BLOSUM-pep + BLOSUM-HLA","split":"cluster","group":"baseline","n_features":860,"n_seeds":5,"runtime_s":9.02,"mean_allele_pcc":0.4943254470825195,"mean_allele_pcc_sd":0.025573615776258406,"global_pcc_score":0.702765166759491,"global_pcc_score_sd":0.013329331745425879,"global_scc_score":0.7090047864981148,"global_scc_score_sd":0.013150657281548354,"auc_1h":0.86092083376402,"auc_1h_sd":0.007002996880626458,"auc_2h":0.86163693182651,"auc_2h_sd":0.009238422733256856,"rmse_hours":11.771489755124588,"rmse_hours_sd":0.9086847298855198,"mae_hours":4.4364463804007395,"mae_hours_sd":0.22477058249243642},{"config":"BLOSUM-pep + BLOSUM-HLA","split":"random","group":"baseline","n_features":860,"n_seeds":5,"runtime_s":9.16,"mean_allele_pcc":0.5362349152565002,"mean_allele_pcc_sd":0.011834574509214721,"global_pcc_score":0.721563196182251,"global_pcc_score_sd":0.0013319077712411643,"global_scc_score":0.7287079791455697,"global_scc_score_sd":0.0020374017941396498,"auc_1h":0.8723795323074732,"auc_1h_sd":0.0025284643255337556,"auc_2h":0.8754579138112767,"auc_2h_sd":0.0024113434432409203,"rmse_hours":11.87765990111873,"rmse_hours_sd":1.0449449109062399,"mae_hours":4.455812067667549,"mae_hours_sd":0.18980152229181854},{"config":"BLOSUM-pep + Boltz-HLA(B+F)","split":"allele","group":"foundation","n_features":948,"n_seeds":5,"runtime_s":8.500000000000002,"mean_allele_pcc":0.2968160152435303,"mean_allele_pcc_sd":0.05332237178500654,"global_pcc_score":0.2853656500577927,"global_pcc_score_sd":0.10774842614021768,"global_scc_score":0.3115938809807151,"global_scc_score_sd":0.11386083031588223,"auc_1h":0.650745890786846,"auc_1h_sd":0.05779126700756329,"auc_2h":0.6386854673465671,"auc_2h_sd":0.06508209731835159,"rmse_hours":10.788277151620946,"rmse_hours_sd":3.527190108576067,"mae_hours":4.654572126218696,"mae_hours_sd":1.0648887545861516},{"config":"BLOSUM-pep + Boltz-HLA(B+F)","split":"cluster","group":"foundation","n_features":948,"n_seeds":5,"runtime_s":9.320000000000002,"mean_allele_pcc":0.528123426437378,"mean_allele_pcc_sd":0.018199152932343185,"global_pcc_score":0.7153321862220764,"global_pcc_score_sd":0.011827601382009587,"global_scc_score":0.7216851326706446,"global_scc_score_sd":0.010948939991864387,"auc_1h":0.8666983739197807,"auc_1h_sd":0.007109982246849117,"auc_2h":0.8682663983474544,"auc_2h_sd":0.007588025592681596,"rmse_hours":11.57119334590176,"rmse_hours_sd":0.7677321627097788,"mae_hours":4.352057999667549,"mae_hours_sd":0.18611113064822857},{"config":"BLOSUM-pep + Boltz-HLA(B+F)","split":"random","group":"foundation","n_features":948,"n_seeds":5,"runtime_s":8.72,"mean_allele_pcc":0.5683169364929199,"mean_allele_pcc_sd":0.02214745061820559,"global_pcc_score":0.7375205516815185,"global_pcc_score_sd":0.009092068095267108,"global_scc_score":0.7449051641759871,"global_scc_score_sd":0.009355987208321242,"auc_1h":0.8802741156768672,"auc_1h_sd":0.005756608891607248,"auc_2h":0.8827169607946248,"auc_2h_sd":0.0068105534516541485,"rmse_hours":11.678026342997146,"rmse_hours_sd":1.0026129009199973,"mae_hours":4.363253654239584,"mae_hours_sd":0.15809742359581772},{"config":"BLOSUM-pep + onehot-HLA","split":"cluster","group":"control","n_features":255,"n_seeds":1,"runtime_s":8.4,"mean_allele_pcc":0.2012806534767151,"mean_allele_pcc_sd":0.0,"global_pcc_score":0.5607413053512573,"global_pcc_score_sd":0.0,"global_scc_score":0.5637198857100312,"global_scc_score_sd":0.0,"auc_1h":0.7851988067094451,"auc_1h_sd":0.0,"auc_2h":0.787201217480593,"auc_2h_sd":0.0,"rmse_hours":10.825206852121719,"rmse_hours_sd":0.0,"mae_hours":4.489954944977203,"mae_hours_sd":0.0},{"config":"BLOSUM-pep + onehot-HLA","split":"random","group":"control","n_features":255,"n_seeds":5,"runtime_s":6.56,"mean_allele_pcc":0.2678104847669601,"mean_allele_pcc_sd":0.02166681738391739,"global_pcc_score":0.5968918085098267,"global_pcc_score_sd":0.005429958878126916,"global_scc_score":0.6000870336158944,"global_scc_score_sd":0.005408240517775401,"auc_1h":0.8081201008367478,"auc_1h_sd":0.004142142688812285,"auc_2h":0.8097622833027172,"auc_2h_sd":0.004834861690163603,"rmse_hours":12.409646523021127,"rmse_hours_sd":1.0514524181717724,"mae_hours":4.817655722571596,"mae_hours_sd":0.18368396478279758},{"config":"ESM2-pep + BLOSUM-HLA","split":"allele","group":"foundation","n_features":6440,"n_seeds":5,"runtime_s":17.06,"mean_allele_pcc":0.30830563306808473,"mean_allele_pcc_sd":0.07694208561461081,"global_pcc_score":0.41728039383888244,"global_pcc_score_sd":0.06008372773787517,"global_scc_score":0.4365630357085057,"global_scc_score_sd":0.052829939451253305,"auc_1h":0.712053749363996,"auc_1h_sd":0.03671606569195275,"auc_2h":0.7153062961117156,"auc_2h_sd":0.03597327239418524,"rmse_hours":10.636424069126827,"rmse_hours_sd":3.695820253558791,"mae_hours":4.5069532483081085,"mae_hours_sd":1.1114306027711767},{"config":"ESM2-pep + BLOSUM-HLA","split":"cluster","group":"foundation","n_features":6440,"n_seeds":5,"runtime_s":17.16,"mean_allele_pcc":0.30841997265815735,"mean_allele_pcc_sd":0.018262500451344695,"global_pcc_score":0.5840840220451355,"global_pcc_score_sd":0.01125941797307662,"global_scc_score":0.5905446782148572,"global_scc_score_sd":0.012226410732148689,"auc_1h":0.8013127000881524,"auc_1h_sd":0.0065056720654109584,"auc_2h":0.7979756366208176,"auc_2h_sd":0.006901095183080465,"rmse_hours":11.81878969573142,"rmse_hours_sd":0.7996180988543875,"mae_hours":4.600405902084993,"mae_hours_sd":0.1932125789074788},{"config":"ESM2-pep + BLOSUM-HLA","split":"random","group":"foundation","n_features":6440,"n_seeds":5,"runtime_s":16.520000000000003,"mean_allele_pcc":0.4300449788570404,"mean_allele_pcc_sd":0.01952002424130183,"global_pcc_score":0.6411432385444641,"global_pcc_score_sd":0.011259964666235054,"global_scc_score":0.6501118811324837,"global_scc_score_sd":0.01067709065060839,"auc_1h":0.8300981836064629,"auc_1h_sd":0.007712290646918416,"auc_2h":0.8306506587730741,"auc_2h_sd":0.005571929709400034,"rmse_hours":11.694367798244809,"rmse_hours_sd":1.1789247675367764,"mae_hours":4.462981866605682,"mae_hours_sd":0.21070782450720918},{"config":"ESM2-pep + Boltz-HLA(B+F)","split":"allele","group":"foundation","n_features":6528,"n_seeds":5,"runtime_s":16.54,"mean_allele_pcc":0.32481030821800233,"mean_allele_pcc_sd":0.07773480462098668,"global_pcc_score":0.3576201915740967,"global_pcc_score_sd":0.07384787088309605,"global_scc_score":0.38439115568809507,"global_scc_score_sd":0.07484170141456062,"auc_1h":0.6824952438393408,"auc_1h_sd":0.039958719953527115,"auc_2h":0.6765915553211422,"auc_2h_sd":0.04844234582888934,"rmse_hours":11.14383745874635,"rmse_hours_sd":3.3953809102662658,"mae_hours":4.777231392628699,"mae_hours_sd":1.0725973765323435},{"config":"ESM2-pep + Boltz-HLA(B+F)","split":"cluster","group":"foundation","n_features":6528,"n_seeds":5,"runtime_s":16.880000000000003,"mean_allele_pcc":0.38216878175735475,"mean_allele_pcc_sd":0.026239527802678343,"global_pcc_score":0.6465885877609253,"global_pcc_score_sd":0.012192926451121725,"global_scc_score":0.6573239224515286,"global_scc_score_sd":0.012707257572067771,"auc_1h":0.8321380201836034,"auc_1h_sd":0.00762472202322974,"auc_2h":0.8316095362231335,"auc_2h_sd":0.007364467666511488,"rmse_hours":11.820219248782264,"rmse_hours_sd":0.7963225880334266,"mae_hours":4.59591615251386,"mae_hours_sd":0.24929589827133664},{"config":"ESM2-pep + Boltz-HLA(B+F)","split":"random","group":"foundation","n_features":6528,"n_seeds":5,"runtime_s":16.98,"mean_allele_pcc":0.5097433686256408,"mean_allele_pcc_sd":0.009911125620483447,"global_pcc_score":0.7132527709007264,"global_pcc_score_sd":0.005062359489140442,"global_scc_score":0.7247493503287005,"global_scc_score_sd":0.004910744354775755,"auc_1h":0.8672606097136868,"auc_1h_sd":0.004279499462837351,"auc_2h":0.8709277715953319,"auc_2h_sd":0.0036341653252479314,"rmse_hours":11.881539932902957,"rmse_hours_sd":0.9142495379228375,"mae_hours":4.414536264113957,"mae_hours_sd":0.11832712868331768}],"deltas":[{"config":"BLOSUM-pep + Boltz-HLA(B+F)","split":"allele","n_paired":5,"group":"foundation","d_mean_allele_pcc":-0.014728334546089173,"d_mean_allele_pcc_sd":0.0318915310467994,"d_mean_allele_pcc_t":-1.0326740723763115,"d_global_pcc_score":-0.177102991938591,"d_global_pcc_score_sd":0.16709427261122403,"d_global_pcc_score_t":-2.370005403564537,"d_global_scc_score":-0.162066201676251,"d_global_scc_score_sd":0.16159594789813855,"d_global_scc_score_t":-2.2425750677344927,"d_auc_1h":-0.08499977227158113,"d_auc_1h_sd":0.09042784807266656,"d_auc_1h_t":-2.101844430916053,"d_auc_2h":-0.10227106983760063,"d_auc_2h_sd":0.08141530701763362,"d_auc_2h_t":-2.8088706247705093,"d_rmse_hours":-0.08382616142716834,"d_rmse_hours_sd":0.4826711749601514,"d_rmse_hours_t":-0.388340976151091,"d_mae_hours":0.16365563312106443,"d_mae_hours_sd":0.15340860247630303,"d_mae_hours_t":2.385427639991659},{"config":"ESM2-pep + BLOSUM-HLA","split":"allele","n_paired":5,"group":"foundation","d_mean_allele_pcc":-0.003238716721534729,"d_mean_allele_pcc_sd":0.03175067768470563,"d_mean_allele_pcc_t":-0.22808932839582804,"d_global_pcc_score":-0.04518824815750122,"d_global_pcc_score_sd":0.0919527911414195,"d_global_pcc_score_t":-1.0988681627825845,"d_global_scc_score":-0.037097046948460465,"d_global_scc_score_sd":0.07975509133872952,"d_global_scc_score_t":-1.0400780357576622,"d_auc_1h":-0.02369191369443102,"d_auc_1h_sd":0.045773470860908404,"d_auc_1h_t":-1.1573675437195061,"d_auc_2h":-0.02565024107245204,"d_auc_2h_sd":0.04532413859102891,"d_auc_2h_t":-1.2654555488587351,"d_rmse_hours":-0.23567924392128906,"d_rmse_hours_sd":0.3618127501665344,"d_rmse_hours_t":-1.456540185637992,"d_mae_hours":0.01603675521047725,"d_mae_hours_sd":0.24397740201155016,"d_mae_hours_t":0.14697785324992296},{"config":"ESM2-pep + Boltz-HLA(B+F)","split":"allele","n_paired":5,"group":"foundation","d_mean_allele_pcc":0.013265958428382874,"d_mean_allele_pcc_sd":0.035641058350765996,"d_mean_allele_pcc_t":0.8322868681567324,"d_global_pcc_score":-0.10484845042228699,"d_global_pcc_score_sd":0.133540542891954,"d_global_pcc_score_t":-1.7556335881413891,"d_global_scc_score":-0.08926892696887101,"d_global_scc_score_sd":0.12323032748036643,"d_global_scc_score_t":-1.6198235699135244,"d_auc_1h":-0.053250419219086284,"d_auc_1h_sd":0.07012316291927576,"d_auc_1h_t":-1.6980346043619106,"d_auc_2h":-0.06436498186302538,"d_auc_2h_sd":0.06339363428845614,"d_auc_2h_t":-2.2703300801682254,"d_rmse_hours":0.2717341456982341,"d_rmse_hours_sd":0.6984801787443474,"d_rmse_hours_t":0.8699116167926059,"d_mae_hours":0.286314899531068,"d_mae_hours_sd":0.36409770317175527,"d_mae_hours_t":1.7583730211571285},{"config":"BLOSUM-pep + Boltz-HLA(B+F)","split":"cluster","n_paired":5,"group":"foundation","d_mean_allele_pcc":0.0337979793548584,"d_mean_allele_pcc_sd":0.023007314705026788,"d_mean_allele_pcc_t":3.2848066064435515,"d_global_pcc_score":0.01256701946258545,"d_global_pcc_score_sd":0.004473464143755902,"d_global_pcc_score_t":6.28164413302097,"d_global_scc_score":0.012680346172529822,"d_global_scc_score_sd":0.006773691460808389,"d_global_scc_score_t":4.18591785351589,"d_auc_1h":0.005777540155760774,"d_auc_1h_sd":0.002339060699242137,"d_auc_1h_t":5.523145481090595,"d_auc_2h":0.006629466520944383,"d_auc_2h_sd":0.002830900563693826,"d_auc_2h_t":5.236474210894942,"d_rmse_hours":-0.20029640922282468,"d_rmse_hours_sd":0.20494550297944503,"d_rmse_hours_t":-2.1853438116974515,"d_mae_hours":-0.08438838073319026,"d_mae_hours_sd":0.09027663704424288,"d_mae_hours_t":-2.0902213685482054},{"config":"BLOSUM-pep + onehot-HLA","split":"cluster","n_paired":1,"group":"control","d_mean_allele_pcc":-0.3163178563117981,"d_mean_allele_pcc_sd":0.0,"d_mean_allele_pcc_t":0.0,"d_global_pcc_score":-0.12930899858474731,"d_global_pcc_score_sd":0.0,"d_global_pcc_score_t":0.0,"d_global_scc_score":-0.1329172490376176,"d_global_scc_score_sd":0.0,"d_global_scc_score_t":0.0,"d_auc_1h":-0.069439434875605,"d_auc_1h_sd":0.0,"d_auc_1h_t":0.0,"d_auc_2h":-0.06653944065612094,"d_auc_2h_sd":0.0,"d_auc_2h_t":0.0,"d_rmse_hours":0.5653684134306083,"d_rmse_hours_sd":0.0,"d_rmse_hours_t":0.0,"d_mae_hours":0.3486446595834902,"d_mae_hours_sd":0.0,"d_mae_hours_t":0.0},{"config":"ESM2-pep + BLOSUM-HLA","split":"cluster","n_paired":5,"group":"foundation","d_mean_allele_pcc":-0.18590547442436217,"d_mean_allele_pcc_sd":0.0245196117827758,"d_mean_allele_pcc_t":-16.953664759661315,"d_global_pcc_score":-0.11868114471435547,"d_global_pcc_score_sd":0.011224829770994602,"d_global_pcc_score_t":-23.64214982703245,"d_global_scc_score":-0.11846010828325762,"d_global_scc_score_sd":0.01320304584442496,"d_global_scc_score_t":-20.06240513473629,"d_auc_1h":-0.05960813367586768,"d_auc_1h_sd":0.004494570095442508,"d_auc_1h_t":-29.65530319491254,"d_auc_2h":-0.06366129520569248,"d_auc_2h_sd":0.005942399242981131,"d_auc_2h_t":-23.955136266508486,"d_rmse_hours":0.04729994060683289,"d_rmse_hours_sd":0.17451604228213444,"d_rmse_hours_t":0.6060524932005548,"d_mae_hours":0.1639595216842542,"d_mae_hours_sd":0.09897236627652314,"d_mae_hours_t":3.7043131314049313},{"config":"ESM2-pep + Boltz-HLA(B+F)","split":"cluster","n_paired":5,"group":"foundation","d_mean_allele_pcc":-0.1121566653251648,"d_mean_allele_pcc_sd":0.022949025865124362,"d_mean_allele_pcc_t":-10.928129554199838,"d_global_pcc_score":-0.05617657899856567,"d_global_pcc_score_sd":0.009420487380280246,"d_global_pcc_score_t":-13.334198573114913,"d_global_scc_score":-0.05168086404658625,"d_global_scc_score_sd":0.012013046225582085,"d_global_scc_score_t":-9.619702028449675,"d_auc_1h":-0.028782813580416698,"d_auc_1h_sd":0.0037560937261124686,"d_auc_1h_t":-17.134909947023168,"d_auc_2h":-0.030027395603376618,"d_auc_2h_sd":0.007640426622122687,"d_auc_2h_t":-8.78789903721037,"d_rmse_hours":0.048729493657678445,"d_rmse_hours_sd":0.42141346332422547,"d_rmse_hours_t":0.2585642600694054,"d_mae_hours":0.1594697721131208,"d_mae_hours_sd":0.1506649076678414,"d_mae_hours_t":2.3667438975734996},{"config":"BLOSUM-pep + Boltz-HLA(B+F)","split":"random","n_paired":5,"group":"foundation","d_mean_allele_pcc":0.03208202123641968,"d_mean_allele_pcc_sd":0.017720230115792157,"d_mean_allele_pcc_t":4.048343609053597,"d_global_pcc_score":0.015957355499267578,"d_global_pcc_score_sd":0.00886000193027498,"d_global_pcc_score_t":4.027282603129747,"d_global_scc_score":0.016197185030417383,"d_global_scc_score_sd":0.00913281214627804,"d_global_scc_score_t":3.965701493916685,"d_auc_1h":0.007894583369393905,"d_auc_1h_sd":0.003982503468502756,"d_auc_1h_t":4.4325950266254965,"d_auc_2h":0.007259046983348028,"d_auc_2h_sd":0.0059358477397758415,"d_auc_2h_t":2.7345247415736345,"d_rmse_hours":-0.19963355812158348,"d_rmse_hours_sd":0.1376347864304203,"d_rmse_hours_t":-3.24332400352643,"d_mae_hours":-0.09255841342796475,"d_mae_hours_sd":0.06914274161778028,"d_mae_hours_t":-2.9933279975874765},{"config":"BLOSUM-pep + onehot-HLA","split":"random","n_paired":5,"group":"control","d_mean_allele_pcc":-0.2684244304895401,"d_mean_allele_pcc_sd":0.017593871511630787,"d_mean_allele_pcc_t":-34.11501971010157,"d_global_pcc_score":-0.12467138767242432,"d_global_pcc_score_sd":0.004913875861662581,"d_global_pcc_score_t":-56.731937381594456,"d_global_scc_score":-0.12862094552967535,"d_global_scc_score_sd":0.0051983669065450025,"d_global_scc_score_t":-55.326063493621916,"d_auc_1h":-0.06425943147072546,"d_auc_1h_sd":0.0017715664106673476,"d_auc_1h_t":-81.10814028693629,"d_auc_2h":-0.0656956305085595,"d_auc_2h_sd":0.003167781187066249,"d_auc_2h_t":-46.373119532885205,"d_rmse_hours":0.5319866219023979,"d_rmse_hours_sd":0.10868394033867605,"d_rmse_hours_t":10.945115221139313,"d_mae_hours":0.3618436549040478,"d_mae_hours_sd":0.07533345856633042,"d_mae_hours_t":10.740340679832384},{"config":"ESM2-pep + BLOSUM-HLA","split":"random","n_paired":5,"group":"foundation","d_mean_allele_pcc":-0.10618993639945984,"d_mean_allele_pcc_sd":0.019230492272487163,"d_mean_allele_pcc_t":-12.347469474574263,"d_global_pcc_score":-0.08041995763778687,"d_global_pcc_score_sd":0.010649176392168547,"d_global_pcc_score_t":-16.886234709943256,"d_global_scc_score":-0.07859609801308595,"d_global_scc_score_sd":0.010286020770226181,"d_global_scc_score_t":-17.085928742454975,"d_auc_1h":-0.04228134870101026,"d_auc_1h_sd":0.007789035782331485,"d_auc_1h_t":-12.138083906392277,"d_auc_2h":-0.04480725503820271,"d_auc_2h_sd":0.006351862906047206,"d_auc_2h_t":-15.773650916679056,"d_rmse_hours":-0.1832921028739193,"d_rmse_hours_sd":0.20575222380252403,"d_rmse_hours_t":-1.9919765346416651,"d_mae_hours":0.0071697989381345195,"d_mae_hours_sd":0.11051093376252044,"d_mae_hours_t":0.1450730463026082},{"config":"ESM2-pep + Boltz-HLA(B+F)","split":"random","n_paired":5,"group":"foundation","d_mean_allele_pcc":-0.026491546630859376,"d_mean_allele_pcc_sd":0.004912405221314311,"d_mean_allele_pcc_t":-12.058634503254252,"d_global_pcc_score":-0.008310425281524658,"d_global_pcc_score_sd":0.003982700695547756,"d_global_pcc_score_t":-4.665847943882767,"d_global_scc_score":-0.0039586288168691475,"d_global_scc_score_sd":0.004422294465663454,"d_global_scc_score_t":-2.0016222802298165,"d_auc_1h":-0.005118922593786679,"d_auc_1h_sd":0.0031301600560193882,"d_auc_1h_t":-3.6567647297316546,"d_auc_2h":-0.004530142215944855,"d_auc_2h_sd":0.0043774557505266275,"d_auc_2h_t":-2.3140624417221303,"d_rmse_hours":0.0038800317842273557,"d_rmse_hours_sd":0.5563289696695835,"d_rmse_hours_t":0.015595116014801546,"d_mae_hours":-0.04127580355359086,"d_mae_hours_sd":0.2020141366439843,"d_mae_hours_t":-0.456876454811733}],"per_allele":{"random":{"baseline":"BLOSUM-pep + BLOSUM-HLA","foundation":"BLOSUM-pep + Boltz-HLA(B+F)","rows":[{"allele":"HLA-A*01:01","n_samples":48.2,"pcc_base":0.2100383133,"pcc_base_sd":0.1847843946,"n_seeds":5,"pcc_fm":0.2347751155,"pcc_fm_sd":0.1713447569},{"allele":"HLA-A*02:01","n_samples":210.0,"pcc_base":0.5788264632,"pcc_base_sd":0.03923397,"n_seeds":5,"pcc_fm":0.5857823431,"pcc_fm_sd":0.0698122326},{"allele":"HLA-A*02:03","n_samples":73.6,"pcc_base":0.5915541232,"pcc_base_sd":0.0950051694,"n_seeds":5,"pcc_fm":0.5107297361,"pcc_fm_sd":0.1146779083},{"allele":"HLA-A*02:05","n_samples":4.8,"pcc_base":0.6397288334,"pcc_base_sd":0.3831176615,"n_seeds":5,"pcc_fm":0.256084843,"pcc_fm_sd":0.6356265173},{"allele":"HLA-A*02:10","n_samples":73.0,"pcc_base":0.4331637979,"pcc_base_sd":0.0778637251,"n_seeds":5,"pcc_fm":0.6134032845,"pcc_fm_sd":0.0446433824},{"allele":"HLA-A*02:11","n_samples":79.2,"pcc_base":0.3867320567,"pcc_base_sd":0.1507163615,"n_seeds":5,"pcc_fm":0.4184705734,"pcc_fm_sd":0.1124499334},{"allele":"HLA-A*02:12","n_samples":73.6,"pcc_base":0.6356559515,"pcc_base_sd":0.0435865405,"n_seeds":5,"pcc_fm":0.628198278,"pcc_fm_sd":0.0674041598},{"allele":"HLA-A*02:16","n_samples":74.6,"pcc_base":0.6217364669,"pcc_base_sd":0.0857559742,"n_seeds":5,"pcc_fm":0.5724313617,"pcc_fm_sd":0.0567806413},{"allele":"HLA-A*02:19","n_samples":69.4,"pcc_base":0.5657380044,"pcc_base_sd":0.0790860497,"n_seeds":5,"pcc_fm":0.5386135697,"pcc_fm_sd":0.1004395342},{"allele":"HLA-A*02:50","n_samples":72.4,"pcc_base":0.3784704387,"pcc_base_sd":0.0860422149,"n_seeds":5,"pcc_fm":0.4835555196,"pcc_fm_sd":0.0749022213},{"allele":"HLA-A*03:01","n_samples":174.4,"pcc_base":0.7197791696,"pcc_base_sd":0.0363061808,"n_seeds":5,"pcc_fm":0.7474113822,"pcc_fm_sd":0.0323366836},{"allele":"HLA-A*11:01","n_samples":122.2,"pcc_base":0.6823724866,"pcc_base_sd":0.065094007,"n_seeds":5,"pcc_fm":0.7518497586,"pcc_fm_sd":0.0665475431},{"allele":"HLA-A*23:01","n_samples":75.6,"pcc_base":0.6690140724,"pcc_base_sd":0.0278969565,"n_seeds":5,"pcc_fm":0.691122365,"pcc_fm_sd":0.0453859156},{"allele":"HLA-A*24:02","n_samples":110.2,"pcc_base":0.7320585608,"pcc_base_sd":0.0610473733,"n_seeds":5,"pcc_fm":0.7223867178,"pcc_fm_sd":0.0570287059},{"allele":"HLA-A*24:03","n_samples":106.0,"pcc_base":0.5627350867,"pcc_base_sd":0.0557403503,"n_seeds":5,"pcc_fm":0.5582882106,"pcc_fm_sd":0.0532202944},{"allele":"HLA-A*24:07","n_samples":70.6,"pcc_base":0.7036066175,"pcc_base_sd":0.0435456345,"n_seeds":5,"pcc_fm":0.7155701518,"pcc_fm_sd":0.0470695861},{"allele":"HLA-A*24:19","n_samples":74.4,"pcc_base":0.2961791888,"pcc_base_sd":0.1710668537,"n_seeds":5,"pcc_fm":0.253674525,"pcc_fm_sd":0.1366141775},{"allele":"HLA-A*25:01","n_samples":65.8,"pcc_base":0.5570729971,"pcc_base_sd":0.091838052,"n_seeds":5,"pcc_fm":0.5254199982,"pcc_fm_sd":0.105122176},{"allele":"HLA-A*26:01","n_samples":52.8,"pcc_base":0.6200634003,"pcc_base_sd":0.0335294306,"n_seeds":5,"pcc_fm":0.571642071,"pcc_fm_sd":0.0674859226},{"allele":"HLA-A*26:02","n_samples":65.8,"pcc_base":0.6161047816,"pcc_base_sd":0.0849337174,"n_seeds":5,"pcc_fm":0.6324342966,"pcc_fm_sd":0.0819533573},{"allele":"HLA-A*26:03","n_samples":74.8,"pcc_base":0.655075562,"pcc_base_sd":0.0514034227,"n_seeds":5,"pcc_fm":0.6712775946,"pcc_fm_sd":0.075223637},{"allele":"HLA-A*29:02","n_samples":79.4,"pcc_base":0.670844543,"pcc_base_sd":0.044105683,"n_seeds":5,"pcc_fm":0.6563011289,"pcc_fm_sd":0.0588640758},{"allele":"HLA-A*30:01","n_samples":70.8,"pcc_base":0.5393090248,"pcc_base_sd":0.1093055313,"n_seeds":5,"pcc_fm":0.5796398282,"pcc_fm_sd":0.0697637225},{"allele":"HLA-A*30:02","n_samples":73.0,"pcc_base":0.4381220937,"pcc_base_sd":0.052233915,"n_seeds":5,"pcc_fm":0.5106489897,"pcc_fm_sd":0.0454420651},{"allele":"HLA-A*31:01","n_samples":76.8,"pcc_base":0.5869180918,"pcc_base_sd":0.0694255824,"n_seeds":5,"pcc_fm":0.6388836026,"pcc_fm_sd":0.0488349148},{"allele":"HLA-A*32:01","n_samples":6.8,"pcc_base":0.5918494284,"pcc_base_sd":0.2571459618,"n_seeds":5,"pcc_fm":0.5390073072,"pcc_fm_sd":0.3826571908},{"allele":"HLA-A*32:07","n_samples":70.2,"pcc_base":0.6474920273,"pcc_base_sd":0.0757725155,"n_seeds":5,"pcc_fm":0.7140036702,"pcc_fm_sd":0.0531273043},{"allele":"HLA-A*33:03","n_samples":72.8,"pcc_base":0.5912629902,"pcc_base_sd":0.0995319518,"n_seeds":5,"pcc_fm":0.6762301803,"pcc_fm_sd":0.0551279737},{"allele":"HLA-A*43:01","n_samples":71.0,"pcc_base":0.3626194477,"pcc_base_sd":0.1075654278,"n_seeds":5,"pcc_fm":0.3849116951,"pcc_fm_sd":0.1762624946},{"allele":"HLA-A*66:01","n_samples":78.8,"pcc_base":0.4673595071,"pcc_base_sd":0.1191619771,"n_seeds":5,"pcc_fm":0.4013325751,"pcc_fm_sd":0.1076892053},{"allele":"HLA-A*68:01","n_samples":83.0,"pcc_base":0.5414197862,"pcc_base_sd":0.0497142938,"n_seeds":5,"pcc_fm":0.6720244288,"pcc_fm_sd":0.0345621439},{"allele":"HLA-A*68:02","n_samples":4.75,"pcc_base":0.0925099701,"pcc_base_sd":0.6048372007,"n_seeds":4,"pcc_fm":0.3299128562,"pcc_fm_sd":0.6596103597},{"allele":"HLA-A*68:23","n_samples":73.2,"pcc_base":0.420337826,"pcc_base_sd":0.0474256444,"n_seeds":5,"pcc_fm":0.4287200332,"pcc_fm_sd":0.0689899308},{"allele":"HLA-A*69:01","n_samples":3.6666666667,"pcc_base":0.2618559996,"pcc_base_sd":0.6558296147,"n_seeds":3,"pcc_fm":0.6082528879,"pcc_fm_sd":0.384151067},{"allele":"HLA-A*74:01","n_samples":71.0,"pcc_base":0.6315931797,"pcc_base_sd":0.0668717277,"n_seeds":5,"pcc_fm":0.6796953559,"pcc_fm_sd":0.0515776381},{"allele":"HLA-A*80:01","n_samples":71.6,"pcc_base":0.4507198155,"pcc_base_sd":0.1630961186,"n_seeds":5,"pcc_fm":0.579523319,"pcc_fm_sd":0.1179424294},{"allele":"HLA-B*07:02","n_samples":126.0,"pcc_base":0.6161034465,"pcc_base_sd":0.0411735135,"n_seeds":5,"pcc_fm":0.613089323,"pcc_fm_sd":0.0438223293},{"allele":"HLA-B*08:01","n_samples":94.2,"pcc_base":0.3766481996,"pcc_base_sd":0.0720510031,"n_seeds":5,"pcc_fm":0.5213421524,"pcc_fm_sd":0.0973418115},{"allele":"HLA-B*08:03","n_samples":70.4,"pcc_base":0.3841153502,"pcc_base_sd":0.1576573409,"n_seeds":5,"pcc_fm":0.5164164543,"pcc_fm_sd":0.1036780353},{"allele":"HLA-B*13:02","n_samples":4.0,"pcc_base":0.5954258442,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.9401161075,"pcc_fm_sd":null},{"allele":"HLA-B*14:01(C67S)","n_samples":79.0,"pcc_base":0.4022297297,"pcc_base_sd":0.2540213673,"n_seeds":5,"pcc_fm":0.4802722648,"pcc_fm_sd":0.3075072938},{"allele":"HLA-B*14:02(C67S)","n_samples":68.2,"pcc_base":0.5005087078,"pcc_base_sd":0.0583959598,"n_seeds":5,"pcc_fm":0.5702214658,"pcc_fm_sd":0.0557728837},{"allele":"HLA-B*15:01","n_samples":224.6,"pcc_base":0.414239049,"pcc_base_sd":0.040471054,"n_seeds":5,"pcc_fm":0.4555823505,"pcc_fm_sd":0.0584222077},{"allele":"HLA-B*15:02","n_samples":59.8,"pcc_base":0.3817319721,"pcc_base_sd":0.0909261178,"n_seeds":5,"pcc_fm":0.4455141723,"pcc_fm_sd":0.0687879193},{"allele":"HLA-B*15:10","n_samples":74.6,"pcc_base":0.5191300094,"pcc_base_sd":0.060291073,"n_seeds":5,"pcc_fm":0.5143950462,"pcc_fm_sd":0.0974533578},{"allele":"HLA-B*15:17","n_samples":75.0,"pcc_base":0.4389269054,"pcc_base_sd":0.0589448793,"n_seeds":5,"pcc_fm":0.6111909032,"pcc_fm_sd":0.0697733811},{"allele":"HLA-B*18:01","n_samples":72.4,"pcc_base":0.4701324165,"pcc_base_sd":0.034645327,"n_seeds":5,"pcc_fm":0.5687553644,"pcc_fm_sd":0.0365892397},{"allele":"HLA-B*27:02","n_samples":71.4,"pcc_base":0.7308496952,"pcc_base_sd":0.0281321742,"n_seeds":5,"pcc_fm":0.7387551069,"pcc_fm_sd":0.0208462064},{"allele":"HLA-B*27:03","n_samples":74.0,"pcc_base":0.7459139347,"pcc_base_sd":0.0338817136,"n_seeds":5,"pcc_fm":0.7707990408,"pcc_fm_sd":0.0310900226},{"allele":"HLA-B*27:05","n_samples":72.6,"pcc_base":0.612567997,"pcc_base_sd":0.0744490289,"n_seeds":5,"pcc_fm":0.6182819128,"pcc_fm_sd":0.0725777816},{"allele":"HLA-B*27:20","n_samples":74.6,"pcc_base":0.6845740318,"pcc_base_sd":0.0338563066,"n_seeds":5,"pcc_fm":0.7356029391,"pcc_fm_sd":0.0481216756},{"allele":"HLA-B*35:01","n_samples":122.8,"pcc_base":0.6054326296,"pcc_base_sd":0.0211607653,"n_seeds":5,"pcc_fm":0.6424817443,"pcc_fm_sd":0.0362583212},{"allele":"HLA-B*35:03","n_samples":77.0,"pcc_base":0.579156518,"pcc_base_sd":0.1152401635,"n_seeds":5,"pcc_fm":0.6271428466,"pcc_fm_sd":0.0866260244},{"allele":"HLA-B*35:08","n_samples":5.6,"pcc_base":0.62549375,"pcc_base_sd":0.291607565,"n_seeds":5,"pcc_fm":0.4953964412,"pcc_fm_sd":0.3751564471},{"allele":"HLA-B*39:01","n_samples":138.0,"pcc_base":0.4809699297,"pcc_base_sd":0.0645264348,"n_seeds":5,"pcc_fm":0.5177970409,"pcc_fm_sd":0.0825011018},{"allele":"HLA-B*39:02","n_samples":79.2,"pcc_base":0.2853028119,"pcc_base_sd":0.1010135134,"n_seeds":5,"pcc_fm":0.3643054843,"pcc_fm_sd":0.0641961315},{"allele":"HLA-B*39:06(C67S)","n_samples":76.4,"pcc_base":0.4321550727,"pcc_base_sd":0.2184606776,"n_seeds":5,"pcc_fm":0.2225939374,"pcc_fm_sd":0.1384551916},{"allele":"HLA-B*39:10","n_samples":70.8,"pcc_base":0.6901890397,"pcc_base_sd":0.0649725586,"n_seeds":5,"pcc_fm":0.7479362607,"pcc_fm_sd":0.0559416511},{"allele":"HLA-B*40:01","n_samples":57.4,"pcc_base":0.2634191051,"pcc_base_sd":0.1906532566,"n_seeds":5,"pcc_fm":0.3306922108,"pcc_fm_sd":0.1743232565},{"allele":"HLA-B*40:02","n_samples":6.3333333333,"pcc_base":0.2552189305,"pcc_base_sd":0.2043234245,"n_seeds":3,"pcc_fm":0.4853803515,"pcc_fm_sd":0.1879156416},{"allele":"HLA-B*41:01","n_samples":74.6,"pcc_base":0.7065973639,"pcc_base_sd":0.0482082639,"n_seeds":5,"pcc_fm":0.6785266757,"pcc_fm_sd":0.1046928589},{"allele":"HLA-B*42:01","n_samples":68.2,"pcc_base":0.63742221,"pcc_base_sd":0.1024085872,"n_seeds":5,"pcc_fm":0.623460573,"pcc_fm_sd":0.0928412289},{"allele":"HLA-B*42:02","n_samples":76.6,"pcc_base":0.6806102276,"pcc_base_sd":0.0609300574,"n_seeds":5,"pcc_fm":0.6622156262,"pcc_fm_sd":0.0809325192},{"allele":"HLA-B*44:05","n_samples":69.2,"pcc_base":0.3266845167,"pcc_base_sd":0.1245331237,"n_seeds":5,"pcc_fm":0.4161556602,"pcc_fm_sd":0.1043378033},{"allele":"HLA-B*45:01","n_samples":74.4,"pcc_base":0.5063443124,"pcc_base_sd":0.1422233954,"n_seeds":5,"pcc_fm":0.5987145543,"pcc_fm_sd":0.1030609122},{"allele":"HLA-B*46:01","n_samples":71.4,"pcc_base":0.2934306949,"pcc_base_sd":0.0640816561,"n_seeds":5,"pcc_fm":0.3899846792,"pcc_fm_sd":0.0978713085},{"allele":"HLA-B*51:01","n_samples":69.6,"pcc_base":0.6124678254,"pcc_base_sd":0.116971554,"n_seeds":5,"pcc_fm":0.667179656,"pcc_fm_sd":0.0974730213},{"allele":"HLA-B*54:01","n_samples":73.0,"pcc_base":0.7240574241,"pcc_base_sd":0.0351834324,"n_seeds":5,"pcc_fm":0.7424608707,"pcc_fm_sd":0.0241704993},{"allele":"HLA-B*55:01","n_samples":76.8,"pcc_base":0.7596531749,"pcc_base_sd":0.0461508492,"n_seeds":5,"pcc_fm":0.7700787902,"pcc_fm_sd":0.030849142},{"allele":"HLA-B*56:01","n_samples":69.0,"pcc_base":0.8554376841,"pcc_base_sd":0.0302765067,"n_seeds":5,"pcc_fm":0.853931725,"pcc_fm_sd":0.0376967688},{"allele":"HLA-B*57:01","n_samples":73.4,"pcc_base":0.4488830149,"pcc_base_sd":0.1052282701,"n_seeds":5,"pcc_fm":0.5189608574,"pcc_fm_sd":0.0911288069},{"allele":"HLA-B*57:02","n_samples":73.8,"pcc_base":0.4958553493,"pcc_base_sd":0.1230032546,"n_seeds":5,"pcc_fm":0.4773266673,"pcc_fm_sd":0.103858985},{"allele":"HLA-B*57:03","n_samples":70.2,"pcc_base":0.5478918135,"pcc_base_sd":0.0735557767,"n_seeds":5,"pcc_fm":0.6254352093,"pcc_fm_sd":0.0616445155},{"allele":"HLA-B*58:01","n_samples":74.6,"pcc_base":0.5060100436,"pcc_base_sd":0.0815787321,"n_seeds":5,"pcc_fm":0.5280843377,"pcc_fm_sd":0.097137918},{"allele":"HLA-B*81:01","n_samples":72.0,"pcc_base":0.6183010221,"pcc_base_sd":0.0875453861,"n_seeds":5,"pcc_fm":0.7014215231,"pcc_fm_sd":0.070316148}]},"cluster":{"baseline":"BLOSUM-pep + BLOSUM-HLA","foundation":"BLOSUM-pep + Boltz-HLA(B+F)","rows":[{"allele":"HLA-A*01:01","n_samples":46.4,"pcc_base":0.1846749976,"pcc_base_sd":0.1119160684,"n_seeds":5,"pcc_fm":0.3225261122,"pcc_fm_sd":0.0878254841},{"allele":"HLA-A*02:01","n_samples":198.2,"pcc_base":0.5681290507,"pcc_base_sd":0.0346812565,"n_seeds":5,"pcc_fm":0.5624515831,"pcc_fm_sd":0.0439007684},{"allele":"HLA-A*02:03","n_samples":80.0,"pcc_base":0.4614043415,"pcc_base_sd":0.0707985508,"n_seeds":5,"pcc_fm":0.4339883029,"pcc_fm_sd":0.065768338},{"allele":"HLA-A*02:05","n_samples":4.0,"pcc_base":0.3687709212,"pcc_base_sd":0.5405648277,"n_seeds":5,"pcc_fm":0.0664770566,"pcc_fm_sd":0.5477328298},{"allele":"HLA-A*02:10","n_samples":78.2,"pcc_base":0.3958999038,"pcc_base_sd":0.0846414429,"n_seeds":5,"pcc_fm":0.5265558541,"pcc_fm_sd":0.0808667237},{"allele":"HLA-A*02:11","n_samples":80.2,"pcc_base":0.3065227449,"pcc_base_sd":0.0755593647,"n_seeds":5,"pcc_fm":0.403720361,"pcc_fm_sd":0.0775645385},{"allele":"HLA-A*02:12","n_samples":79.4,"pcc_base":0.4818756998,"pcc_base_sd":0.0617375277,"n_seeds":5,"pcc_fm":0.4524947464,"pcc_fm_sd":0.0766133506},{"allele":"HLA-A*02:16","n_samples":79.4,"pcc_base":0.4052754343,"pcc_base_sd":0.112616907,"n_seeds":5,"pcc_fm":0.4333172262,"pcc_fm_sd":0.0939039827},{"allele":"HLA-A*02:19","n_samples":74.8,"pcc_base":0.5067658007,"pcc_base_sd":0.0832684652,"n_seeds":5,"pcc_fm":0.467065227,"pcc_fm_sd":0.0759596099},{"allele":"HLA-A*02:50","n_samples":79.0,"pcc_base":0.390200004,"pcc_base_sd":0.1083608211,"n_seeds":5,"pcc_fm":0.4294106007,"pcc_fm_sd":0.0814819099},{"allele":"HLA-A*03:01","n_samples":171.6,"pcc_base":0.6787222505,"pcc_base_sd":0.0433923461,"n_seeds":5,"pcc_fm":0.7247975826,"pcc_fm_sd":0.0359171292},{"allele":"HLA-A*11:01","n_samples":115.4,"pcc_base":0.6945266962,"pcc_base_sd":0.0437305455,"n_seeds":5,"pcc_fm":0.7550909758,"pcc_fm_sd":0.0459908992},{"allele":"HLA-A*23:01","n_samples":73.6,"pcc_base":0.5815097451,"pcc_base_sd":0.106351675,"n_seeds":5,"pcc_fm":0.5688202798,"pcc_fm_sd":0.118473712},{"allele":"HLA-A*24:02","n_samples":121.8,"pcc_base":0.6172081113,"pcc_base_sd":0.0204944844,"n_seeds":5,"pcc_fm":0.6066566229,"pcc_fm_sd":0.0401501185},{"allele":"HLA-A*24:03","n_samples":102.2,"pcc_base":0.5196184874,"pcc_base_sd":0.0785653902,"n_seeds":5,"pcc_fm":0.522114557,"pcc_fm_sd":0.0638940721},{"allele":"HLA-A*24:07","n_samples":69.8,"pcc_base":0.6400966644,"pcc_base_sd":0.0765019047,"n_seeds":5,"pcc_fm":0.6369343162,"pcc_fm_sd":0.069464001},{"allele":"HLA-A*24:19","n_samples":75.0,"pcc_base":0.3386359453,"pcc_base_sd":0.0990574728,"n_seeds":5,"pcc_fm":0.3694292486,"pcc_fm_sd":0.1212503587},{"allele":"HLA-A*25:01","n_samples":76.4,"pcc_base":0.4913399994,"pcc_base_sd":0.0525496753,"n_seeds":5,"pcc_fm":0.4814486802,"pcc_fm_sd":0.0616850927},{"allele":"HLA-A*26:01","n_samples":53.2,"pcc_base":0.5804680705,"pcc_base_sd":0.1028939743,"n_seeds":5,"pcc_fm":0.5152059674,"pcc_fm_sd":0.1156286653},{"allele":"HLA-A*26:02","n_samples":70.0,"pcc_base":0.562252003,"pcc_base_sd":0.1076474926,"n_seeds":5,"pcc_fm":0.5530893266,"pcc_fm_sd":0.0863473654},{"allele":"HLA-A*26:03","n_samples":70.4,"pcc_base":0.5790213346,"pcc_base_sd":0.0494164209,"n_seeds":5,"pcc_fm":0.5526296258,"pcc_fm_sd":0.053150425},{"allele":"HLA-A*29:02","n_samples":84.6,"pcc_base":0.5925311327,"pcc_base_sd":0.090902739,"n_seeds":5,"pcc_fm":0.6216339946,"pcc_fm_sd":0.0524126136},{"allele":"HLA-A*30:01","n_samples":78.6,"pcc_base":0.576237905,"pcc_base_sd":0.0524045487,"n_seeds":5,"pcc_fm":0.5813513398,"pcc_fm_sd":0.0464161751},{"allele":"HLA-A*30:02","n_samples":81.4,"pcc_base":0.4008635104,"pcc_base_sd":0.0871043624,"n_seeds":5,"pcc_fm":0.4953525186,"pcc_fm_sd":0.0877845436},{"allele":"HLA-A*31:01","n_samples":76.8,"pcc_base":0.5708829224,"pcc_base_sd":0.0543551978,"n_seeds":5,"pcc_fm":0.6448550582,"pcc_fm_sd":0.0328666986},{"allele":"HLA-A*32:01","n_samples":7.0,"pcc_base":0.6917775869,"pcc_base_sd":0.1459019503,"n_seeds":5,"pcc_fm":0.8326277018,"pcc_fm_sd":0.104583953},{"allele":"HLA-A*32:07","n_samples":73.6,"pcc_base":0.593136549,"pcc_base_sd":0.0285765744,"n_seeds":5,"pcc_fm":0.6648893952,"pcc_fm_sd":0.0495723896},{"allele":"HLA-A*33:03","n_samples":74.6,"pcc_base":0.5624374926,"pcc_base_sd":0.0796124403,"n_seeds":5,"pcc_fm":0.6476852298,"pcc_fm_sd":0.061112885},{"allele":"HLA-A*43:01","n_samples":79.0,"pcc_base":0.3373789489,"pcc_base_sd":0.109916986,"n_seeds":5,"pcc_fm":0.3622102797,"pcc_fm_sd":0.0874284722},{"allele":"HLA-A*66:01","n_samples":80.0,"pcc_base":0.366355738,"pcc_base_sd":0.1181978794,"n_seeds":5,"pcc_fm":0.4106459349,"pcc_fm_sd":0.1528701984},{"allele":"HLA-A*68:01","n_samples":78.4,"pcc_base":0.6133955002,"pcc_base_sd":0.0865382385,"n_seeds":5,"pcc_fm":0.6469715774,"pcc_fm_sd":0.1097712557},{"allele":"HLA-A*68:02","n_samples":4.6666666667,"pcc_base":0.2783340911,"pcc_base_sd":0.3422712798,"n_seeds":3,"pcc_fm":0.1597361813,"pcc_fm_sd":0.3968689946},{"allele":"HLA-A*68:23","n_samples":77.8,"pcc_base":0.346165067,"pcc_base_sd":0.0592840759,"n_seeds":5,"pcc_fm":0.410004878,"pcc_fm_sd":0.0708969783},{"allele":"HLA-A*69:01","n_samples":4.0,"pcc_base":0.220713973,"pcc_base_sd":0.091021767,"n_seeds":2,"pcc_fm":0.7147769928,"pcc_fm_sd":0.2909339633},{"allele":"HLA-A*74:01","n_samples":72.8,"pcc_base":0.5897169948,"pcc_base_sd":0.0552403795,"n_seeds":5,"pcc_fm":0.6877857327,"pcc_fm_sd":0.0333676664},{"allele":"HLA-A*80:01","n_samples":78.2,"pcc_base":0.4869072735,"pcc_base_sd":0.088184562,"n_seeds":5,"pcc_fm":0.5798405409,"pcc_fm_sd":0.0622287358},{"allele":"HLA-B*07:02","n_samples":130.6,"pcc_base":0.5745081425,"pcc_base_sd":0.0499619028,"n_seeds":5,"pcc_fm":0.5566857278,"pcc_fm_sd":0.0799779556},{"allele":"HLA-B*08:01","n_samples":93.6,"pcc_base":0.3131561294,"pcc_base_sd":0.1482227461,"n_seeds":5,"pcc_fm":0.454778403,"pcc_fm_sd":0.1067031655},{"allele":"HLA-B*08:03","n_samples":71.2,"pcc_base":0.4727075219,"pcc_base_sd":0.0766815273,"n_seeds":5,"pcc_fm":0.4943200409,"pcc_fm_sd":0.1069010989},{"allele":"HLA-B*14:01(C67S)","n_samples":76.4,"pcc_base":0.3165555388,"pcc_base_sd":0.1204774435,"n_seeds":5,"pcc_fm":0.4727521598,"pcc_fm_sd":0.1280338047},{"allele":"HLA-B*14:02(C67S)","n_samples":77.6,"pcc_base":0.3640579045,"pcc_base_sd":0.08784091,"n_seeds":5,"pcc_fm":0.4747760355,"pcc_fm_sd":0.1149456789},{"allele":"HLA-B*15:01","n_samples":223.4,"pcc_base":0.4491095424,"pcc_base_sd":0.0853832111,"n_seeds":5,"pcc_fm":0.4882347345,"pcc_fm_sd":0.0747831182},{"allele":"HLA-B*15:02","n_samples":73.0,"pcc_base":0.4213300824,"pcc_base_sd":0.0562095332,"n_seeds":5,"pcc_fm":0.5024836302,"pcc_fm_sd":0.0544014371},{"allele":"HLA-B*15:10","n_samples":71.2,"pcc_base":0.2957234949,"pcc_base_sd":0.1009212291,"n_seeds":5,"pcc_fm":0.3536254436,"pcc_fm_sd":0.100755218},{"allele":"HLA-B*15:17","n_samples":73.4,"pcc_base":0.3733299077,"pcc_base_sd":0.0982343491,"n_seeds":5,"pcc_fm":0.5108341277,"pcc_fm_sd":0.03930936},{"allele":"HLA-B*18:01","n_samples":68.2,"pcc_base":0.4579960108,"pcc_base_sd":0.0724833206,"n_seeds":5,"pcc_fm":0.5088247657,"pcc_fm_sd":0.0817369719},{"allele":"HLA-B*27:02","n_samples":78.6,"pcc_base":0.7256141186,"pcc_base_sd":0.0347965921,"n_seeds":5,"pcc_fm":0.7312286973,"pcc_fm_sd":0.0374448631},{"allele":"HLA-B*27:03","n_samples":79.4,"pcc_base":0.7404391646,"pcc_base_sd":0.0564381288,"n_seeds":5,"pcc_fm":0.7687147975,"pcc_fm_sd":0.0918160338},{"allele":"HLA-B*27:05","n_samples":78.8,"pcc_base":0.5612038255,"pcc_base_sd":0.0465515451,"n_seeds":5,"pcc_fm":0.6052586198,"pcc_fm_sd":0.036142635},{"allele":"HLA-B*27:20","n_samples":79.0,"pcc_base":0.6717611551,"pcc_base_sd":0.0664015125,"n_seeds":5,"pcc_fm":0.6942337751,"pcc_fm_sd":0.0340818684},{"allele":"HLA-B*35:01","n_samples":131.2,"pcc_base":0.488887912,"pcc_base_sd":0.0415667346,"n_seeds":5,"pcc_fm":0.535182786,"pcc_fm_sd":0.0324092008},{"allele":"HLA-B*35:03","n_samples":75.8,"pcc_base":0.5204049826,"pcc_base_sd":0.0684861666,"n_seeds":5,"pcc_fm":0.5265445709,"pcc_fm_sd":0.0856321941},{"allele":"HLA-B*35:08","n_samples":5.6,"pcc_base":0.5348587632,"pcc_base_sd":0.3479253414,"n_seeds":5,"pcc_fm":0.4878704403,"pcc_fm_sd":0.3324297452},{"allele":"HLA-B*39:01","n_samples":131.6,"pcc_base":0.4186424434,"pcc_base_sd":0.0511410816,"n_seeds":5,"pcc_fm":0.4644827783,"pcc_fm_sd":0.0543054501},{"allele":"HLA-B*39:02","n_samples":74.2,"pcc_base":0.2899304003,"pcc_base_sd":0.1083993483,"n_seeds":5,"pcc_fm":0.4593600214,"pcc_fm_sd":0.0375054933},{"allele":"HLA-B*39:06(C67S)","n_samples":75.2,"pcc_base":0.4842653692,"pcc_base_sd":0.256896101,"n_seeds":5,"pcc_fm":0.3491627902,"pcc_fm_sd":0.0848057297},{"allele":"HLA-B*39:10","n_samples":75.0,"pcc_base":0.5798590958,"pcc_base_sd":0.0756314202,"n_seeds":5,"pcc_fm":0.5992257357,"pcc_fm_sd":0.0614856845},{"allele":"HLA-B*40:01","n_samples":59.0,"pcc_base":0.3086210012,"pcc_base_sd":0.1337633893,"n_seeds":5,"pcc_fm":0.3103580922,"pcc_fm_sd":0.0958019404},{"allele":"HLA-B*40:02","n_samples":3.75,"pcc_base":0.1346834973,"pcc_base_sd":0.8993104168,"n_seeds":4,"pcc_fm":0.2388320118,"pcc_fm_sd":0.5858534058},{"allele":"HLA-B*41:01","n_samples":69.2,"pcc_base":0.6520812154,"pcc_base_sd":0.1149534034,"n_seeds":5,"pcc_fm":0.6802121639,"pcc_fm_sd":0.0866763996},{"allele":"HLA-B*42:01","n_samples":69.6,"pcc_base":0.6026931643,"pcc_base_sd":0.047594592,"n_seeds":5,"pcc_fm":0.5602594912,"pcc_fm_sd":0.1201494637},{"allele":"HLA-B*42:02","n_samples":75.8,"pcc_base":0.6116007566,"pcc_base_sd":0.0564189255,"n_seeds":5,"pcc_fm":0.6423303723,"pcc_fm_sd":0.047891611},{"allele":"HLA-B*44:05","n_samples":67.4,"pcc_base":0.3069672853,"pcc_base_sd":0.083243523,"n_seeds":5,"pcc_fm":0.3574509561,"pcc_fm_sd":0.0932116917},{"allele":"HLA-B*45:01","n_samples":71.2,"pcc_base":0.4635822952,"pcc_base_sd":0.1234435174,"n_seeds":5,"pcc_fm":0.516257453,"pcc_fm_sd":0.1108336865},{"allele":"HLA-B*46:01","n_samples":75.8,"pcc_base":0.3107563734,"pcc_base_sd":0.1143466186,"n_seeds":5,"pcc_fm":0.3765730828,"pcc_fm_sd":0.1317452873},{"allele":"HLA-B*51:01","n_samples":71.2,"pcc_base":0.684817636,"pcc_base_sd":0.087057492,"n_seeds":5,"pcc_fm":0.6800487995,"pcc_fm_sd":0.0893293512},{"allele":"HLA-B*54:01","n_samples":71.0,"pcc_base":0.6225076795,"pcc_base_sd":0.0392560316,"n_seeds":5,"pcc_fm":0.6333250284,"pcc_fm_sd":0.0262073861},{"allele":"HLA-B*55:01","n_samples":75.8,"pcc_base":0.7489388347,"pcc_base_sd":0.0294805683,"n_seeds":5,"pcc_fm":0.7540286541,"pcc_fm_sd":0.0285722716},{"allele":"HLA-B*56:01","n_samples":72.8,"pcc_base":0.777362895,"pcc_base_sd":0.0444174334,"n_seeds":5,"pcc_fm":0.7803310275,"pcc_fm_sd":0.0515108476},{"allele":"HLA-B*57:01","n_samples":71.6,"pcc_base":0.443964088,"pcc_base_sd":0.0761136379,"n_seeds":5,"pcc_fm":0.449118197,"pcc_fm_sd":0.0769419398},{"allele":"HLA-B*57:02","n_samples":74.0,"pcc_base":0.4512155354,"pcc_base_sd":0.0705308133,"n_seeds":5,"pcc_fm":0.5139275312,"pcc_fm_sd":0.0531464764},{"allele":"HLA-B*57:03","n_samples":76.0,"pcc_base":0.4420536697,"pcc_base_sd":0.117143315,"n_seeds":5,"pcc_fm":0.5007696033,"pcc_fm_sd":0.1252881339},{"allele":"HLA-B*58:01","n_samples":79.4,"pcc_base":0.5211103022,"pcc_base_sd":0.0426662903,"n_seeds":5,"pcc_fm":0.5167595804,"pcc_fm_sd":0.0366813808},{"allele":"HLA-B*81:01","n_samples":74.4,"pcc_base":0.5259051621,"pcc_base_sd":0.0719214868,"n_seeds":5,"pcc_fm":0.5872985661,"pcc_fm_sd":0.0890598486}]},"allele":{"baseline":"BLOSUM-pep + BLOSUM-HLA","foundation":"ESM2-pep + BLOSUM-HLA","rows":[{"allele":"HLA-A*01:01","n_samples":220.0,"pcc_base":-0.1219629869,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":-0.0540630631,"pcc_fm_sd":null},{"allele":"HLA-A*02:01","n_samples":1023.0,"pcc_base":0.3420513074,"pcc_base_sd":0.0890859336,"n_seeds":3,"pcc_fm":0.3545377453,"pcc_fm_sd":0.0380193713},{"allele":"HLA-A*02:03","n_samples":379.0,"pcc_base":0.4278285205,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.5503899455,"pcc_fm_sd":null},{"allele":"HLA-A*02:05","n_samples":21.0,"pcc_base":0.3579570353,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.2410385907,"pcc_fm_sd":null},{"allele":"HLA-A*02:10","n_samples":370.0,"pcc_base":0.243745029,"pcc_base_sd":0.0544510309,"n_seeds":2,"pcc_fm":0.3095539957,"pcc_fm_sd":0.0163482778},{"allele":"HLA-A*02:16","n_samples":373.0,"pcc_base":0.2698323429,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.6646236777,"pcc_fm_sd":null},{"allele":"HLA-A*02:19","n_samples":354.0,"pcc_base":0.5530309677,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.7021003962,"pcc_fm_sd":null},{"allele":"HLA-A*02:50","n_samples":375.0,"pcc_base":0.4941449463,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.5867983699,"pcc_fm_sd":null},{"allele":"HLA-A*03:01","n_samples":861.0,"pcc_base":0.5022910237,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.4143283665,"pcc_fm_sd":null},{"allele":"HLA-A*24:02","n_samples":573.0,"pcc_base":0.642645359,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.6344205141,"pcc_fm_sd":null},{"allele":"HLA-A*24:03","n_samples":512.0,"pcc_base":0.5520836115,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.6829111576,"pcc_fm_sd":null},{"allele":"HLA-A*24:07","n_samples":352.0,"pcc_base":0.6928176284,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.7350625992,"pcc_fm_sd":null},{"allele":"HLA-A*24:19","n_samples":378.0,"pcc_base":0.3074354827,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.1847524643,"pcc_fm_sd":null},{"allele":"HLA-A*26:01","n_samples":272.0,"pcc_base":0.5123031338,"pcc_base_sd":0.02597447,"n_seeds":3,"pcc_fm":0.6381952961,"pcc_fm_sd":0.0172148612},{"allele":"HLA-A*26:03","n_samples":341.0,"pcc_base":0.4537415951,"pcc_base_sd":0.1502903724,"n_seeds":2,"pcc_fm":0.6433105171,"pcc_fm_sd":0.0386833469},{"allele":"HLA-A*29:02","n_samples":383.0,"pcc_base":0.2822429091,"pcc_base_sd":0.0063154313,"n_seeds":2,"pcc_fm":0.1907910258,"pcc_fm_sd":0.038390047},{"allele":"HLA-A*30:01","n_samples":386.0,"pcc_base":-0.0837703198,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":-0.0114924302,"pcc_fm_sd":null},{"allele":"HLA-A*30:02","n_samples":367.0,"pcc_base":0.3498244286,"pcc_base_sd":0.0621985489,"n_seeds":2,"pcc_fm":0.1632770188,"pcc_fm_sd":0.0737523224},{"allele":"HLA-A*31:01","n_samples":382.0,"pcc_base":0.290587306,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.377343148,"pcc_fm_sd":null},{"allele":"HLA-A*32:01","n_samples":32.0,"pcc_base":0.6182513237,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.3878318071,"pcc_fm_sd":null},{"allele":"HLA-A*43:01","n_samples":359.0,"pcc_base":0.2195038423,"pcc_base_sd":0.0577324265,"n_seeds":2,"pcc_fm":0.2493539676,"pcc_fm_sd":0.0042310905},{"allele":"HLA-A*66:01","n_samples":382.0,"pcc_base":0.222823754,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.3293715417,"pcc_fm_sd":null},{"allele":"HLA-A*68:01","n_samples":387.0,"pcc_base":0.3082654178,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.1887934506,"pcc_fm_sd":null},{"allele":"HLA-A*68:02","n_samples":16.0,"pcc_base":-0.2357129753,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.1334373504,"pcc_fm_sd":null},{"allele":"HLA-A*68:23","n_samples":369.0,"pcc_base":0.1382158846,"pcc_base_sd":0.0346571388,"n_seeds":3,"pcc_fm":0.2094716877,"pcc_fm_sd":0.0688569283},{"allele":"HLA-A*74:01","n_samples":361.0,"pcc_base":0.4698008746,"pcc_base_sd":0.0977416816,"n_seeds":2,"pcc_fm":0.4078829139,"pcc_fm_sd":0.0943645811},{"allele":"HLA-B*08:01","n_samples":465.0,"pcc_base":0.2106111348,"pcc_base_sd":0.0524910128,"n_seeds":2,"pcc_fm":0.1983178258,"pcc_fm_sd":0.0257792042},{"allele":"HLA-B*13:02","n_samples":7.0,"pcc_base":-0.0743469335,"pcc_base_sd":0.0109044803,"n_seeds":2,"pcc_fm":-0.1059630364,"pcc_fm_sd":0.266623935},{"allele":"HLA-B*14:01(C67S)","n_samples":374.0,"pcc_base":0.2979269624,"pcc_base_sd":0.15364798,"n_seeds":2,"pcc_fm":0.322168313,"pcc_fm_sd":0.1610754875},{"allele":"HLA-B*14:02(C67S)","n_samples":382.0,"pcc_base":0.1898412853,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.2444533259,"pcc_fm_sd":null},{"allele":"HLA-B*15:01","n_samples":1070.0,"pcc_base":0.0984691475,"pcc_base_sd":0.1076507495,"n_seeds":3,"pcc_fm":0.0909975817,"pcc_fm_sd":0.0319524193},{"allele":"HLA-B*15:02","n_samples":349.0,"pcc_base":-0.2178161293,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.0658786222,"pcc_fm_sd":null},{"allele":"HLA-B*18:01","n_samples":359.0,"pcc_base":0.1673048288,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":-0.110813573,"pcc_fm_sd":null},{"allele":"HLA-B*27:02","n_samples":359.0,"pcc_base":0.3610837162,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.3554532528,"pcc_fm_sd":null},{"allele":"HLA-B*27:03","n_samples":368.0,"pcc_base":0.5838587582,"pcc_base_sd":0.0045686762,"n_seeds":2,"pcc_fm":0.5180000961,"pcc_fm_sd":0.0116372928},{"allele":"HLA-B*35:01","n_samples":650.0,"pcc_base":0.477751255,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.3823749721,"pcc_fm_sd":null},{"allele":"HLA-B*35:03","n_samples":376.0,"pcc_base":0.5158885717,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.5355626345,"pcc_fm_sd":null},{"allele":"HLA-B*39:01","n_samples":680.0,"pcc_base":0.3298525214,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.1532803476,"pcc_fm_sd":null},{"allele":"HLA-B*39:02","n_samples":375.0,"pcc_base":0.0119942849,"pcc_base_sd":0.0713787768,"n_seeds":3,"pcc_fm":0.0375621021,"pcc_fm_sd":0.0941139773},{"allele":"HLA-B*39:06(C67S)","n_samples":379.0,"pcc_base":0.3728289902,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.0583248176,"pcc_fm_sd":null},{"allele":"HLA-B*40:01","n_samples":302.0,"pcc_base":0.1429325305,"pcc_base_sd":0.0751106626,"n_seeds":2,"pcc_fm":0.0706814304,"pcc_fm_sd":0.0236834521},{"allele":"HLA-B*40:02","n_samples":19.0,"pcc_base":0.1939116083,"pcc_base_sd":0.1591258533,"n_seeds":2,"pcc_fm":0.1046675481,"pcc_fm_sd":0.1160808449},{"allele":"HLA-B*41:01","n_samples":368.0,"pcc_base":0.5055602491,"pcc_base_sd":0.0936738479,"n_seeds":3,"pcc_fm":0.3451503813,"pcc_fm_sd":0.1451029481},{"allele":"HLA-B*42:01","n_samples":350.0,"pcc_base":0.5367991924,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.484483093,"pcc_fm_sd":null},{"allele":"HLA-B*42:02","n_samples":376.0,"pcc_base":0.5803564787,"pcc_base_sd":0.0509031935,"n_seeds":2,"pcc_fm":0.491627574,"pcc_fm_sd":0.1534330732},{"allele":"HLA-B*44:05","n_samples":352.0,"pcc_base":0.2077379525,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.1179111302,"pcc_fm_sd":null},{"allele":"HLA-B*45:01","n_samples":368.0,"pcc_base":0.3369582519,"pcc_base_sd":0.1472929623,"n_seeds":2,"pcc_fm":0.3421605602,"pcc_fm_sd":0.1767963252},{"allele":"HLA-B*56:01","n_samples":368.0,"pcc_base":0.7656855583,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.8101966381,"pcc_fm_sd":null},{"allele":"HLA-B*57:02","n_samples":363.0,"pcc_base":0.4524026513,"pcc_base_sd":null,"n_seeds":1,"pcc_fm":0.4387650192,"pcc_fm_sd":null}]}},"runs":[{"pep":"blosum_pep","hla":"blosum_hla","label":"blosum_pep + blosum_hla","split":"random","seed":42,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":680},"n_features":860,"n_train":20278,"n_test":5634,"runtime_s":9.5,"global_pcc_score":0.7198918462,"global_scc_score":0.7255712247,"global_pcc_thalf":0.4508089254,"global_scc_thalf":0.7255712247,"mean_allele_pcc":0.5329002738,"mean_allele_scc":0.5171570413,"auc_1h":0.8719954038,"auc_2h":0.877793458,"rmse_hours":10.7542331966,"mae_hours":4.1947325541,"n_evaluated_alleles":73,"config":"BLOSUM-pep + BLOSUM-HLA","group":"baseline"},{"pep":"blosum_pep","hla":"blosum_hla","label":"blosum_pep + blosum_hla","split":"random","seed":43,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":680},"n_features":860,"n_train":20278,"n_test":5634,"runtime_s":8.3,"global_pcc_score":0.7228037715,"global_scc_score":0.7302016448,"global_pcc_thalf":0.450933258,"global_scc_thalf":0.7302016448,"mean_allele_pcc":0.5230082273,"mean_allele_scc":0.521564369,"auc_1h":0.8768309636,"auc_2h":0.877574122,"rmse_hours":11.9368543116,"mae_hours":4.3428918616,"n_evaluated_alleles":72,"config":"BLOSUM-pep + BLOSUM-HLA","group":"baseline"},{"pep":"blosum_pep","hla":"blosum_hla","label":"blosum_pep + blosum_hla","split":"random","seed":44,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":680},"n_features":860,"n_train":20278,"n_test":5634,"runtime_s":10.2,"global_pcc_score":0.7222787738,"global_scc_score":0.7304221918,"global_pcc_thalf":0.4805475856,"global_scc_thalf":0.7304221787,"mean_allele_pcc":0.5521876812,"mean_allele_scc":0.5539883988,"auc_1h":0.8712745782,"auc_2h":0.8722548316,"rmse_hours":11.8248478651,"mae_hours":4.5318090351,"n_evaluated_alleles":75,"config":"BLOSUM-pep + BLOSUM-HLA","group":"baseline"},{"pep":"blosum_pep","hla":"blosum_hla","label":"blosum_pep + blosum_hla","split":"random","seed":45,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":680},"n_features":860,"n_train":20278,"n_test":5634,"runtime_s":9.2,"global_pcc_score":0.7224721909,"global_scc_score":0.7295648028,"global_pcc_thalf":0.5140709161,"global_scc_thalf":0.7295648028,"mean_allele_pcc":0.5288097858,"mean_allele_scc":0.5163506747,"auc_1h":0.8709213129,"auc_2h":0.8737644947,"rmse_hours":11.3236703134,"mae_hours":4.5241703195,"n_evaluated_alleles":74,"config":"BLOSUM-pep + BLOSUM-HLA","group":"baseline"},{"pep":"blosum_pep","hla":"blosum_hla","label":"blosum_pep + blosum_hla","split":"random","seed":46,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":680},"n_features":860,"n_train":20278,"n_test":5634,"runtime_s":8.6,"global_pcc_score":0.7203693986,"global_scc_score":0.7277800316,"global_pcc_thalf":0.406905832,"global_scc_thalf":0.7277800316,"mean_allele_pcc":0.5442686081,"mean_allele_scc":0.5575605308,"auc_1h":0.870875403,"auc_2h":0.8759026627,"rmse_hours":13.5486938188,"mae_hours":4.6854565679,"n_evaluated_alleles":72,"config":"BLOSUM-pep + BLOSUM-HLA","group":"baseline"},{"pep":"blosum_pep","hla":"blosum_hla","label":"blosum_pep + blosum_hla","split":"cluster","seed":42,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":680},"n_features":860,"n_train":19984,"n_test":5961,"runtime_s":9.1,"global_pcc_score":0.6900503039,"global_scc_score":0.6966371347,"global_pcc_thalf":0.4592512328,"global_scc_thalf":0.6966371347,"mean_allele_pcc":0.5175985098,"mean_allele_scc":0.491839334,"auc_1h":0.8546382416,"auc_2h":0.8537406581,"rmse_hours":10.2598384387,"mae_hours":4.1413102854,"n_evaluated_alleles":72,"config":"BLOSUM-pep + BLOSUM-HLA","group":"baseline"},{"pep":"blosum_pep","hla":"blosum_hla","label":"blosum_pep + blosum_hla","split":"cluster","seed":43,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":680},"n_features":860,"n_train":20147,"n_test":5780,"runtime_s":8.9,"global_pcc_score":0.6898228526,"global_scc_score":0.6986497533,"global_pcc_thalf":0.4208015341,"global_scc_thalf":0.6986497533,"mean_allele_pcc":0.4928615987,"mean_allele_scc":0.5031373796,"auc_1h":0.854350743,"auc_2h":0.8543969427,"rmse_hours":12.7258577451,"mae_hours":4.7088512947,"n_evaluated_alleles":73,"config":"BLOSUM-pep + BLOSUM-HLA","group":"baseline"},{"pep":"blosum_pep","hla":"blosum_hla","label":"blosum_pep + blosum_hla","split":"cluster","seed":44,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":680},"n_features":860,"n_train":20192,"n_test":5730,"runtime_s":8.9,"global_pcc_score":0.7034769058,"global_scc_score":0.7075773236,"global_pcc_thalf":0.3880498242,"global_scc_thalf":0.7075772641,"mean_allele_pcc":0.4515478909,"mean_allele_scc":0.4610801229,"auc_1h":0.8589824976,"auc_2h":0.8577376152,"rmse_hours":11.9523611205,"mae_hours":4.3722263041,"n_evaluated_alleles":74,"config":"BLOSUM-pep + BLOSUM-HLA","group":"baseline"},{"pep":"blosum_pep","hla":"blosum_hla","label":"blosum_pep + blosum_hla","split":"cluster","seed":45,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":680},"n_features":860,"n_train":20279,"n_test":5633,"runtime_s":9.1,"global_pcc_score":0.7211484313,"global_scc_score":0.729384111,"global_pcc_thalf":0.4310988262,"global_scc_thalf":0.7293842062,"mean_allele_pcc":0.5081641674,"mean_allele_scc":0.5179986591,"auc_1h":0.8687559644,"auc_2h":0.8750434183,"rmse_hours":12.0007222972,"mae_hours":4.6081269784,"n_evaluated_alleles":73,"config":"BLOSUM-pep + BLOSUM-HLA","group":"baseline"},{"pep":"blosum_pep","hla":"blosum_hla","label":"blosum_pep + blosum_hla","split":"cluster","seed":46,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":680},"n_features":860,"n_train":20268,"n_test":5645,"runtime_s":9.1,"global_pcc_score":0.7093273401,"global_scc_score":0.7127756099,"global_pcc_thalf":0.4054960442,"global_scc_thalf":0.7127756099,"mean_allele_pcc":0.5014550686,"mean_allele_scc":0.5018474196,"auc_1h":0.8678767222,"auc_2h":0.8672660248,"rmse_hours":11.9186691741,"mae_hours":4.3517170395,"n_evaluated_alleles":72,"config":"BLOSUM-pep + BLOSUM-HLA","group":"baseline"},{"pep":"blosum_pep","hla":"blosum_hla","label":"blosum_pep + blosum_hla","split":"allele","seed":42,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":680},"n_features":860,"n_train":19100,"n_test":6943,"runtime_s":8.3,"global_pcc_score":0.4420671761,"global_scc_score":0.4543179354,"global_pcc_thalf":0.3890155272,"global_scc_thalf":0.4543179354,"mean_allele_pcc":0.3631618619,"mean_allele_scc":0.3783907752,"auc_1h":0.7346618975,"auc_2h":0.7447900524,"rmse_hours":8.5474487705,"mae_hours":4.0408614717,"n_evaluated_alleles":15,"config":"BLOSUM-pep + BLOSUM-HLA","group":"baseline"},{"pep":"blosum_pep","hla":"blosum_hla","label":"blosum_pep + blosum_hla","split":"allele","seed":43,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":680},"n_features":860,"n_train":19552,"n_test":6441,"runtime_s":8.1,"global_pcc_score":0.3527552187,"global_scc_score":0.3879896693,"global_pcc_thalf":0.4211150595,"global_scc_thalf":0.3879896693,"mean_allele_pcc":0.2151903063,"mean_allele_scc":0.209594974,"auc_1h":0.6718367731,"auc_2h":0.691869792,"rmse_hours":7.7045755814,"mae_hours":3.7774123075,"n_evaluated_alleles":15,"config":"BLOSUM-pep + BLOSUM-HLA","group":"baseline"},{"pep":"blosum_pep","hla":"blosum_hla","label":"blosum_pep + blosum_hla","split":"allele","seed":44,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":680},"n_features":860,"n_train":20149,"n_test":5778,"runtime_s":8.6,"global_pcc_score":0.5692729354,"global_scc_score":0.5654683534,"global_pcc_thalf":0.3958082772,"global_scc_thalf":0.5654683534,"mean_allele_pcc":0.2639577091,"mean_allele_scc":0.2528083546,"auc_1h":0.7981884258,"auc_2h":0.7872159275,"rmse_hours":8.6750770503,"mae_hours":3.98343132,"n_evaluated_alleles":15,"config":"BLOSUM-pep + BLOSUM-HLA","group":"baseline"},{"pep":"blosum_pep","hla":"blosum_hla","label":"blosum_pep + blosum_hla","split":"allele","seed":45,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":680},"n_features":860,"n_train":20345,"n_test":5560,"runtime_s":8.9,"global_pcc_score":0.5077868104,"global_scc_score":0.4993728052,"global_pcc_thalf":0.2617176683,"global_scc_thalf":0.4993728052,"mean_allele_pcc":0.3879833519,"mean_allele_scc":0.393558487,"auc_1h":0.7639391149,"auc_2h":0.7483610219,"rmse_hours":15.2153352126,"mae_hours":6.3278677559,"n_evaluated_alleles":15,"config":"BLOSUM-pep + BLOSUM-HLA","group":"baseline"},{"pep":"blosum_pep","hla":"blosum_hla","label":"blosum_pep + blosum_hla","split":"allele","seed":46,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":680},"n_features":860,"n_train":20328,"n_test":5579,"runtime_s":8.7,"global_pcc_score":0.4404610693,"global_scc_score":0.4611516499,"global_pcc_thalf":0.3256177494,"global_scc_thalf":0.4611516499,"mean_allele_pcc":0.3274285197,"mean_allele_scc":0.3203691734,"auc_1h":0.710102104,"auc_2h":0.7325458922,"rmse_hours":14.2180799505,"mae_hours":4.3250096104,"n_evaluated_alleles":15,"config":"BLOSUM-pep + BLOSUM-HLA","group":"baseline"},{"pep":"blosum_pep","hla":"boltz_BF","label":"blosum_pep + boltz_BF","split":"random","seed":42,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":768},"n_features":948,"n_train":20278,"n_test":5634,"runtime_s":9.0,"global_pcc_score":0.7279875278,"global_scc_score":0.7362671807,"global_pcc_thalf":0.4645906446,"global_scc_thalf":0.7362671807,"mean_allele_pcc":0.5383767486,"mean_allele_scc":0.5396453129,"auc_1h":0.8752242622,"auc_2h":0.8795812081,"rmse_hours":10.5090437323,"mae_hours":4.1400693051,"n_evaluated_alleles":73,"config":"BLOSUM-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"blosum_pep","hla":"boltz_BF","label":"blosum_pep + boltz_BF","split":"random","seed":43,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":768},"n_features":948,"n_train":20278,"n_test":5634,"runtime_s":8.6,"global_pcc_score":0.7473706007,"global_scc_score":0.7498004773,"global_pcc_thalf":0.392962102,"global_scc_thalf":0.7498004773,"mean_allele_pcc":0.5660324097,"mean_allele_scc":0.5621471162,"auc_1h":0.889145005,"auc_2h":0.8908199323,"rmse_hours":11.9177560701,"mae_hours":4.302437572,"n_evaluated_alleles":72,"config":"BLOSUM-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"blosum_pep","hla":"boltz_BF","label":"blosum_pep + boltz_BF","split":"random","seed":44,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":768},"n_features":948,"n_train":20278,"n_test":5634,"runtime_s":8.5,"global_pcc_score":0.7389484048,"global_scc_score":0.7461111078,"global_pcc_thalf":0.4540135979,"global_scc_thalf":0.7461111339,"mean_allele_pcc":0.6008479595,"mean_allele_scc":0.6005811801,"auc_1h":0.8812931393,"auc_2h":0.8804733836,"rmse_hours":11.5142035293,"mae_hours":4.3470127616,"n_evaluated_alleles":75,"config":"BLOSUM-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"blosum_pep","hla":"boltz_BF","label":"blosum_pep + boltz_BF","split":"random","seed":45,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":768},"n_features":948,"n_train":20278,"n_test":5634,"runtime_s":8.5,"global_pcc_score":0.728305459,"global_scc_score":0.7350630067,"global_pcc_thalf":0.4220126713,"global_scc_thalf":0.7350630067,"mean_allele_pcc":0.5691860318,"mean_allele_scc":0.5692308368,"auc_1h":0.8750604334,"auc_2h":0.8742382337,"rmse_hours":11.2314139825,"mae_hours":4.489571597,"n_evaluated_alleles":74,"config":"BLOSUM-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"blosum_pep","hla":"boltz_BF","label":"blosum_pep + boltz_BF","split":"random","seed":46,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":768},"n_features":948,"n_train":20278,"n_test":5634,"runtime_s":9.0,"global_pcc_score":0.744990766,"global_scc_score":0.7572840483,"global_pcc_thalf":0.4413679229,"global_scc_thalf":0.7572840213,"mean_allele_pcc":0.5671415329,"mean_allele_scc":0.5811463289,"auc_1h":0.8806477385,"auc_2h":0.8884720463,"rmse_hours":13.2177144008,"mae_hours":4.5371770356,"n_evaluated_alleles":72,"config":"BLOSUM-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"blosum_pep","hla":"boltz_BF","label":"blosum_pep + boltz_BF","split":"cluster","seed":42,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":768},"n_features":948,"n_train":19984,"n_test":5961,"runtime_s":10.0,"global_pcc_score":0.7012613416,"global_scc_score":0.707090259,"global_pcc_thalf":0.4331028205,"global_scc_thalf":0.707090259,"mean_allele_pcc":0.5155655146,"mean_allele_scc":0.5037869239,"auc_1h":0.8592462006,"auc_2h":0.8592898109,"rmse_hours":10.2729392822,"mae_hours":4.1416747477,"n_evaluated_alleles":72,"config":"BLOSUM-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"blosum_pep","hla":"boltz_BF","label":"blosum_pep + boltz_BF","split":"cluster","seed":43,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":768},"n_features":948,"n_train":20147,"n_test":5780,"runtime_s":9.5,"global_pcc_score":0.7086651325,"global_scc_score":0.7199112392,"global_pcc_thalf":0.4589181175,"global_scc_thalf":0.7199112392,"mean_allele_pcc":0.5350769162,"mean_allele_scc":0.5306655378,"auc_1h":0.8622928526,"auc_2h":0.8652249271,"rmse_hours":12.2572086482,"mae_hours":4.4857672022,"n_evaluated_alleles":73,"config":"BLOSUM-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"blosum_pep","hla":"boltz_BF","label":"blosum_pep + boltz_BF","split":"cluster","seed":44,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":768},"n_features":948,"n_train":20192,"n_test":5730,"runtime_s":9.1,"global_pcc_score":0.7178115249,"global_scc_score":0.725870049,"global_pcc_thalf":0.4260200877,"global_scc_thalf":0.725870049,"mean_allele_pcc":0.5052109957,"mean_allele_scc":0.5084745651,"auc_1h":0.8643462546,"auc_2h":0.8659103034,"rmse_hours":11.680957007,"mae_hours":4.2898399038,"n_evaluated_alleles":74,"config":"BLOSUM-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"blosum_pep","hla":"boltz_BF","label":"blosum_pep + boltz_BF","split":"cluster","seed":45,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":768},"n_features":948,"n_train":20279,"n_test":5633,"runtime_s":9.3,"global_pcc_score":0.7329554558,"global_scc_score":0.7370405206,"global_pcc_thalf":0.3939965733,"global_scc_thalf":0.7370405206,"mean_allele_pcc":0.5327071548,"mean_allele_scc":0.5437367739,"auc_1h":0.8770260138,"auc_2h":0.8794298761,"rmse_hours":12.0003092409,"mae_hours":4.5988364478,"n_evaluated_alleles":73,"config":"BLOSUM-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"blosum_pep","hla":"boltz_BF","label":"blosum_pep + boltz_BF","split":"cluster","seed":46,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":768},"n_features":948,"n_train":20268,"n_test":5645,"runtime_s":8.7,"global_pcc_score":0.7159674764,"global_scc_score":0.7185135956,"global_pcc_thalf":0.424133623,"global_scc_thalf":0.7185135956,"mean_allele_pcc":0.552056551,"mean_allele_scc":0.5410120503,"auc_1h":0.870580548,"auc_2h":0.8714770743,"rmse_hours":11.6445525512,"mae_hours":4.2441716969,"n_evaluated_alleles":72,"config":"BLOSUM-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"blosum_pep","hla":"boltz_BF","label":"blosum_pep + boltz_BF","split":"allele","seed":42,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":768},"n_features":948,"n_train":19100,"n_test":6943,"runtime_s":8.0,"global_pcc_score":0.4398248494,"global_scc_score":0.4454662341,"global_pcc_thalf":0.3633692377,"global_scc_thalf":0.4454663439,"mean_allele_pcc":0.3476763666,"mean_allele_scc":0.3576737279,"auc_1h":0.7337728073,"auc_2h":0.7435926012,"rmse_hours":7.9964399441,"mae_hours":4.1055985331,"n_evaluated_alleles":15,"config":"BLOSUM-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"blosum_pep","hla":"boltz_BF","label":"blosum_pep + boltz_BF","split":"allele","seed":43,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":768},"n_features":948,"n_train":19552,"n_test":6441,"runtime_s":8.6,"global_pcc_score":0.3533309102,"global_scc_score":0.4133529604,"global_pcc_thalf":0.4182863674,"global_scc_thalf":0.4133529604,"mean_allele_pcc":0.2429909408,"mean_allele_scc":0.225970885,"auc_1h":0.6872532113,"auc_2h":0.6595628885,"rmse_hours":7.849005978,"mae_hours":3.7621279842,"n_evaluated_alleles":15,"config":"BLOSUM-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"blosum_pep","hla":"boltz_BF","label":"blosum_pep + boltz_BF","split":"allele","seed":44,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":768},"n_features":948,"n_train":20149,"n_test":5778,"runtime_s":8.6,"global_pcc_score":0.2016935796,"global_scc_score":0.2308627932,"global_pcc_thalf":0.3009901728,"global_scc_thalf":0.2308627932,"mean_allele_pcc":0.2637348473,"mean_allele_scc":0.2734401041,"auc_1h":0.6019721405,"auc_2h":0.5948890724,"rmse_hours":8.8362534295,"mae_hours":4.2504134247,"n_evaluated_alleles":15,"config":"BLOSUM-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"blosum_pep","hla":"boltz_BF","label":"blosum_pep + boltz_BF","split":"allele","seed":45,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":768},"n_features":948,"n_train":20345,"n_test":5560,"runtime_s":8.7,"global_pcc_score":0.2418239713,"global_scc_score":0.284471984,"global_pcc_thalf":0.2929147643,"global_scc_thalf":0.284471984,"mean_allele_pcc":0.3603646159,"mean_allele_scc":0.36683051,"auc_1h":0.6265608894,"auc_2h":0.6082315653,"rmse_hours":14.5800729644,"mae_hours":6.4638430681,"n_evaluated_alleles":15,"config":"BLOSUM-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"blosum_pep","hla":"boltz_BF","label":"blosum_pep + boltz_BF","split":"allele","seed":46,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":768},"n_features":948,"n_train":20328,"n_test":5579,"runtime_s":8.6,"global_pcc_score":0.1901549399,"global_scc_score":0.1838154332,"global_pcc_thalf":0.0570204564,"global_scc_thalf":0.1838154332,"mean_allele_pcc":0.2693133056,"mean_allele_scc":0.2863418265,"auc_1h":0.6041704054,"auc_2h":0.5871512094,"rmse_hours":14.679613442,"mae_hours":4.6908776209,"n_evaluated_alleles":15,"config":"BLOSUM-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"blosum_hla","label":"esm2_150m_pep_res + blosum_hla","split":"random","seed":42,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":680},"n_features":6440,"n_train":20278,"n_test":5634,"runtime_s":17.6,"global_pcc_score":0.6424680352,"global_scc_score":0.6533399459,"global_pcc_thalf":0.4001626308,"global_scc_thalf":0.6533399459,"mean_allele_pcc":0.4381313324,"mean_allele_scc":0.4069443865,"auc_1h":0.8317601365,"auc_2h":0.8354104326,"rmse_hours":10.4740278685,"mae_hours":4.2587135937,"n_evaluated_alleles":73,"config":"ESM2-pep + BLOSUM-HLA","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"blosum_hla","label":"esm2_150m_pep_res + blosum_hla","split":"random","seed":43,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":680},"n_features":6440,"n_train":20278,"n_test":5634,"runtime_s":16.8,"global_pcc_score":0.6383408308,"global_scc_score":0.6470707066,"global_pcc_thalf":0.3601943658,"global_scc_thalf":0.6470707066,"mean_allele_pcc":0.3981469572,"mean_allele_scc":0.4008834896,"auc_1h":0.8311283826,"auc_2h":0.8305711734,"rmse_hours":11.8197731534,"mae_hours":4.3853693959,"n_evaluated_alleles":72,"config":"ESM2-pep + BLOSUM-HLA","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"blosum_hla","label":"esm2_150m_pep_res + blosum_hla","split":"random","seed":44,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":680},"n_features":6440,"n_train":20278,"n_test":5634,"runtime_s":16.2,"global_pcc_score":0.6527302265,"global_scc_score":0.661225792,"global_pcc_thalf":0.3636594533,"global_scc_thalf":0.661225792,"mean_allele_pcc":0.4343213439,"mean_allele_scc":0.4286651986,"auc_1h":0.8355389473,"auc_2h":0.8347436165,"rmse_hours":11.3475620058,"mae_hours":4.3671447635,"n_evaluated_alleles":75,"config":"ESM2-pep + BLOSUM-HLA","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"blosum_hla","label":"esm2_150m_pep_res + blosum_hla","split":"random","seed":45,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":680},"n_features":6440,"n_train":20278,"n_test":5634,"runtime_s":16.2,"global_pcc_score":0.6485821605,"global_scc_score":0.6556185153,"global_pcc_thalf":0.3534452277,"global_scc_thalf":0.6556185153,"mean_allele_pcc":0.450586468,"mean_allele_scc":0.442575395,"auc_1h":0.8352897018,"auc_2h":0.8310747846,"rmse_hours":11.2121343947,"mae_hours":4.4948029122,"n_evaluated_alleles":74,"config":"ESM2-pep + BLOSUM-HLA","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"blosum_hla","label":"esm2_150m_pep_res + blosum_hla","split":"random","seed":46,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":680},"n_features":6440,"n_train":20278,"n_test":5634,"runtime_s":15.8,"global_pcc_score":0.6235949397,"global_scc_score":0.6333044459,"global_pcc_thalf":0.2645501182,"global_scc_thalf":0.6333044459,"mean_allele_pcc":0.4290387928,"mean_allele_scc":0.4232246587,"auc_1h":0.8167737497,"auc_2h":0.8214532867,"rmse_hours":13.6183415688,"mae_hours":4.8088786677,"n_evaluated_alleles":72,"config":"ESM2-pep + BLOSUM-HLA","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"blosum_hla","label":"esm2_150m_pep_res + blosum_hla","split":"cluster","seed":42,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":680},"n_features":6440,"n_train":19984,"n_test":5961,"runtime_s":16.2,"global_pcc_score":0.5675368905,"global_scc_score":0.572017107,"global_pcc_thalf":0.3103628983,"global_scc_thalf":0.572017107,"mean_allele_pcc":0.2988055944,"mean_allele_scc":0.2898036302,"auc_1h":0.7929455702,"auc_2h":0.7891400802,"rmse_hours":10.4619609345,"mae_hours":4.3568058034,"n_evaluated_alleles":72,"config":"ESM2-pep + BLOSUM-HLA","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"blosum_hla","label":"esm2_150m_pep_res + blosum_hla","split":"cluster","seed":43,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":680},"n_features":6440,"n_train":20147,"n_test":5780,"runtime_s":16.6,"global_pcc_score":0.5895217657,"global_scc_score":0.6011614013,"global_pcc_thalf":0.2908721901,"global_scc_thalf":0.6011614013,"mean_allele_pcc":0.3322735727,"mean_allele_scc":0.3384319574,"auc_1h":0.8020374193,"auc_2h":0.8007367473,"rmse_hours":12.5394534878,"mae_hours":4.7273729409,"n_evaluated_alleles":73,"config":"ESM2-pep + BLOSUM-HLA","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"blosum_hla","label":"esm2_150m_pep_res + blosum_hla","split":"cluster","seed":44,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":680},"n_features":6440,"n_train":20192,"n_test":5730,"runtime_s":18.5,"global_pcc_score":0.5864073634,"global_scc_score":0.5940378801,"global_pcc_thalf":0.2538891032,"global_scc_thalf":0.5940378801,"mean_allele_pcc":0.2875621915,"mean_allele_scc":0.281598687,"auc_1h":0.7975333198,"auc_2h":0.7923706283,"rmse_hours":12.1221963483,"mae_hours":4.6294384505,"n_evaluated_alleles":74,"config":"ESM2-pep + BLOSUM-HLA","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"blosum_hla","label":"esm2_150m_pep_res + blosum_hla","split":"cluster","seed":45,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":680},"n_features":6440,"n_train":20279,"n_test":5633,"runtime_s":18.0,"global_pcc_score":0.5974136591,"global_scc_score":0.600499291,"global_pcc_thalf":0.2875442846,"global_scc_thalf":0.600499291,"mean_allele_pcc":0.3221142292,"mean_allele_scc":0.3178808037,"auc_1h":0.8101259032,"auc_2h":0.8054260666,"rmse_hours":12.1429601435,"mae_hours":4.830193996,"n_evaluated_alleles":73,"config":"ESM2-pep + BLOSUM-HLA","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"blosum_hla","label":"esm2_150m_pep_res + blosum_hla","split":"cluster","seed":46,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":680},"n_features":6440,"n_train":20268,"n_test":5645,"runtime_s":16.5,"global_pcc_score":0.5795404315,"global_scc_score":0.5850077117,"global_pcc_thalf":0.3184775899,"global_scc_thalf":0.5850077117,"mean_allele_pcc":0.3013442755,"mean_allele_scc":0.2952486351,"auc_1h":0.803921288,"auc_2h":0.8022046608,"rmse_hours":11.8273775645,"mae_hours":4.4582183196,"n_evaluated_alleles":72,"config":"ESM2-pep + BLOSUM-HLA","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"blosum_hla","label":"esm2_150m_pep_res + blosum_hla","split":"allele","seed":42,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":680},"n_features":6440,"n_train":19100,"n_test":6943,"runtime_s":19.0,"global_pcc_score":0.505777359,"global_scc_score":0.5148338257,"global_pcc_thalf":0.4679391568,"global_scc_thalf":0.5148338257,"mean_allele_pcc":0.3945368528,"mean_allele_scc":0.3996186813,"auc_1h":0.7606559235,"auc_2h":0.7709515482,"rmse_hours":7.7151940649,"mae_hours":3.7040803703,"n_evaluated_alleles":15,"config":"ESM2-pep + BLOSUM-HLA","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"blosum_hla","label":"esm2_150m_pep_res + blosum_hla","split":"allele","seed":43,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":680},"n_features":6440,"n_train":19552,"n_test":6441,"runtime_s":16.3,"global_pcc_score":0.348820895,"global_scc_score":0.3837343744,"global_pcc_thalf":0.3968710652,"global_scc_thalf":0.3837343744,"mean_allele_pcc":0.2429117113,"mean_allele_scc":0.2104813255,"auc_1h":0.670527035,"auc_2h":0.6798693203,"rmse_hours":7.5166348724,"mae_hours":3.6861361771,"n_evaluated_alleles":15,"config":"ESM2-pep + BLOSUM-HLA","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"blosum_hla","label":"esm2_150m_pep_res + blosum_hla","split":"allele","seed":44,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":680},"n_features":6440,"n_train":20149,"n_test":5778,"runtime_s":17.1,"global_pcc_score":0.3835228086,"global_scc_score":0.4071563538,"global_pcc_thalf":0.3117630517,"global_scc_thalf":0.4071563538,"mean_allele_pcc":0.2241188437,"mean_allele_scc":0.2394072863,"auc_1h":0.7010388526,"auc_2h":0.6886533514,"rmse_hours":8.6500654706,"mae_hours":4.150183709,"n_evaluated_alleles":15,"config":"ESM2-pep + BLOSUM-HLA","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"blosum_hla","label":"esm2_150m_pep_res + blosum_hla","split":"allele","seed":45,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":680},"n_features":6440,"n_train":20345,"n_test":5560,"runtime_s":16.9,"global_pcc_score":0.4426891208,"global_scc_score":0.4647580402,"global_pcc_thalf":0.2302867604,"global_scc_thalf":0.4647580402,"mean_allele_pcc":0.3778891861,"mean_allele_scc":0.3770423172,"auc_1h":0.7382778597,"auc_2h":0.7253471942,"rmse_hours":14.9700054247,"mae_hours":6.3730745439,"n_evaluated_alleles":15,"config":"ESM2-pep + BLOSUM-HLA","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"blosum_hla","label":"esm2_150m_pep_res + blosum_hla","split":"allele","seed":46,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":680},"n_features":6440,"n_train":20328,"n_test":5579,"runtime_s":16.0,"global_pcc_score":0.4055917859,"global_scc_score":0.4123325845,"global_pcc_thalf":0.2098172638,"global_scc_thalf":0.4123325845,"mean_allele_pcc":0.3020715714,"mean_allele_scc":0.3114392882,"auc_1h":0.689769076,"auc_2h":0.7117100665,"rmse_hours":14.3302205131,"mae_hours":4.6212914412,"n_evaluated_alleles":15,"config":"ESM2-pep + BLOSUM-HLA","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"boltz_BF","label":"esm2_150m_pep_res + boltz_BF","split":"random","seed":42,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":768},"n_features":6528,"n_train":20278,"n_test":5634,"runtime_s":15.8,"global_pcc_score":0.7107089758,"global_scc_score":0.7253752117,"global_pcc_thalf":0.3781674233,"global_scc_thalf":0.7253752117,"mean_allele_pcc":0.5052323937,"mean_allele_scc":0.4934185121,"auc_1h":0.8681541421,"auc_2h":0.8732831777,"rmse_hours":11.3914274178,"mae_hours":4.3342234703,"n_evaluated_alleles":73,"config":"ESM2-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"boltz_BF","label":"esm2_150m_pep_res + boltz_BF","split":"random","seed":43,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":768},"n_features":6528,"n_train":20278,"n_test":5634,"runtime_s":17.4,"global_pcc_score":0.7196859121,"global_scc_score":0.7295026589,"global_pcc_thalf":0.3511678299,"global_scc_thalf":0.7295026589,"mean_allele_pcc":0.5025543571,"mean_allele_scc":0.5095925995,"auc_1h":0.8720575877,"auc_2h":0.8727831787,"rmse_hours":12.5185214361,"mae_hours":4.5569585421,"n_evaluated_alleles":72,"config":"ESM2-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"boltz_BF","label":"esm2_150m_pep_res + boltz_BF","split":"random","seed":44,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":768},"n_features":6528,"n_train":20278,"n_test":5634,"runtime_s":18.5,"global_pcc_score":0.71526438,"global_scc_score":0.7278950601,"global_pcc_thalf":0.3934164441,"global_scc_thalf":0.7278950601,"mean_allele_pcc":0.5266703963,"mean_allele_scc":0.5161226189,"auc_1h":0.8677996346,"auc_2h":0.8736935656,"rmse_hours":11.5205558518,"mae_hours":4.3133265021,"n_evaluated_alleles":75,"config":"ESM2-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"boltz_BF","label":"esm2_150m_pep_res + boltz_BF","split":"random","seed":45,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":768},"n_features":6528,"n_train":20278,"n_test":5634,"runtime_s":15.2,"global_pcc_score":0.71437639,"global_scc_score":0.7241776908,"global_pcc_thalf":0.4271511036,"global_scc_thalf":0.7241777365,"mean_allele_pcc":0.5039122701,"mean_allele_scc":0.5189687281,"auc_1h":0.8680028463,"auc_2h":0.8698738072,"rmse_hours":10.860718715,"mae_hours":4.3385271135,"n_evaluated_alleles":74,"config":"ESM2-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"boltz_BF","label":"esm2_150m_pep_res + boltz_BF","split":"random","seed":46,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":768},"n_features":6528,"n_train":20278,"n_test":5634,"runtime_s":18.0,"global_pcc_score":0.7062281966,"global_scc_score":0.7167961302,"global_pcc_thalf":0.3683296335,"global_scc_thalf":0.7167961302,"mean_allele_pcc":0.5103474259,"mean_allele_scc":0.5145527788,"auc_1h":0.8602888379,"auc_2h":0.8650051287,"rmse_hours":13.1164762437,"mae_hours":4.5296456926,"n_evaluated_alleles":72,"config":"ESM2-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"boltz_BF","label":"esm2_150m_pep_res + boltz_BF","split":"cluster","seed":42,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":768},"n_features":6528,"n_train":19984,"n_test":5961,"runtime_s":16.8,"global_pcc_score":0.6264820695,"global_scc_score":0.6362816694,"global_pcc_thalf":0.3183959322,"global_scc_thalf":0.6362816694,"mean_allele_pcc":0.3734334409,"mean_allele_scc":0.3947754784,"auc_1h":0.8207734999,"auc_2h":0.8201041404,"rmse_hours":10.5683380441,"mae_hours":4.3821797139,"n_evaluated_alleles":72,"config":"ESM2-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"boltz_BF","label":"esm2_150m_pep_res + boltz_BF","split":"cluster","seed":43,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":768},"n_features":6528,"n_train":20147,"n_test":5780,"runtime_s":16.0,"global_pcc_score":0.6494226456,"global_scc_score":0.6655564561,"global_pcc_thalf":0.3580439062,"global_scc_thalf":0.6655564561,"mean_allele_pcc":0.3944754004,"mean_allele_scc":0.4081259899,"auc_1h":0.8309239563,"auc_2h":0.8361728479,"rmse_hours":12.3374335645,"mae_hours":4.7251426037,"n_evaluated_alleles":73,"config":"ESM2-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"boltz_BF","label":"esm2_150m_pep_res + boltz_BF","split":"cluster","seed":44,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":768},"n_features":6528,"n_train":20192,"n_test":5730,"runtime_s":17.5,"global_pcc_score":0.6453774571,"global_scc_score":0.6542915801,"global_pcc_thalf":0.3729135019,"global_scc_thalf":0.6542915801,"mean_allele_pcc":0.3446087241,"mean_allele_scc":0.3603242396,"auc_1h":0.8306259805,"auc_2h":0.8283412418,"rmse_hours":12.0515450314,"mae_hours":4.590251001,"n_evaluated_alleles":74,"config":"ESM2-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"boltz_BF","label":"esm2_150m_pep_res + boltz_BF","split":"cluster","seed":45,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":768},"n_features":6528,"n_train":20279,"n_test":5633,"runtime_s":17.5,"global_pcc_score":0.6580750942,"global_scc_score":0.6658220121,"global_pcc_thalf":0.2990339785,"global_scc_thalf":0.6658220121,"mean_allele_pcc":0.3827632368,"mean_allele_scc":0.3863620864,"auc_1h":0.8387589687,"auc_2h":0.836030648,"rmse_hours":12.5825823247,"mae_hours":4.9427595561,"n_evaluated_alleles":73,"config":"ESM2-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"boltz_BF","label":"esm2_150m_pep_res + boltz_BF","split":"cluster","seed":46,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":768},"n_features":6528,"n_train":20268,"n_test":5645,"runtime_s":16.6,"global_pcc_score":0.6535856724,"global_scc_score":0.6646678946,"global_pcc_thalf":0.3530590946,"global_scc_thalf":0.6646678946,"mean_allele_pcc":0.4155631065,"mean_allele_scc":0.4152074954,"auc_1h":0.8396076954,"auc_2h":0.837398803,"rmse_hours":11.5611972792,"mae_hours":4.3392478877,"n_evaluated_alleles":72,"config":"ESM2-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"boltz_BF","label":"esm2_150m_pep_res + boltz_BF","split":"allele","seed":42,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":768},"n_features":6528,"n_train":19100,"n_test":6943,"runtime_s":15.7,"global_pcc_score":0.4723335207,"global_scc_score":0.4863621182,"global_pcc_thalf":0.3782513761,"global_scc_thalf":0.4863621182,"mean_allele_pcc":0.3852103651,"mean_allele_scc":0.3888301745,"auc_1h":0.7473295333,"auc_2h":0.7590536792,"rmse_hours":9.4584888473,"mae_hours":4.320432972,"n_evaluated_alleles":15,"config":"ESM2-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"boltz_BF","label":"esm2_150m_pep_res + boltz_BF","split":"allele","seed":43,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":768},"n_features":6528,"n_train":19552,"n_test":6441,"runtime_s":15.3,"global_pcc_score":0.3662396073,"global_scc_score":0.4126690946,"global_pcc_thalf":0.4514673484,"global_scc_thalf":0.4126690946,"mean_allele_pcc":0.2609817088,"mean_allele_scc":0.251117902,"auc_1h":0.6794011702,"auc_2h":0.6624182616,"rmse_hours":7.5083650641,"mae_hours":3.6371019722,"n_evaluated_alleles":15,"config":"ESM2-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"boltz_BF","label":"esm2_150m_pep_res + boltz_BF","split":"allele","seed":44,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":768},"n_features":6528,"n_train":20149,"n_test":5778,"runtime_s":15.7,"global_pcc_score":0.2729175091,"global_scc_score":0.3023530315,"global_pcc_thalf":0.2863561141,"global_scc_thalf":0.3023530315,"mean_allele_pcc":0.2613048553,"mean_allele_scc":0.2581442449,"auc_1h":0.6407736453,"auc_2h":0.6310772179,"rmse_hours":9.2218613977,"mae_hours":4.3274579152,"n_evaluated_alleles":15,"config":"ESM2-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"boltz_BF","label":"esm2_150m_pep_res + boltz_BF","split":"allele","seed":45,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":768},"n_features":6528,"n_train":20345,"n_test":5560,"runtime_s":17.0,"global_pcc_score":0.3564697504,"global_scc_score":0.4009982266,"global_pcc_thalf":0.3180315297,"global_scc_thalf":0.4009982266,"mean_allele_pcc":0.4296058416,"mean_allele_scc":0.4581817098,"auc_1h":0.6832719103,"auc_2h":0.6704419456,"rmse_hours":14.5060642615,"mae_hours":6.4316570521,"n_evaluated_alleles":15,"config":"ESM2-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"esm2_150m_pep_res","hla":"boltz_BF","label":"esm2_150m_pep_res + boltz_BF","split":"allele","seed":46,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":5760,"hla":768},"n_features":6528,"n_train":20328,"n_test":5579,"runtime_s":19.0,"global_pcc_score":0.3201405704,"global_scc_score":0.3195733076,"global_pcc_thalf":0.1590398927,"global_scc_thalf":0.3195733076,"mean_allele_pcc":0.2869487703,"mean_allele_scc":0.2992018263,"auc_1h":0.6616999601,"auc_2h":0.6599666722,"rmse_hours":15.0244077231,"mae_hours":5.1695070516,"n_evaluated_alleles":15,"config":"ESM2-pep + Boltz-HLA(B+F)","group":"foundation"},{"pep":"blosum_pep","hla":"onehot_hla","label":"blosum_pep + onehot_hla","split":"random","seed":42,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":75},"n_features":255,"n_train":20278,"n_test":5634,"runtime_s":7.1,"global_pcc_score":0.5961357951,"global_scc_score":0.6011445384,"global_pcc_thalf":0.333803559,"global_scc_thalf":0.6011445384,"mean_allele_pcc":0.2412529737,"mean_allele_scc":0.2316564231,"auc_1h":0.8062150496,"auc_2h":0.8141419612,"rmse_hours":11.3260246228,"mae_hours":4.6136672976,"n_evaluated_alleles":73,"config":"BLOSUM-pep + onehot-HLA","group":"control"},{"pep":"blosum_pep","hla":"onehot_hla","label":"blosum_pep + onehot_hla","split":"random","seed":43,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":75},"n_features":255,"n_train":20278,"n_test":5634,"runtime_s":6.3,"global_pcc_score":0.6056509614,"global_scc_score":0.6075406151,"global_pcc_thalf":0.3095481165,"global_scc_thalf":0.6075406151,"mean_allele_pcc":0.2503286898,"mean_allele_scc":0.2550381654,"auc_1h":0.8154425148,"auc_2h":0.8158848038,"rmse_hours":12.5381433948,"mae_hours":4.731674585,"n_evaluated_alleles":72,"config":"BLOSUM-pep + onehot-HLA","group":"control"},{"pep":"blosum_pep","hla":"onehot_hla","label":"blosum_pep + onehot_hla","split":"random","seed":44,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":75},"n_features":255,"n_train":20278,"n_test":5634,"runtime_s":6.7,"global_pcc_score":0.5978093147,"global_scc_score":0.6021094077,"global_pcc_thalf":0.3207599593,"global_scc_thalf":0.6021094077,"mean_allele_pcc":0.2916493416,"mean_allele_scc":0.2975997446,"auc_1h":0.8066148978,"auc_2h":0.8062836128,"rmse_hours":12.1637764612,"mae_hours":4.7686937937,"n_evaluated_alleles":75,"config":"BLOSUM-pep + onehot-HLA","group":"control"},{"pep":"blosum_pep","hla":"onehot_hla","label":"blosum_pep + onehot_hla","split":"random","seed":45,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":75},"n_features":255,"n_train":20278,"n_test":5634,"runtime_s":6.3,"global_pcc_score":0.5925112367,"global_scc_score":0.5954347858,"global_pcc_thalf":0.3233031222,"global_scc_thalf":0.5954347858,"mean_allele_pcc":0.2847870886,"mean_allele_scc":0.2907163426,"auc_1h":0.8070196743,"auc_2h":0.806438394,"rmse_hours":11.9033888578,"mae_hours":4.8728397689,"n_evaluated_alleles":74,"config":"BLOSUM-pep + onehot-HLA","group":"control"},{"pep":"blosum_pep","hla":"onehot_hla","label":"blosum_pep + onehot_hla","split":"random","seed":46,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":75},"n_features":255,"n_train":20278,"n_test":5634,"runtime_s":6.4,"global_pcc_score":0.5923517346,"global_scc_score":0.594205821,"global_pcc_thalf":0.2629223338,"global_scc_thalf":0.594205821,"mean_allele_pcc":0.2710343301,"mean_allele_scc":0.2779795275,"auc_1h":0.8053083677,"auc_2h":0.8060626447,"rmse_hours":14.1168992785,"mae_hours":5.1014031678,"n_evaluated_alleles":72,"config":"BLOSUM-pep + onehot-HLA","group":"control"},{"pep":"blosum_pep","hla":"onehot_hla","label":"blosum_pep + onehot_hla","split":"cluster","seed":42,"epochs":25,"hidden_dim":60,"pca_dim":0,"tag":"","dims":{"pep":180,"hla":75},"n_features":255,"n_train":19984,"n_test":5961,"runtime_s":8.4,"global_pcc_score":0.5607413054,"global_scc_score":0.5637198857,"global_pcc_thalf":0.3008773306,"global_scc_thalf":0.5637198857,"mean_allele_pcc":0.2012806535,"mean_allele_scc":0.2030581517,"auc_1h":0.7851988067,"auc_2h":0.7872012175,"rmse_hours":10.8252068521,"mae_hours":4.489954945,"n_evaluated_alleles":72,"config":"BLOSUM-pep + onehot-HLA","group":"control"}],"structures":[{"pdb_id":"1M6O","allele":"HLA-B*44:02","title":"HLA-B*44:02 with the self peptide EEFGRAFSF. The clearest anchor demonstration in this set: Glu at P2 is buried in the B pocket, Phe at P9 in the F pocket - the two pockets the Boltz-2 embeddings were pooled over.","peptide":"EEFGRAFSF","peptide_length":9,"chain_hla":"A","chain_b2m":"B","chain_peptide":"C","resolution":1.6,"method":"X-ray diffraction","citation":"Macdonald WA et al. (2003) J Exp Med 198:679. PMID 12939341","in_dataset":true,"pocket_residues_b":[7,9,24,45,63,66,67,70,99],"pocket_residues_f":[77,80,84,95,116,123,143,146,147]},{"pdb_id":"6PYJ","allele":"HLA-B*27:05","title":"HLA-B*27:05 with the self peptide LRNQSVFNF. Textbook B-pocket case: Arg at P2 in the deep acidic B*27:05 B pocket (Glu45, Cys67, His9), Phe at P9 in the F pocket.","peptide":"LRNQSVFNF","peptide_length":9,"chain_hla":"A","chain_b2m":"B","chain_peptide":"C","resolution":1.44,"method":"X-ray diffraction","citation":"Lim Kam Sian TCC et al. (2019) J Biol Chem 294:20185. PMID 31740583","in_dataset":true,"pocket_residues_b":[7,9,24,25,34,45,63,66,67,99],"pocket_residues_f":[77,80,81,84,95,116,123,143,146,147]},{"pdb_id":"1DUZ","allele":"HLA-A*02:01","title":"HLA-A*02:01 with the HTLV-1 Tax 11-19 epitope LLFGYPVYV. The primary paper is specifically about peptide-HLA complex stability, which makes it the natural anchor for this sprint.","peptide":"LLFGYPVYV","peptide_length":9,"chain_hla":"A","chain_b2m":"B","chain_peptide":"C","resolution":1.8,"method":"X-ray diffraction","citation":"Khan AR, Baker BM, Ghosh P, Biddison WE, Wiley DC (2000) J Immunol 164:6398. PMID 10843695","in_dataset":true,"pocket_residues_b":[7,9,45,63,66,67,70,99],"pocket_residues_f":[77,80,81,84,116,123,143,146,147]},{"pdb_id":"1X7Q","allele":"HLA-A*11:01","title":"HLA-A*11:01 with the SARS-CoV nucleocapsid peptide KTFPPTEPK. Canonical A*11:01 anchors - Thr at P2 in the B pocket, Lys at P9 in the F pocket - and the highest resolution binary complex in this set.","peptide":"KTFPPTEPK","peptide_length":9,"chain_hla":"A","chain_b2m":"B","chain_peptide":"C","resolution":1.45,"method":"X-ray diffraction","citation":"Blicher T, Kastrup JS, Buus S, Gajhede M (2005) Acta Crystallogr D 61:1031. PMID 16041067","in_dataset":true,"pocket_residues_b":[7,9,45,63,66,67,99],"pocket_residues_f":[77,80,81,84,95,97,114,116,123,143,146,147]},{"pdb_id":"3BO8","allele":"HLA-A*01:01","title":"HLA-A*01:01 with the MAGE-A1 tumour antigen EADPTGHSY. Classic A*01:01 anchoring - Asp at P3 and Tyr at P9 - showing that not every allele anchors primarily at P2.","peptide":"EADPTGHSY","peptide_length":9,"chain_hla":"A","chain_b2m":"B","chain_peptide":"C","resolution":1.8,"method":"X-ray diffraction","citation":"Kumar P, Vahedi-Faridi A, Saenger W, Ziegler A, Uchanska-Ziegler B (2009) Protein Sci 18:37. PMID 19177349","in_dataset":true,"pocket_residues_b":[7,63,66,67,99],"pocket_residues_f":[77,80,81,84,95,97,116,123,143,146,147]},{"pdb_id":"4MJI","allele":"HLA-B*51:01","title":"The structure named in the challenge PDF - but it is NOT a binary peptide-HLA complex. It is a TCR / peptide-HLA ternary complex carrying an 8-mer HIV-1 reverse transcriptase epitope, at the lowest resolution in this set, and HLA-B*51:01 does not appear in the Rasmussen dataset. Included for completeness and to show TCR engagement, not as a representative stability structure.","peptide":"TAFTIPSI","peptide_length":8,"chain_hla":"A","chain_b2m":"B","chain_peptide":"C","resolution":2.99,"method":"X-ray diffraction","citation":"Motozono C et al. (2014) J Immunol 192:3428. PMID 24600035","in_dataset":false,"caveat":"8-mer, not 9-mer; TCR ternary complex (chains D/E are TCR alpha/beta, with a second copy F-J in the asymmetric unit); allele absent from the dataset.","pocket_residues_b":[7,9,63,66,67,99],"pocket_residues_f":[77,80,84,143,146,147]}],"noise":{},"baseline":"BLOSUM-pep + BLOSUM-HLA","split_meta":{"random":{"name":"Random split","blurb":"Rows shuffled. Every test allele and ~49% of test peptides also appear in training. The easiest split, and the least informative: a per-allele vector can act as a memorised lookup key here."},"cluster":{"name":"Peptide-grouped split","blurb":"No peptide appears in both train and test (verified: 0 shared). Tests generalisation to unseen peptides; all alleles are still seen."},"allele":{"name":"Leave-allele-out split","blurb":"15 held-out alleles, zero allele overlap (verified). This is the real test of the premise: a per-allele HLA embedding can only help if it generalises to alleles never seen in training."}},"split_order":["random","cluster","allele"],"metrics":["mean_allele_pcc","global_pcc_score","global_scc_score","auc_1h","auc_2h","rmse_hours","mae_hours"],"seeds":[42,43,44,45,46]}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ngl/2.0.0-dev.37/ngl.js"></script>
+<script>
+(function () {
+  "use strict";
+  const D = JSON.parse(document.getElementById("payload").textContent);
+  const $ = (s, r) => (r || document).querySelector(s);
+  const el = (t, a, kids) => {
+    const n = document.createElementNS(t === "svg" || SVG_TAGS.has(t)
+      ? "http://www.w3.org/2000/svg" : "http://www.w3.org/1999/xhtml", t);
+    for (const k in (a || {})) {
+      if (k === "text") n.textContent = a[k];
+      else if (k === "html") n.innerHTML = a[k];
+      else n.setAttribute(k, a[k]);
+    }
+    (kids || []).forEach(c => c && n.appendChild(c));
+    return n;
+  };
+  const SVG_TAGS = new Set(["svg","g","rect","line","text","circle","path","polyline","defs","clipPath"]);
+  const fmt = (v, d) => (v === null || v === undefined || isNaN(v)) ? "—" : (+v).toFixed(d === undefined ? 4 : d);
+
+  const GROUP_COLOR = { foundation: "var(--series-1)", baseline: "var(--series-2)",
+                        control: "var(--series-3)", ablation: "var(--series-3)" };
+  const GROUP_LABEL = { baseline: "Published baseline (BLOSUM both sides)",
+                        foundation: "Foundation-model arm",
+                        control: "Control", ablation: "Single-side ablation" };
+  const HIGHER_BETTER = m => m !== "rmse_hours" && m !== "mae_hours";
+  const METRIC_LABEL = { global_pcc_score: "Global PCC", mean_allele_pcc: "Mean per-allele PCC",
+                         auc_1h: "AUC (t½ ≥ 1h)", auc_2h: "AUC (t½ ≥ 2h)",
+                         rmse_hours: "RMSE (hours)", mae_hours: "MAE (hours)",
+                         global_scc_score: "Global SCC" };
+  const DEC = m => (m === "rmse_hours" || m === "mae_hours") ? 2 : 4;
+
+  /* ---------------- tooltip ---------------- */
+  const tip = $("#tip");
+  function showTip(e, html) {
+    tip.innerHTML = html; tip.style.opacity = 1;
+    const r = tip.getBoundingClientRect();
+    let x = e.clientX + 14, y = e.clientY + 14;
+    if (x + r.width > innerWidth - 8) x = e.clientX - r.width - 14;
+    if (y + r.height > innerHeight - 8) y = e.clientY - r.height - 14;
+    tip.style.left = x + "px"; tip.style.top = y + "px";
+  }
+  const hideTip = () => { tip.style.opacity = 0; };
+  function hook(node, html) {
+    node.addEventListener("mousemove", e => showTip(e, html));
+    node.addEventListener("mouseleave", hideTip);
+    node.setAttribute("tabindex", "0");
+    node.addEventListener("focus", e => {
+      const b = node.getBoundingClientRect();
+      showTip({ clientX: b.right, clientY: b.top }, html);
+    });
+    node.addEventListener("blur", hideTip);
+  }
+
+  /* ---------------- theme ---------------- */
+  const tb = $("#themebtn");
+  tb.addEventListener("click", () => {
+    const dark = document.documentElement.getAttribute("data-theme") === "dark";
+    document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+    tb.setAttribute("aria-pressed", String(!dark));
+    renderAll();
+  });
+
+  /* ================= verdict ================= */
+  function bySplit(split) { return D.summary.filter(r => r.split === split); }
+  function find(split, cfg) { return D.summary.find(r => r.split === split && r.config === cfg); }
+  function deltaOf(split, cfg) { return D.deltas.find(r => r.split === split && r.config === cfg); }
+
+  function bestFoundation(split, metric) {
+    const f = bySplit(split).filter(r => r.group === "foundation");
+    if (!f.length) return null;
+    return f.reduce((a, b) => (HIGHER_BETTER(metric)
+      ? (b[metric] > a[metric] ? b : a) : (b[metric] < a[metric] ? b : a)));
+  }
+
+  function renderVerdict() {
+    const tiles = $("#verdict-tiles"); tiles.innerHTML = "";
+    const noiseSd = (D.noise && D.noise.global_pcc_score_sd) || 0.005;
+    D.split_order.forEach(split => {
+      const base = find(split, D.baseline);
+      const bf = bestFoundation(split, "global_pcc_score");
+      if (!base || !bf) return;
+      const d = deltaOf(split, bf.config);
+      const dv = d ? d.d_global_pcc_score : (bf.global_pcc_score - base.global_pcc_score);
+      const sig = d && Math.abs(d.d_global_pcc_score_t) > 2.5;
+      const sign = dv >= 0 ? "+" : "−";
+      tiles.appendChild(el("div", { class: "tile" }, [
+        el("div", { class: "k", text: D.split_meta[split].name }),
+        el("div", { class: "v", text: sign + Math.abs(dv).toFixed(4),
+                    style: "color:" + (dv >= 0 ? "var(--pos)" : "var(--neg)") }),
+        el("div", { class: "n", html: "best foundation arm vs baseline, global PCC<br>"
+          + "<span class='muted'>" + (sig ? "outside" : "inside") + " noise; baseline "
+          + fmt(base.global_pcc_score) + "</span>" })
+      ]));
+    });
+
+    // Headline sentence, derived from the data rather than asserted.
+    const parts = D.split_order.map(split => {
+      const bf = bestFoundation(split, "global_pcc_score");
+      const d = bf && deltaOf(split, bf.config);
+      if (!d) return null;
+      const dv = d.d_global_pcc_score;
+      const sig = Math.abs(d.d_global_pcc_score_t) > 2.5;
+      return { split, dv, sig };
+    }).filter(Boolean);
+    const anyWin = parts.some(p => p.dv > 0 && p.sig);
+    const allLose = parts.every(p => p.dv <= 0);
+    let txt;
+    if (allLose) {
+      txt = "No. On every split tested, the best foundation-model arm scores at or "
+          + "below the BLOSUM baseline, and the deficits on the harder splits are "
+          + "larger than the noise floor. On this dataset, with this head and this "
+          + "training budget, the foundation-model features did not help.";
+    } else if (anyWin) {
+      txt = "Partly. At least one foundation-model arm beats the baseline by more "
+          + "than the noise floor on at least one split — see the paired differences "
+          + "below for where, and by how little.";
+    } else {
+      txt = "No measurable benefit. Differences between the best foundation-model arm "
+          + "and the baseline sit inside the run-to-run noise floor on every split.";
+    }
+    $("#verdict-text").textContent = txt;
+    $("#verdict-note").textContent = "Positive means the foundation-model arm beat the "
+      + "baseline. \"Inside noise\" means the paired per-seed difference is not "
+      + "distinguishable from run-to-run variation (|t| ≤ 2.5 over "
+      + D.seeds.length + " seeds).";
+  }
+
+  /* ================= noise floor ================= */
+  function renderNoise() {
+    const c = $("#noise-card");
+    const n = D.noise || {};
+    const rows = [];
+    if (n.unseeded) {
+      rows.push(["Unseeded repeats of the published script (fixed seed 42, fixed split)",
+        n.unseeded.n, fmt(n.unseeded.global_pcc_score_mean), fmt(n.unseeded.global_pcc_score_sd),
+        fmt(n.unseeded.global_pcc_score_range)]);
+    }
+    if (n.init) {
+      rows.push(["Initialisation only (split fixed, torch seed varied)",
+        n.init.n, fmt(n.init.global_pcc_score_mean), fmt(n.init.global_pcc_score_sd),
+        fmt(n.init.global_pcc_score_range)]);
+    }
+    if (n.split) {
+      rows.push(["Split + initialisation (both varied — the seed spread used throughout)",
+        n.split.n, fmt(n.split.global_pcc_score_mean), fmt(n.split.global_pcc_score_sd),
+        fmt(n.split.global_pcc_score_range)]);
+    }
+    if (!rows.length) { c.innerHTML = "<p class='muted'>Noise-floor measurements not available.</p>"; return; }
+    const t = el("table", {}, [
+      el("thead", {}, [el("tr", {}, ["Source of variation", "runs", "mean global PCC", "SD", "range"]
+        .map(h => el("th", { text: h })))]),
+      el("tbody", {}, rows.map(r => el("tr", {}, r.map((v, i) =>
+        el("td", { text: String(v) })))))
+    ]);
+    c.innerHTML = "";
+    c.appendChild(el("div", { class: "scroll" }, [t]));
+    c.appendChild(el("p", { class: "muted", text:
+      "All on the random split. The threshold used on this page is |t| > 2.5 on the "
+      + "paired per-seed difference, which is stricter than comparing means against "
+      + "the SD above." }));
+  }
+
+  /* ================= grouped bar facets ================= */
+  let METRIC = "global_pcc_score";
+
+  function barFacet(split, metric) {
+    const rows = bySplit(split).slice().sort((a, b) =>
+      HIGHER_BETTER(metric) ? b[metric] - a[metric] : a[metric] - b[metric]);
+    if (!rows.length) return null;
+
+    const padL = 230, padR = 64, padT = 10, padB = 34;
+    const rowH = 26, h = padT + rows.length * rowH + padB;
+    const w = 860;
+    const vals = rows.map(r => r[metric] + (r[metric + "_sd"] || 0));
+    let lo = 0, hi = Math.max.apply(null, vals) * 1.06;
+    if (metric === "auc_1h" || metric === "auc_2h") lo = 0.5;
+    const x = v => padL + (v - lo) / (hi - lo) * (w - padL - padR);
+
+    const g = [];
+    // gridlines + ticks
+    const nT = 5;
+    for (let i = 0; i <= nT; i++) {
+      const v = lo + (hi - lo) * i / nT;
+      g.push(el("line", { class: "gridline", x1: x(v), x2: x(v), y1: padT, y2: padT + rows.length * rowH }));
+      g.push(el("text", { class: "tick", x: x(v), y: padT + rows.length * rowH + 15,
+        "text-anchor": "middle", text: fmt(v, DEC(metric) === 2 ? 1 : 2) }));
+    }
+    g.push(el("line", { class: "axis", x1: padL, x2: padL, y1: padT, y2: padT + rows.length * rowH }));
+
+    rows.forEach((r, i) => {
+      const y = padT + i * rowH + 4, bh = rowH - 10;
+      const bw = Math.max(1, x(r[metric]) - padL);
+      const color = GROUP_COLOR[r.group] || "var(--series-3)";
+      const bar = el("rect", { class: "bar", x: padL, y: y, width: bw, height: bh,
+        rx: 4, fill: color });
+      const sd = r[metric + "_sd"] || 0;
+      hook(bar, "<b>" + r.config + "</b><br>" + D.split_meta[split].name
+        + "<br>" + METRIC_LABEL[metric] + ": <b>" + fmt(r[metric], DEC(metric))
+        + "</b> ± " + fmt(sd, DEC(metric)) + " SD"
+        + "<br>input width: " + r.n_features + " dims"
+        + "<br>" + r.n_seeds + " seeds · " + Math.round(r.runtime_s) + "s/run");
+      g.push(bar);
+      if (sd > 0) {
+        const x1 = x(Math.max(lo, r[metric] - sd)), x2 = x(r[metric] + sd), yc = y + bh / 2;
+        g.push(el("line", { class: "err", x1: x1, x2: x2, y1: yc, y2: yc }));
+        g.push(el("line", { class: "err", x1: x1, x2: x1, y1: yc - 4, y2: yc + 4 }));
+        g.push(el("line", { class: "err", x1: x2, x2: x2, y1: yc - 4, y2: yc + 4 }));
+      }
+      g.push(el("text", { class: "lab", x: padL - 10, y: y + bh / 2 + 4,
+        "text-anchor": "end", text: r.config }));
+      g.push(el("text", { class: "val", x: x(r[metric] + sd) + 7, y: y + bh / 2 + 4,
+        text: fmt(r[metric], DEC(metric)) }));
+    });
+
+    const svg = el("svg", { viewBox: "0 0 " + w + " " + h, role: "img",
+      "aria-label": METRIC_LABEL[metric] + " by configuration, " + D.split_meta[split].name }, g);
+    return el("figure", {}, [
+      el("figcaption", { text: D.split_meta[split].name }),
+      el("p", { class: "cap", text: D.split_meta[split].blurb }),
+      svg
+    ]);
+  }
+
+  function renderFacets() {
+    const host = $("#facets"); host.innerHTML = "";
+    D.split_order.forEach(s => { const f = barFacet(s, METRIC); if (f) host.appendChild(f); });
+    const lg = $("#legend"); lg.innerHTML = "";
+    ["baseline", "foundation", "control"].forEach(k => {
+      lg.appendChild(el("span", {}, [
+        el("span", { class: "swatch", style: "background:" + GROUP_COLOR[k] }),
+        el("span", { text: GROUP_LABEL[k] })
+      ]));
+    });
+    lg.appendChild(el("span", {}, [el("span", { class: "muted",
+      text: "error bars = ±1 SD over " + D.seeds.length + " seeds" })]));
+  }
+
+  document.querySelectorAll("[data-metric]").forEach(b => {
+    b.addEventListener("click", () => {
+      document.querySelectorAll("[data-metric]").forEach(o =>
+        o.setAttribute("aria-pressed", String(o === b)));
+      METRIC = b.dataset.metric;
+      renderFacets();
+    });
+  });
+
+  /* ================= delta facets ================= */
+  function deltaFacet(split) {
+    const rows = D.deltas.filter(r => r.split === split)
+      .slice().sort((a, b) => b.d_global_pcc_score - a.d_global_pcc_score);
+    if (!rows.length) return null;
+    const noise = (D.noise && D.noise.global_pcc_score_sd) || 0.005;
+
+    const padL = 230, padR = 70, padT = 12, padB = 34;
+    const rowH = 26, h = padT + rows.length * rowH + padB, w = 860;
+    const ext = Math.max(noise * 1.5, ...rows.map(r =>
+      Math.abs(r.d_global_pcc_score) + (r.d_global_pcc_score_sd || 0))) * 1.12;
+    const x = v => padL + (v + ext) / (2 * ext) * (w - padL - padR);
+
+    const g = [];
+    g.push(el("rect", { x: x(-noise), y: padT, width: x(noise) - x(-noise),
+      height: rows.length * rowH, fill: "var(--band)" }));
+    const nT = 4;
+    for (let i = 0; i <= nT; i++) {
+      const v = -ext + 2 * ext * i / nT;
+      g.push(el("text", { class: "tick", x: x(v), y: padT + rows.length * rowH + 15,
+        "text-anchor": "middle", text: (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(3) }));
+    }
+    g.push(el("line", { class: "axis", x1: x(0), x2: x(0), y1: padT, y2: padT + rows.length * rowH }));
+
+    rows.forEach((r, i) => {
+      const y = padT + i * rowH + 4, bh = rowH - 10;
+      const v = r.d_global_pcc_score, sd = r.d_global_pcc_score_sd || 0;
+      const sig = Math.abs(r.d_global_pcc_score_t) > 2.5;
+      const x0 = x(0), x1 = x(v);
+      const bar = el("rect", { class: "bar", x: Math.min(x0, x1), y: y,
+        width: Math.max(1, Math.abs(x1 - x0)), height: bh, rx: 4,
+        fill: v >= 0 ? "var(--pos)" : "var(--neg)",
+        opacity: sig ? 1 : 0.42 });
+      hook(bar, "<b>" + r.config + "</b><br>" + D.split_meta[split].name
+        + "<br>Δ global PCC vs baseline: <b>" + (v >= 0 ? "+" : "−")
+        + Math.abs(v).toFixed(4) + "</b> ± " + fmt(sd) + " SD"
+        + "<br>paired t = " + r.d_global_pcc_score_t.toFixed(2)
+        + " over " + r.n_paired + " seeds"
+        + "<br>Δ mean per-allele PCC: " + (r.d_mean_allele_pcc >= 0 ? "+" : "−")
+        + Math.abs(r.d_mean_allele_pcc).toFixed(4)
+        + "<br><span style='opacity:.75'>" + (sig ? "outside the noise floor"
+        : "inside the noise floor — not a result") + "</span>");
+      g.push(bar);
+      if (sd > 0) {
+        const a = x(v - sd), b2 = x(v + sd), yc = y + bh / 2;
+        g.push(el("line", { class: "err", x1: a, x2: b2, y1: yc, y2: yc }));
+        g.push(el("line", { class: "err", x1: a, x2: a, y1: yc - 4, y2: yc + 4 }));
+        g.push(el("line", { class: "err", x1: b2, x2: b2, y1: yc - 4, y2: yc + 4 }));
+      }
+      g.push(el("text", { class: "lab", x: padL - 10, y: y + bh / 2 + 4,
+        "text-anchor": "end", text: r.config }));
+      const tx = v >= 0 ? x(v + sd) + 7 : x(v - sd) - 7;
+      g.push(el("text", { class: "val", x: tx, y: y + bh / 2 + 4,
+        "text-anchor": v >= 0 ? "start" : "end",
+        text: (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(4) + (sig ? " *" : "") }));
+    });
+
+    const svg = el("svg", { viewBox: "0 0 " + w + " " + h, role: "img",
+      "aria-label": "Paired difference in global PCC versus baseline, " + D.split_meta[split].name }, g);
+    return el("figure", {}, [
+      el("figcaption", { text: D.split_meta[split].name }),
+      el("p", { class: "cap", text: "Shaded band = ±" + noise.toFixed(3)
+        + " noise floor. Faded bars and unmarked values are inside it. "
+        + "An asterisk marks |t| > 2.5." }),
+      svg
+    ]);
+  }
+
+  function renderDeltas() {
+    const host = $("#delta-facets"); host.innerHTML = "";
+    D.split_order.forEach(s => { const f = deltaFacet(s); if (f) host.appendChild(f); });
+  }
+
+  /* ================= per-allele ================= */
+  let PA_SPLIT = null;
+  function renderPAControls() {
+    const host = $("#pa-controls"); host.innerHTML = "";
+    const avail = D.split_order.filter(s => D.per_allele[s]);
+    if (!avail.length) return;
+    if (!PA_SPLIT || !D.per_allele[PA_SPLIT]) PA_SPLIT = avail[avail.length - 1];
+    host.appendChild(el("span", { class: "muted", style: "margin-right:4px", text: "Split" }));
+    avail.forEach(s => {
+      const b = el("button", { class: "seg", text: D.split_meta[s].name,
+        "aria-pressed": String(s === PA_SPLIT) });
+      b.addEventListener("click", () => { PA_SPLIT = s; renderPAControls(); renderPA(); });
+      host.appendChild(b);
+    });
+  }
+
+  function renderPA() {
+    const host = $("#pa-facets"); host.innerHTML = "";
+    const pa = D.per_allele[PA_SPLIT];
+    if (!pa) { host.appendChild(el("p", { class: "muted", text: "No per-allele data." })); return; }
+    const rows = pa.rows.filter(r => r.pcc_base !== null && r.pcc_base !== undefined)
+      .slice().sort((a, b) => b.pcc_base - a.pcc_base);
+    const hasFM = rows.some(r => r.pcc_fm !== null && r.pcc_fm !== undefined);
+
+    const padL = 150, padR = 24, padT = 14, padB = 40;
+    const rowH = 17, h = padT + rows.length * rowH + padB, w = 860;
+    const lo = Math.min(0, ...rows.flatMap(r => [r.pcc_base, r.pcc_fm].filter(v => v != null))) - 0.05;
+    const hi = Math.max(...rows.flatMap(r => [r.pcc_base, r.pcc_fm].filter(v => v != null))) + 0.05;
+    const x = v => padL + (v - lo) / (hi - lo) * (w - padL - padR);
+
+    const g = [];
+    for (let i = 0; i <= 6; i++) {
+      const v = lo + (hi - lo) * i / 6;
+      g.push(el("line", { class: "gridline", x1: x(v), x2: x(v), y1: padT, y2: padT + rows.length * rowH }));
+      g.push(el("text", { class: "tick", x: x(v), y: padT + rows.length * rowH + 15,
+        "text-anchor": "middle", text: v.toFixed(2) }));
+    }
+    if (lo < 0) g.push(el("line", { class: "axis", x1: x(0), x2: x(0), y1: padT, y2: padT + rows.length * rowH }));
+    g.push(el("text", { class: "tick", x: (padL + w - padR) / 2, y: padT + rows.length * rowH + 32,
+      "text-anchor": "middle", text: "per-allele Pearson correlation (mean over seeds)" }));
+
+    rows.forEach((r, i) => {
+      const yc = padT + i * rowH + rowH / 2;
+      if (hasFM && r.pcc_fm != null) {
+        g.push(el("line", { x1: x(r.pcc_base), x2: x(r.pcc_fm), y1: yc, y2: yc,
+          stroke: "var(--border)", "stroke-width": 1.5 }));
+      }
+      const mk = (v, color, label) => {
+        if (v == null) return;
+        const c = el("circle", { cx: x(v), cy: yc, r: 4.5, fill: color,
+          stroke: "var(--surface-1)", "stroke-width": 2 });
+        hook(c, "<b>" + r.allele + "</b><br>" + label + ": <b>" + fmt(v) + "</b>"
+          + "<br>n = " + Math.round(r.n_samples) + " measurements"
+          + (hasFM && r.pcc_fm != null && r.pcc_base != null
+            ? "<br>Δ (foundation − baseline): " + ((r.pcc_fm - r.pcc_base) >= 0 ? "+" : "−")
+              + Math.abs(r.pcc_fm - r.pcc_base).toFixed(4) : ""));
+        g.push(c);
+      };
+      mk(r.pcc_base, "var(--series-2)", pa.baseline);
+      if (hasFM) mk(r.pcc_fm, "var(--series-1)", pa.foundation);
+      g.push(el("text", { class: "lab", x: padL - 10, y: yc + 4,
+        "text-anchor": "end", text: r.allele }));
+    });
+
+    const lg = el("div", { class: "legend" }, [
+      el("span", {}, [el("span", { class: "swatch", style: "background:var(--series-2)" }),
+        el("span", { text: pa.baseline })]),
+      hasFM ? el("span", {}, [el("span", { class: "swatch", style: "background:var(--series-1)" }),
+        el("span", { text: pa.foundation })]) : null
+    ]);
+    const svg = el("svg", { viewBox: "0 0 " + w + " " + h, role: "img",
+      "aria-label": "Per-allele Pearson correlation, " + D.split_meta[PA_SPLIT].name }, g);
+    const fig = el("figure", {}, [
+      el("figcaption", { text: D.split_meta[PA_SPLIT].name + " — " + rows.length + " alleles" }),
+      el("p", { class: "cap", text: "Alleles with fewer than 3 test measurements, or with no "
+        + "variance in the measured half-life, cannot yield a correlation and are omitted." }),
+      lg, svg
+    ]);
+    host.appendChild(fig);
+
+    const tbl = el("table", {}, [
+      el("thead", {}, [el("tr", {}, ["allele", "n", pa.baseline,
+        hasFM ? pa.foundation : null, hasFM ? "Δ" : null].filter(Boolean)
+        .map(t => el("th", { text: t })))]),
+      el("tbody", {}, rows.map(r => el("tr", {}, [
+        el("td", { text: r.allele }),
+        el("td", { text: String(Math.round(r.n_samples)) }),
+        el("td", { text: fmt(r.pcc_base) }),
+        hasFM ? el("td", { text: fmt(r.pcc_fm) }) : null,
+        hasFM ? el("td", { text: (r.pcc_fm != null && r.pcc_base != null)
+          ? ((r.pcc_fm - r.pcc_base >= 0 ? "+" : "−") + Math.abs(r.pcc_fm - r.pcc_base).toFixed(4))
+          : "—" }) : null
+      ].filter(Boolean))))
+    ]);
+    host.appendChild(el("details", {}, [
+      el("summary", { text: "Table view — per-allele correlations" }),
+      el("div", { class: "scroll" }, [tbl])
+    ]));
+  }
+
+  /* ================= summary table ================= */
+  function renderSummaryTable() {
+    const cols = ["global_pcc_score", "mean_allele_pcc", "global_scc_score",
+                  "auc_1h", "auc_2h", "rmse_hours", "mae_hours"];
+    const rows = D.summary.slice().sort((a, b) =>
+      D.split_order.indexOf(a.split) - D.split_order.indexOf(b.split)
+      || b.global_pcc_score - a.global_pcc_score);
+    const t = el("table", {}, [
+      el("thead", {}, [el("tr", {}, ["split", "configuration", "dims", "seeds"]
+        .concat(cols.map(c => METRIC_LABEL[c])).map(h => el("th", { text: h })))]),
+      el("tbody", {}, rows.map(r => el("tr", {}, [
+        el("td", { text: D.split_meta[r.split].name }),
+        el("td", { text: r.config }),
+        el("td", { text: String(r.n_features) }),
+        el("td", { text: String(r.n_seeds) })
+      ].concat(cols.map(c => el("td", {
+        text: fmt(r[c], DEC(c)) + " ± " + fmt(r[c + "_sd"], DEC(c))
+      }))))))
+    ]);
+    $("#summary-table").innerHTML = "";
+    $("#summary-table").appendChild(t);
+  }
+
+  /* ================= methods ================= */
+  function renderMethods() {
+    const c = $("#methods-card");
+    c.innerHTML = ""
+      + "<h3>Protocol held constant across every arm</h3>"
+      + "<p>60-unit single-hidden-layer MLP with sigmoid activation and sigmoid output; "
+      + "MSE loss on the NetMHC-style target <code>s = 2^(-t0/t½)</code> with t0 = 1 h; "
+      + "Adam, lr 1e-3, weight decay 1e-5, batch 128, 25 epochs, "
+      + "best-validation-loss checkpoint; 80/20 train/test with 10% of train held out "
+      + "for validation. The model, loss, target transform, metrics and split logic are "
+      + "imported from the published <code>train_baseline.py</code> rather than "
+      + "reimplemented, so only the input features differ between arms.</p>"
+      + "<h3>Features</h3>"
+      + "<p><strong>BLOSUM-pep</strong> 9×20 = 180 dims; <strong>BLOSUM-HLA</strong> "
+      + "34×20 = 680 dims (NetMHCpan pseudosequence) — together these are the 860-dim "
+      + "published baseline. <strong>ESM2-pep</strong> per-residue ESM-2 t30_150M "
+      + "representations, 9×640 = 5,760 dims, the positional analogue of BLOSUM. "
+      + "<strong>ESM2-HLA</strong> mean-pooled ESM-2 over the 182-residue α1/α2 domain, "
+      + "640 dims. <strong>Boltz-HLA</strong> Boltz-2 pocket embeddings, B pocket "
+      + "(P2 anchor) and F pocket (C-terminal anchor) concatenated, 2×384 = 768 dims. "
+      + "<strong>onehot-HLA</strong> 75-dim allele indicator.</p>"
+      + "<h3>Why learned features are standardised and BLOSUM is not</h3>"
+      + "<p>The Boltz-2 features reach magnitude ~1000 with a mean L2 norm of 1656, "
+      + "against BLOSUM50/5 values in roughly [−1, 3]. Fed raw into a sigmoid MLP the "
+      + "first layer saturates and no gradient flows — that alone would manufacture a "
+      + "false negative. All learned blocks are therefore z-scored with statistics fit "
+      + "on the training subset only. BLOSUM blocks are left raw so the baseline arm "
+      + "reproduces the published script exactly.</p>"
+      + "<h3>Caveats, stated plainly</h3>"
+      + "<ul>"
+      + "<li><strong>The Boltz-2 embeddings carry no peptide information.</strong> "
+      + "75 distinct vectors for 28,166 rows: they are a per-allele lookup. On the "
+      + "random and peptide-grouped splits every test allele is also in training, so "
+      + "such a vector can act as a memorised key. The allele one-hot control exists "
+      + "to measure exactly that, and only the leave-allele-out split separates "
+      + "structural information from allele identity.</li>"
+      + "<li><strong>A fifth of the target is a single point mass.</strong> 5,679 of "
+      + "28,166 rows have t½ exactly 0.0, which the transform maps to s = 0. This caps "
+      + "attainable correlation and makes RMSE-in-hours a poor headline metric.</li>"
+      + "<li><strong>Capacity is not matched by default.</strong> The ESM-2 peptide arm "
+      + "feeds 5,760 dims where BLOSUM feeds 180, at a fixed 60-unit head and a fixed "
+      + "25-epoch budget. A win could be capacity and a loss could be underfitting, so "
+      + "neither should be read as representation quality without the dimension-matched "
+      + "run.</li>"
+      + "<li><strong>Frozen features, shallow head, no fine-tuning.</strong> Nothing "
+      + "here tests what a fine-tuned foundation model could do — only what its frozen "
+      + "representations offer a small supervised head. There is no CUDA on this "
+      + "machine; all training is CPU.</li>"
+      + "<li><strong>Three engineered constructs are invisible to the pseudosequence.</strong> "
+      + "The C67S mutants differ from their wild types at a residue outside the 34 "
+      + "NetMHCpan contact positions, so the baseline encoding cannot distinguish them.</li>"
+      + "</ul>";
+  }
+
+  /* ================= structures (NGL) ================= */
+  function renderStructures() {
+    const host = $("#structs"); host.innerHTML = "";
+    const S = D.structures || [];
+    const key = $("#chainkey"); key.innerHTML = "";
+    if (!S.length) {
+      host.appendChild(el("p", { class: "muted",
+        text: "No structure metadata available (outputs/report/structures.json missing)." }));
+      return;
+    }
+    [["#2a78d6", "HLA heavy chain (α1/α2 groove)"],
+     ["#eb6834", "bound peptide — shown as spheres"],
+     ["#1baf7a", "β2-microglobulin"],
+     ["#e34948", "B pocket (P2 anchor) / F pocket (C-term anchor) residues"]
+    ].forEach(([c, t]) => key.appendChild(el("span", {}, [
+      el("span", { class: "swatch", style: "background:" + c }), el("span", { text: t })])));
+
+    const haveNGL = typeof window.NGL !== "undefined";
+    S.forEach(s => {
+      const id = "v_" + s.pdb_id;
+      const holder = el("div", { class: "viewer", id: id });
+      holder.appendChild(el("div", { class: "ph", text: haveNGL
+        ? ("loading " + s.pdb_id + " …")
+        : ("3D viewer needs the NGL library from a CDN — offline, so " + s.pdb_id
+           + " is not rendered. Metadata below is unaffected.") }));
+      const dl = el("dl", {}, [].concat(
+        ["allele", s.allele || "—"],
+        ["peptide", (s.peptide || "—") + (s.peptide_length ? " (" + s.peptide_length + "-mer)" : "")],
+        ["resolution", s.resolution ? s.resolution + " Å" : "—"],
+        ["method", s.method || "—"],
+        ["chains", "HLA " + (s.chain_hla || "?") + " · peptide " + (s.chain_peptide || "?")
+          + " · β2m " + (s.chain_b2m || "?")],
+        ["citation", s.citation || "—"]
+      ).reduce((acc, v, i, arr) => {
+        if (i % 2 === 0) acc.push(el("dt", { text: v }));
+        else acc.push(el("dd", { text: v }));
+        return acc;
+      }, []));
+      host.appendChild(el("figure", {}, [
+        el("figcaption", { text: s.pdb_id + " — " + (s.allele || "peptide-HLA complex") }),
+        el("p", { class: "cap", text: s.title || "" }),
+        holder,
+        el("div", { class: "meta" }, [dl,
+          el("p", { class: "muted", style: "margin:8px 0 0" }, [
+            el("a", { href: "https://www.rcsb.org/structure/" + s.pdb_id,
+              target: "_blank", rel: "noopener", text: "RCSB PDB entry " + s.pdb_id })])])
+      ]));
+    });
+
+    if (!haveNGL) return;
+    S.forEach(s => {
+      const holder = document.getElementById("v_" + s.pdb_id);
+      let stage;
+      try { stage = new NGL.Stage(holder, { backgroundColor: "white" }); }
+      catch (e) { return; }
+      const dark = () => getComputedStyle(document.documentElement)
+        .getPropertyValue("color-scheme").indexOf("dark") >= 0;
+      stage.setParameters({ backgroundColor: dark() ? "#232322" : "#f0efec" });
+      stage.loadFile("rcsb://" + s.pdb_id, { defaultRepresentation: false })
+        .then(comp => {
+          const ph = holder.querySelector(".ph"); if (ph) ph.remove();
+          const pep = s.chain_peptide ? (":" + s.chain_peptide) : "";
+          const hla = s.chain_hla ? (":" + s.chain_hla) : "";
+          const b2m = s.chain_b2m ? (":" + s.chain_b2m) : "";
+          if (hla) comp.addRepresentation("cartoon", {
+            sele: hla + " and polymer", color: "#2a78d6", opacity: 0.86 });
+          if (b2m) comp.addRepresentation("cartoon", {
+            sele: b2m + " and polymer", color: "#1baf7a", opacity: 0.5 });
+          if (pep) {
+            comp.addRepresentation("spacefill", {
+              sele: pep + " and polymer", color: "#eb6834", opacity: 0.95, radiusScale: 0.72 });
+            comp.addRepresentation("licorice", { sele: pep + " and polymer", color: "#eb6834" });
+          }
+          const pockets = (s.pocket_residues_b || []).concat(s.pocket_residues_f || []);
+          if (pockets.length) {
+            // NGL selection: "(7 or 9 or 24) and :A and sidechainAttached"
+            let sele = "(" + pockets.join(" or ") + ")";
+            if (hla) sele += " and " + hla;
+            comp.addRepresentation("licorice", {
+              sele: sele + " and sidechainAttached",
+              color: "#e34948", opacity: 0.95, radiusScale: 0.8 });
+          }
+          if (pep) comp.autoView(pep);
+          else comp.autoView();
+        })
+        .catch(() => {
+          const ph = holder.querySelector(".ph");
+          if (ph) ph.textContent = "Could not fetch " + s.pdb_id
+            + " from the PDB (offline?). Metadata below is unaffected.";
+        });
+      window.addEventListener("resize", () => stage.handleResize());
+      document.getElementById("themebtn").addEventListener("click", () =>
+        setTimeout(() => stage.setParameters({
+          backgroundColor: dark() ? "#232322" : "#f0efec" }), 0));
+    });
+    $("#struct-note").textContent = "Coordinates are fetched live from the RCSB PDB, so "
+      + "the 3D panels need a network connection; everything else on this page is embedded.";
+  }
+
+  /* ================= go ================= */
+  function renderAll() {
+    renderVerdict(); renderNoise(); renderFacets(); renderDeltas();
+    renderPAControls(); renderPA(); renderSummaryTable(); renderMethods();
+  }
+  renderAll();
+  renderStructures();
+  $("#runstamp").textContent = D.runs.length + " runs · " + D.seeds.length
+    + " seeds · " + new Set(D.summary.map(r => r.config)).size + " configurations";
+})();
+</script>
+</body>
+</html>

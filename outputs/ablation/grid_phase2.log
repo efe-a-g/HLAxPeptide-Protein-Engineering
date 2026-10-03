@@ -1,0 +1,10 @@
+﻿
+==============================================================================
+[PHASE2] noise: initialisation only (split fixed)  (8 runs)
+==============================================================================
+[+] blosum_pep + blosum_hla                        random   s42 | allele_pcc 0.5394 | global_pcc 0.7247 | auc1h 0.8729 | rmse 10.75 | 10.2s
+    [1/8] 0.2m elapsed, eta 1.2m
+[+] blosum_pep + blosum_hla                        random   s42 | allele_pcc 0.5193 | global_pcc 0.7178 | auc1h 0.8701 | rmse 10.89 | 6.8s
+    [2/8] 0.3m elapsed, eta 0.8m
+[+] blosum_pep + blosum_hla                        random   s42 | allele_pcc 0.5264 | global_pcc 0.7215 | auc1h 0.8718 | rmse 10.83 | 7.8s
+    [3/8] 0.4m elapsed, eta 0.7m

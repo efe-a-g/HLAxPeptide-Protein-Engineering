@@ -95,6 +95,20 @@ def main():
                              "--tag", "pooling"])
         launch(runs, args.results, "pooling: mean-pool vs per-residue, 35M vs 150M")
 
+    if "augment" in args.probes:
+        # AUGMENT rather than replace: keep the pseudosequence and add the
+        # learned HLA block on top. This is the configuration that matters in
+        # practice -- "does it add anything the pseudosequence lacks?" -- and
+        # it is the one the brief explicitly allows alongside replacement.
+        runs = []
+        for hla in ["blosum_hla+boltz_BF", "blosum_hla+esm2_150m_hla_mean",
+                    "blosum_hla+boltz_BF+esm2_150m_hla_mean"]:
+            for split, seed in itertools.product(["random", "cluster", "allele"], SEEDS):
+                runs.append(["--pep", PEP_B, "--hla", hla,
+                             "--split_strategy", split, "--seed", str(seed),
+                             "--tag", "augment"])
+        launch(runs, args.results, "augment: pseudosequence + learned HLA block")
+
     if "identity" in args.probes:
         runs = []
         for hla in [HLA_1, "boltz_BFs"]:

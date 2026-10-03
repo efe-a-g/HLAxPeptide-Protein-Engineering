@@ -108,6 +108,24 @@ def boltz_block(which):
 
 
 def build_side(df, spec, args):
+    """
+    spec -> list of (name, features (N,D), is_learned).
+
+    A '+'-joined spec concatenates blocks, e.g. 'blosum_hla+boltz_BF' keeps the
+    pseudosequence and *augments* it with the Boltz pockets rather than
+    replacing it. Each sub-block keeps its own standardization flag, since
+    mixing raw BLOSUM with z-scored Boltz in one block would be wrong.
+    """
+    if "+" in spec:
+        out = []
+        for part in spec.split("+"):
+            out.extend(build_side(df, part, args))
+        return out
+    X, learned = _build_one(df, spec, args)
+    return [] if X is None else [(spec, X, learned)]
+
+
+def _build_one(df, spec, args):
     """spec -> (features (N,D) or None, is_learned)."""
     if spec == "none":
         return None, False
@@ -132,7 +150,7 @@ def build_side(df, spec, args):
 def fit_transform_blocks(blocks, tr, va, te, args):
     """Z-score (and optionally PCA) each block using TRAIN rows only."""
     out_tr, out_va, out_te, dims = [], [], [], {}
-    for name, (X, learned) in blocks.items():
+    for name, X, learned in blocks:
         if X is None:
             continue
         standardize = learned or args.standardize_blosum
@@ -201,8 +219,7 @@ def main(argv=None):
     sub_idx, val_idx = train_test_split(
         train_idx, test_size=args.val_size, random_state=args.seed, shuffle=True)
 
-    blocks = {"pep": build_side(df, args.pep, args),
-              "hla": build_side(df, args.hla, args)}
+    blocks = build_side(df, args.pep, args) + build_side(df, args.hla, args)
     X_tr, X_va, X_te, dims = fit_transform_blocks(
         blocks, sub_idx, val_idx, test_idx, args)
 

@@ -620,7 +620,8 @@
         const c = el("circle", { cx: x(v), cy: yc, r: 4.5, fill: color,
           stroke: "var(--surface-1)", "stroke-width": 2 });
         hook(c, "<b>" + r.allele + "</b><br>" + label + ": <b>" + fmt(v) + "</b>"
-          + "<br>n = " + Math.round(r.n_samples) + " measurements"
+          + "<br>n = " + Math.round(r.n_samples) + " test measurements"
+          + "<br>held out in " + (r.n_seeds || 1) + " of " + D.seeds.length + " seeds"
           + (hasFM && r.pcc_fm != null && r.pcc_base != null
             ? "<br>Δ (foundation − baseline): " + ((r.pcc_fm - r.pcc_base) >= 0 ? "+" : "−")
               + Math.abs(r.pcc_fm - r.pcc_base).toFixed(4) : ""));
@@ -643,18 +644,24 @@
     const fig = el("figure", {}, [
       el("figcaption", { text: D.split_meta[PA_SPLIT].name + " — " + rows.length + " alleles" }),
       el("p", { class: "cap", text: "Alleles with fewer than 3 test measurements, or with no "
-        + "variance in the measured half-life, cannot yield a correlation and are omitted." }),
+        + "variance in the measured half-life, cannot yield a correlation and are omitted."
+        + (PA_SPLIT === "allele"
+          ? " On this split only 15 alleles are held out per seed, so each allele is "
+            + "averaged over the subset of seeds that held it out — hover for that count. "
+            + "Alleles are therefore not all measured equally often."
+          : " Each value is averaged over all " + D.seeds.length + " seeds.") }),
       lg, svg
     ]);
     host.appendChild(fig);
 
     const tbl = el("table", {}, [
-      el("thead", {}, [el("tr", {}, ["allele", "n", pa.baseline,
+      el("thead", {}, [el("tr", {}, ["allele", "n", "seeds", pa.baseline,
         hasFM ? pa.foundation : null, hasFM ? "Δ" : null].filter(Boolean)
         .map(t => el("th", { text: t })))]),
       el("tbody", {}, rows.map(r => el("tr", {}, [
         el("td", { text: r.allele }),
         el("td", { text: String(Math.round(r.n_samples)) }),
+        el("td", { text: String(r.n_seeds || 1) }),
         el("td", { text: fmt(r.pcc_base) }),
         hasFM ? el("td", { text: fmt(r.pcc_fm) }) : null,
         hasFM ? el("td", { text: (r.pcc_fm != null && r.pcc_base != null)

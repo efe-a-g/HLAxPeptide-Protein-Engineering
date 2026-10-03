@@ -101,8 +101,6 @@ def build_payload(results_path, noise_path, struct_path):
             deltas.append(rec)
 
     # ---- per-allele: baseline vs the best foundation arm ------------------
-    def slugify(cfg):
-        return cfg
     inv = {v: k for k, v in PRETTY.items()}
 
     def load_per_allele(cfg, split):
@@ -174,9 +172,26 @@ def main():
     payload = build_payload(args.results, args.noise, args.structures)
     os.makedirs(os.path.dirname(args.out), exist_ok=True)
 
+    def clean(o):
+        """NaN/Inf -> None so the blob is valid JSON for JSON.parse."""
+        if isinstance(o, float):
+            return o if np.isfinite(o) else None
+        if isinstance(o, dict):
+            return {k: clean(v) for k, v in o.items()}
+        if isinstance(o, (list, tuple)):
+            return [clean(v) for v in o]
+        if isinstance(o, (np.integer,)):
+            return int(o)
+        if isinstance(o, (np.floating,)):
+            return clean(float(o))
+        return o
+
     tpl = open(args.template, encoding="utf-8").read()
-    blob = json.dumps(payload, separators=(",", ":"), allow_nan=False,
+    blob = json.dumps(clean(payload), separators=(",", ":"), allow_nan=False,
                       default=lambda o: None)
+    # The blob sits inside <script type="application/json">; neutralise any
+    # sequence that could close that element early.
+    blob = blob.replace("</", "<\\/")
     html = tpl.replace("/*__DATA__*/", blob)
     with open(args.out, "w", encoding="utf-8") as f:
         f.write(html)
