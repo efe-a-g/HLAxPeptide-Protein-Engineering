@@ -25,7 +25,7 @@ import pandas as pd
 
 METRICS = ["mean_allele_pcc", "mean_allele_scc", "global_pcc_score",
            "global_scc_score", "auc_1h", "auc_2h", "rmse_hours", "mae_hours"]
-SPLIT_ORDER = ["random", "cluster", "allele"]
+SPLIT_ORDER = ["supertype", "random", "cluster", "allele"]
 BASE_VARIANT = "base"
 
 PRETTY = {
@@ -35,6 +35,7 @@ PRETTY = {
     "blosum_hla": "BLOSUM-HLA", "boltz_BF": "Boltz-HLA(B+F)",
     "boltz_BFs": "Boltz-HLA(B+F+s)", "boltz_s": "Boltz-HLA(s)",
     "esm2_150m_hla_mean": "ESM2-HLA", "onehot_hla": "onehot-HLA",
+    "peptide_mean_null": "peptide-only null",
 }
 
 

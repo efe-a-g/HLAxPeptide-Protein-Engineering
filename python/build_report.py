@@ -26,6 +26,16 @@ from aggregate import (BASE_VARIANT, METRICS, SPLIT_ORDER, load, paired_deltas,
 BASELINE = "BLOSUM-pep | BLOSUM-HLA"
 
 SPLIT_META = {
+    "supertype": {
+        "name": "Supertype leave-allele-out (canonical)",
+        "blurb": "The project-wide convention from baseline.py, imported unchanged: "
+                 "whole alleles held out, stratified by HLA supertype so every motif "
+                 "family appears on both sides, split on unique pseudosequence, and "
+                 "test-eligible only with ≥100 measurements. This measures "
+                 "generalisation to a new allele within a known motif family — the "
+                 "personalised-immunotherapy case. These are the only numbers "
+                 "comparable with the rest of the repo, so they lead.",
+    },
     "random": {
         "name": "Random split",
         "blurb": "Rows shuffled. Every test allele, and ~49% of test peptides, "
@@ -48,6 +58,11 @@ SPLIT_META = {
 }
 
 VARIANT_META = {
+    "canonical": {
+        "name": "Canonical (baseline.py)",
+        "blurb": "90 epochs, no validation split, no early stopping — the protocol "
+                 "baseline.py ships. Only the supertype split is run this way.",
+    },
     BASE_VARIANT: {
         "name": "Published protocol",
         "blurb": "25 epochs, 60 hidden units — identical to train_baseline.py.",
@@ -131,7 +146,25 @@ def minify_pdb(s, src_dir="outputs/report/structures"):
     return "\n".join(out)
 
 
+def load_per_allele_supertype(pep, hla):
+    """Per-allele rows written by run_supertype.py (baseline.py's evaluate())."""
+    frames = []
+    for p in sorted(glob.glob(f"outputs/supertype/per_allele/{pep}__{hla}__s*.csv")):
+        t = pd.read_csv(p)
+        if len(t):
+            frames.append(t)
+    if not frames:
+        return None
+    allc = pd.concat(frames).rename(columns={"n": "n_samples"})
+    agg = {"n_samples": ("n_samples", "mean"), "pcc": ("pcc", "mean"),
+           "pcc_sd": ("pcc", "std"), "n_seeds": ("pcc", "size"),
+           "scc": ("scc", "mean"), "scc_sd": ("scc", "std")}
+    return allc.groupby("allele").agg(**agg).reset_index()
+
+
 def load_per_allele(pep, hla, split, variant):
+    if split == "supertype":
+        return load_per_allele_supertype(pep, hla)
     """Average the per-allele CSVs for one arm across seeds."""
     if variant != BASE_VARIANT:
         return None
@@ -159,9 +192,38 @@ def load_per_allele(pep, hla, split, variant):
     return allc.groupby("allele").agg(**agg).reset_index()
 
 
+def load_supertype(path="outputs/supertype/results.jsonl"):
+    """
+    Runs that comply with the project-wide convention in baseline.py: the
+    supertype-stratified leave-allele-out split and `evaluate`, both imported
+    unchanged. These are the numbers that are comparable with the rest of the
+    repo, so they lead the report; the earlier splits remain as context.
+
+    baseline.py's evaluate() reports a smaller metric set than my own harness
+    (no AUC, no RMSE, and global Spearman only), so the missing columns stay
+    absent and render as n/a rather than being invented.
+    """
+    if not os.path.isfile(path):
+        return None
+    rows = [json.loads(l) for l in open(path) if l.strip()]
+    if not rows:
+        return None
+    d = pd.DataFrame(rows)
+    d = d.rename(columns={"global_scc": "global_scc_score"})
+    d["variant"] = "canonical"
+    d["split"] = "supertype"
+    d["tag"] = "supertype"
+    d["pca_dim"] = 0
+    d["config"] = [pretty(p, h) for p, h in zip(d["pep"], d["hla"])]
+    return d.drop_duplicates(["config", "seed"], keep="last")
+
+
 def build_payload(results_path, noise_path, struct_path):
     df = load(results_path)
     df = df[df["variant"] != "noise_init"]
+    sup = load_supertype()
+    if sup is not None:
+        df = pd.concat([df, sup], ignore_index=True)
 
     # --pca_dim projects only the LEARNED blocks, so a pure-BLOSUM arm under
     # pca180 would be bit-identical to the same arm at base. Rather than spend
@@ -204,23 +266,23 @@ def build_payload(results_path, noise_path, struct_path):
 
     # ---- per-allele: baseline vs the best foundation arm (base variant) ----
     per_allele = {}
-    base_summ = summ[summ["variant"] == BASE_VARIANT]
     for split in SPLIT_ORDER:
-        s = base_summ[base_summ["split"] == split]
+        var = "canonical" if split == "supertype" else BASE_VARIANT
+        s = summ[(summ["variant"] == var) & (summ["split"] == split)]
         if s.empty:
             continue
         fm = s[s["group"] == "foundation"]
         best_cfg = (fm.loc[fm["mean_allele_pcc"].idxmax(), "config"]
                     if not fm.empty and fm["mean_allele_pcc"].notna().any() else None)
         bp, bh = cfgmap[BASELINE]
-        b = load_per_allele(bp, bh, split, BASE_VARIANT)
+        b = load_per_allele(bp, bh, split, var)
         if b is None:
             continue
         merged = b.rename(columns={"pcc": "pcc_base", "pcc_sd": "pcc_base_sd",
                                    "scc": "scc_base", "scc_sd": "scc_base_sd"})
         if best_cfg:
             fp, fh = cfgmap[best_cfg]
-            f = load_per_allele(fp, fh, split, BASE_VARIANT)
+            f = load_per_allele(fp, fh, split, var)
             if f is not None:
                 cols = [c for c in ["allele", "pcc", "pcc_sd", "scc", "scc_sd"]
                         if c in f.columns]
@@ -238,8 +300,13 @@ def build_payload(results_path, noise_path, struct_path):
         s["pdb_text"] = minify_pdb(s)
     noise = json.load(open(noise_path)) if os.path.isfile(noise_path) else {}
 
-    variants = [BASE_VARIANT] + sorted(
-        v for v in summ["variant"].unique() if v != BASE_VARIANT)
+    # Canonical first: it is the comparable protocol and should be what a
+    # reader sees before any of my exploratory splits.
+    others = sorted(v for v in summ["variant"].unique()
+                    if v not in (BASE_VARIANT, "canonical"))
+    variants = ([("canonical" if "canonical" in set(summ["variant"]) else None)]
+                + [BASE_VARIANT] + others)
+    variants = [v for v in variants if v]
 
     return {
         "summary": json.loads(summ.to_json(orient="records")),

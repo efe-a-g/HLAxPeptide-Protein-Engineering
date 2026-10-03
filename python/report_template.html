@@ -331,7 +331,8 @@
   });
 
   /* ================= verdict ================= */
-  let VARIANT = D.base_variant;
+  // Open on the canonical protocol when it exists: it is the comparable one.
+  let VARIANT = D.variants.indexOf("canonical") >= 0 ? "canonical" : D.base_variant;
   function bySplit(split, variant) {
     const v = variant || VARIANT;
     return D.summary.filter(r => r.split === split && r.variant === v);
@@ -357,41 +358,57 @@
   // one. Reporting only the 25-epoch result would state the opposite conclusion:
   // the foundation-model gain there reverses once the baseline is trained to
   // convergence, so each tile shows both and makes the sign flip the headline.
-  const FINAL_VARIANT = D.variants.indexOf("ep100") >= 0 ? "ep100" : D.base_variant;
+  // Each split has a "best protocol": the canonical split is only ever run under
+  // baseline.py's own 90-epoch protocol, the exploratory splits under mine.
+  const HAS_CANON = D.variants.indexOf("canonical") >= 0;
+  const EP100 = D.variants.indexOf("ep100") >= 0 ? "ep100" : D.base_variant;
+  const finalVariantFor = split =>
+    (split === "supertype" && HAS_CANON) ? "canonical" : EP100;
+  const FINAL_VARIANT = EP100;
 
   function renderVerdict() {
     const tiles = $("#verdict-tiles"); tiles.innerHTML = "";
+    const MLABEL = PRIMARY_METRIC.indexOf("scc") >= 0 ? "Spearman" : "Pearson";
+    const sign = x => (x >= 0 ? "+" : "−") + Math.abs(x).toFixed(4);
     D.split_order.forEach(split => {
-      const base25 = find(split, D.baseline, D.base_variant);
-      const bf25 = bestFoundation(split, PRIMARY_METRIC, D.base_variant);
-      const d25 = bf25 && deltaOf(split, bf25.config, D.base_variant);
-      const bfF = bestFoundation(split, PRIMARY_METRIC, FINAL_VARIANT);
-      const dF = bfF && deltaOf(split, bfF.config, FINAL_VARIANT);
-      if (!base25 || !d25) return;
-      const v25 = d25["d_" + PRIMARY_METRIC];
-      const vF = dF ? dF["d_" + PRIMARY_METRIC] : null;
-      const sigF = dF && Math.abs(dF["d_" + PRIMARY_METRIC + "_t"]) > 2.5;
-      const show = vF == null ? v25 : vF;
-      const sign = x => (x >= 0 ? "+" : "−") + Math.abs(x).toFixed(4);
-      tiles.appendChild(el("div", { class: "tile" }, [
-        el("div", { class: "k", text: D.split_meta[split].name }),
-        el("div", { class: "v", text: sign(show),
-                    style: "color:" + (show >= 0 ? "var(--pos)" : "var(--neg)") }),
+      const FV = finalVariantFor(split);
+      const canon = split === "supertype" && HAS_CANON;
+      const baseF = find(split, D.baseline, FV);
+      const bfF = bestFoundation(split, PRIMARY_METRIC, FV);
+      const dF = bfF && deltaOf(split, bfF.config, FV);
+      if (!baseF || !dF) return;
+      const vF = dF["d_" + PRIMARY_METRIC];
+      const sigF = Math.abs(dF["d_" + PRIMARY_METRIC + "_t"]) > 2.5;
+      // The 25-epoch comparison only exists for my exploratory splits; the
+      // canonical split is run solely under baseline.py's own protocol.
+      const d25 = canon ? null : (() => {
+        const b = bestFoundation(split, PRIMARY_METRIC, D.base_variant);
+        return b && deltaOf(split, b.config, D.base_variant);
+      })();
+      const v25 = d25 ? d25["d_" + PRIMARY_METRIC] : null;
+      const tile = el("div", { class: "tile" }, [
+        el("div", { class: "k", text: D.split_meta[split].name
+          + (canon ? "  ·  canonical" : "") }),
+        el("div", { class: "v", text: sign(vF),
+                    style: "color:" + (vF >= 0 ? "var(--pos)" : "var(--neg)") }),
         el("div", { class: "n", html:
-          "best foundation arm vs baseline, mean per-allele " + (PRIMARY_METRIC.indexOf("scc") >= 0 ? "Spearman" : "Pearson") + ",<br><b>at 100 epochs</b>"
+          "best foundation arm vs baseline, mean per-allele " + MLABEL + ",<br><b>"
+          + (canon ? "baseline.py protocol, 90 epochs" : "at 100 epochs") + "</b>"
           + "<br><span class='muted'>"
-          + (vF == null ? "" : "at the published 25 epochs it was <b>" + sign(v25)
+          + (v25 == null ? "" : "at the published 25 epochs it was <b>" + sign(v25)
              + "</b> — the sign " + (v25 > 0 && vF < 0 ? "flips" : "holds") + "<br>")
           + (sigF ? "outside" : "inside") + " noise · baseline "
-          + fmt((find(split, D.baseline, FINAL_VARIANT) || base25)[PRIMARY_METRIC])
+          + fmt(baseF[PRIMARY_METRIC])
           + "</span>" })
-      ]));
+      ]);
+      if (canon) tile.style.borderColor = "var(--series-2)";
+      tiles.appendChild(tile);
     });
 
     // Headline sentence, derived from the data at the best protocol available.
     const parts = D.split_order.map(split => {
-      const bf = bestFoundation(split, PRIMARY_METRIC, FINAL_VARIANT);
-      const d = bf && deltaOf(split, bf.config, FINAL_VARIANT);
+      const bf = bestFoundation(split, PRIMARY_METRIC, finalVariantFor(split));
+      const d = bf && deltaOf(split, bf.config, finalVariantFor(split));
       if (!d) return null;
       const dv = d["d_" + PRIMARY_METRIC];
       const sig = Math.abs(d["d_" + PRIMARY_METRIC + "_t"]) > 2.5;
@@ -400,17 +417,23 @@
     const wins = parts.filter(p => p.dv > 0 && p.sig).length;
     let txt;
     if (!wins && parts.length) {
-      txt = "No — and the way the answer changes is the finding. At the published "
-          + "25-epoch protocol, replacing or augmenting the BLOSUM pseudosequence with "
-          + "Boltz-2 pocket embeddings looks like a clear win (+0.038 mean per-allele "
-          + "Spearman, well outside the noise floor). Train the same baseline to convergence "
-          + "and that gain reverses: at 100 epochs no learned HLA representation beats "
-          + "the pseudosequence on any split. The apparent benefit was optimisation "
-          + "speed, not information — a dense embedding converges faster than sparse "
-          + "BLOSUM, and the baseline overtakes it given enough epochs. The peptide side "
-          + "never wins at all. The largest, cheapest improvement found in 330 runs was "
-          + "training the existing baseline four times longer: +0.097 mean per-allele "
-          + "Spearman, about three times what any foundation-model feature delivered.";
+      txt = "No. On the canonical split — supertype-stratified leave-allele-out, the "
+          + "protocol baseline.py defines for the whole repo — the BLOSUM baseline "
+          + "scores 0.4626 mean per-allele Spearman and every foundation-model arm "
+          + "loses to it, all outside the noise floor: Boltz-2 replacing the "
+          + "pseudosequence −0.065, augmenting it −0.044, ESM-2 on the HLA side −0.147, "
+          + "ESM-2 on the peptide side −0.071. "
+          + "The way the answer changes is itself the finding. At the original 25-epoch "
+          + "protocol Boltz-2 looked like a clear win (+0.038, well outside noise); "
+          + "training the same baseline to convergence reverses it. The apparent benefit "
+          + "was optimisation speed, not information — a dense embedding converges "
+          + "faster than sparse BLOSUM, and the baseline overtakes it given enough "
+          + "epochs. The cheapest real improvement found in 370 runs was simply training "
+          + "the existing baseline longer: +0.097 mean per-allele Spearman, about three "
+          + "times what any foundation-model feature ever delivered. "
+          + "For scale: a peptide-only null that knows nothing about alleles already "
+          + "scores 0.3045, so the entire margin allele modelling buys is +0.158 — and "
+          + "ESM-2 on the HLA side (0.3151) barely clears that null.";
     } else if (wins === parts.length) {
       txt = "Yes. At the best protocol tested, the foundation-model arm beats the "
           + "baseline by more than the noise floor on every split.";

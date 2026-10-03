@@ -673,3 +673,80 @@ structures *and* the viewer library.
 
 `outputs/report/index.html` is now **one self-contained file** — no sibling files, no network,
 no server. `--no-inline-ngl` restores the split layout if ever wanted.
+
+---
+
+## Entry 10 — CORRECTION: my splits were not congruent with the repo convention
+
+`origin/baseline` advanced to **ed9d863 "update baseline code"** after this worktree was cut.
+It deletes `train_baseline.py` and replaces it with `baseline.py`, which states a binding
+project-wide convention:
+
+> *"this applies to every model in this repo, not just the baseline. Later models
+> (foundation-model embeddings, fine-tuned heads, etc.) should import `split_by_supertype`
+> and `evaluate` from here and use them unchanged, so results are comparable across
+> approaches."*
+
+**Everything in Entries 1-9 predates that commit and does not comply.** The arithmetic is
+sound and the internal comparisons are valid, but the numbers are not comparable with anything
+else in the repo. Divergences:
+
+| | `baseline.py` @ ed9d863 | Entries 1-9 |
+|---|---|---|
+| split | supertype-stratified leave-allele-out, one canonical split | random / peptide-grouped / naive allele holdout |
+| split unit | **unique pseudosequence** | allele name |
+| test_size | 0.25 | 0.20 |
+| test eligibility | **>= 100 measurements**; Unclassified and singleton supertypes forced to train | none |
+| epochs | **90**, no validation split, no early stopping | 25 (then 100 in my probes) |
+| metric | mean per-allele Spearman | same (reached independently) |
+| null model | `peptide_only_null` | equivalent arm present |
+
+Two points of accidental agreement are worth recording: the team standardised on **mean
+per-allele Spearman**, which I had switched to independently, and on **90 epochs**, which
+independently corroborates Entry 5's finding that 25 was undertrained.
+
+Their split is **better than mine** in two specific ways I should have anticipated:
+
+1. Splitting on pseudosequence, not allele name. I noted in Entry 0 that C67S constructs are
+   invisible to the pseudosequence encoding, then failed to act on it — my allele split could
+   place a model-identical allele on both sides.
+2. The >= 100-measurement floor. This is almost certainly the main cause of the pathological
+   variance in Entry 4: my split could hold out an allele with 16 rows, whose noise-level
+   Spearman then carried **equal weight** in the mean. Under the canonical split the smallest
+   held-out allele has 350 measurements, and the baseline seed SD falls from **0.081 to 0.038**.
+
+### Re-run under the canonical protocol (`python/run_supertype.py`, 40 runs)
+
+Imports `split_by_supertype`, `evaluate`, `transform_target`, `encode_sequences`,
+`train_model` and `peptide_only_null` from `baseline.py` unchanged; only input features vary.
+Split: 21,943 train / 6,223 test, 16 held-out alleles across 10 supertypes, smallest 350 rows.
+
+| arm | dims | mean per-allele SCC | paired Δ vs baseline |
+|---|---|---|---|
+| **BLOSUM-pep \| BLOSUM-HLA (baseline)** | 860 | **0.4626 ± 0.0379** | — |
+| ESM2-pep \| Boltz-HLA | 6528 | 0.4206 ± 0.0424 | −0.0420 (t=−3.17) * |
+| BLOSUM-pep \| BLOSUM+Boltz (augment) | 1628 | 0.4183 ± 0.0271 | −0.0442 (t=−4.99) * |
+| BLOSUM-pep \| Boltz-HLA (replace) | 948 | 0.3974 ± 0.0282 | −0.0651 (t=−14.75) * |
+| ESM2-pep \| BLOSUM-HLA | 6440 | 0.3914 ± 0.0356 | −0.0712 (t=−6.32) * |
+| BLOSUM-pep \| ESM2-HLA | 820 | 0.3151 ± 0.0436 | −0.1474 (t=−12.13) * |
+| BLOSUM-pep \| onehot-HLA (control) | 255 | 0.3148 ± 0.0236 | −0.1477 (t=−8.23) * |
+| *peptide-only null (no allele info)* | 0 | *0.3045 ± 0.0163* | −0.1581 (t=−9.99) * |
+
+**Every foundation-model arm loses to the BLOSUM baseline, every one outside the noise floor.**
+No ambiguity, no sign flip, nothing inside noise — a cleaner negative than Entries 6-7 produced.
+
+Two further readings:
+
+- **The margin allele modelling buys is +0.158** (baseline 0.4626 vs peptide-only null 0.3045,
+  t=+9.99). That is the budget any HLA representation is competing for.
+- **ESM-2 on the HLA side (0.3151) is statistically indistinguishable from an allele one-hot
+  (0.3148) and barely above the peptide-only null (0.3045).** A mean-pooled PLM embedding of
+  the alpha1/alpha2 domain carries essentially no usable allele information beyond identity.
+
+### Status of the earlier entries
+
+Retained, not deleted. They are a valid internal ablation and contain the methodological
+findings (noise floor, global-PCC inflation, the convergence artifact, the one-hot control,
+dimension-matching). But **the canonical-split table above is the result that should be
+quoted**, and the report now leads with it; the earlier splits are kept as supporting context
+behind the protocol selector.

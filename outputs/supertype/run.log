@@ -1,0 +1,83 @@
+﻿[*] Split: 21,943 train / 6,223 test rows (22.1% test)
+    16 held-out alleles across 10 supertypes: A01(2), A02(2), A03(2), A24(1), B07(2), B08(1), B27(2), B44(1), B58(1), B62(1)
+    train-only supertypes (too few eligible alleles): A01 A03, A01 A24
+    smallest held-out allele: 350 measurements
+[*] 7 arms + null x 5 seeds = 40 runs at 90 epochs
+
+[+] peptide-only null                              s42 | allele_scc 0.2950 | allele_pcc 0.2970 | median_scc 0.2607 | n=16
+[+] blosum_pep | blosum_hla                        s42 | allele_scc 0.3955 | allele_pcc 0.3854 | median_scc 0.3805 | n=16 | 38.6s
+    [2/40] 0.6m elapsed, eta 12.3m
+[+] blosum_pep | boltz_BF                          s42 | allele_scc 0.3474 | allele_pcc 0.3232 | median_scc 0.2832 | n=16 | 30.0s
+    [3/40] 1.1m elapsed, eta 14.1m
+[+] blosum_pep | blosum_hla+boltz_BF               s42 | allele_scc 0.3803 | allele_pcc 0.3523 | median_scc 0.2902 | n=16 | 38.3s
+    [4/40] 1.8m elapsed, eta 16.1m
+[+] blosum_pep | esm2_150m_hla_mean                s42 | allele_scc 0.2505 | allele_pcc 0.2350 | median_scc 0.1678 | n=16 | 40.2s
+    [5/40] 2.5m elapsed, eta 17.2m
+[+] blosum_pep | onehot_hla                        s42 | allele_scc 0.3092 | allele_pcc 0.2950 | median_scc 0.3280 | n=16 | 24.7s
+    [6/40] 2.9m elapsed, eta 16.2m
+[+] esm2_150m_pep_res | blosum_hla                 s42 | allele_scc 0.3391 | allele_pcc 0.3346 | median_scc 0.2614 | n=16 | 61.0s
+    [7/40] 3.9m elapsed, eta 18.3m
+[+] esm2_150m_pep_res | boltz_BF                   s42 | allele_scc 0.3619 | allele_pcc 0.3492 | median_scc 0.3067 | n=16 | 59.5s
+    [8/40] 4.9m elapsed, eta 19.5m
+[+] peptide-only null                              s43 | allele_scc 0.2830 | allele_pcc 0.2853 | median_scc 0.2391 | n=15
+[+] blosum_pep | blosum_hla                        s43 | allele_scc 0.4780 | allele_pcc 0.4613 | median_scc 0.5299 | n=15 | 35.0s
+    [10/40] 5.5m elapsed, eta 16.4m
+[+] blosum_pep | boltz_BF                          s43 | allele_scc 0.4095 | allele_pcc 0.3925 | median_scc 0.4822 | n=15 | 42.7s
+    [11/40] 6.2m elapsed, eta 16.3m
+[+] blosum_pep | blosum_hla+boltz_BF               s43 | allele_scc 0.4207 | allele_pcc 0.4303 | median_scc 0.4403 | n=15 | 34.0s
+    [12/40] 6.7m elapsed, eta 15.7m
+[+] blosum_pep | esm2_150m_hla_mean                s43 | allele_scc 0.3246 | allele_pcc 0.3021 | median_scc 0.3424 | n=15 | 41.4s
+    [13/40] 7.4m elapsed, eta 15.4m
+[+] blosum_pep | onehot_hla                        s43 | allele_scc 0.2816 | allele_pcc 0.2817 | median_scc 0.2783 | n=15 | 45.7s
+    [14/40] 8.2m elapsed, eta 15.2m
+[+] esm2_150m_pep_res | blosum_hla                 s43 | allele_scc 0.3905 | allele_pcc 0.3897 | median_scc 0.4226 | n=15 | 110.7s
+    [15/40] 10.0m elapsed, eta 16.7m
+[+] esm2_150m_pep_res | boltz_BF                   s43 | allele_scc 0.3953 | allele_pcc 0.3956 | median_scc 0.4638 | n=15 | 106.6s
+    [16/40] 11.8m elapsed, eta 17.7m
+[+] peptide-only null                              s44 | allele_scc 0.3218 | allele_pcc 0.3187 | median_scc 0.3924 | n=15
+[+] blosum_pep | blosum_hla                        s44 | allele_scc 0.4889 | allele_pcc 0.4662 | median_scc 0.5544 | n=15 | 58.4s
+    [18/40] 12.8m elapsed, eta 15.6m
+[+] blosum_pep | boltz_BF                          s44 | allele_scc 0.4154 | allele_pcc 0.4006 | median_scc 0.4613 | n=15 | 60.9s
+    [19/40] 13.8m elapsed, eta 15.3m
+[+] blosum_pep | blosum_hla+boltz_BF               s44 | allele_scc 0.4545 | allele_pcc 0.4178 | median_scc 0.5315 | n=15 | 65.4s
+    [20/40] 14.9m elapsed, eta 14.9m
+[+] blosum_pep | esm2_150m_hla_mean                s44 | allele_scc 0.3119 | allele_pcc 0.2762 | median_scc 0.3368 | n=15 | 52.0s
+    [21/40] 15.8m elapsed, eta 14.3m
+[+] blosum_pep | onehot_hla                        s44 | allele_scc 0.3463 | allele_pcc 0.3343 | median_scc 0.4579 | n=15 | 45.1s
+    [22/40] 16.5m elapsed, eta 13.5m
+[+] esm2_150m_pep_res | blosum_hla                 s44 | allele_scc 0.3946 | allele_pcc 0.3849 | median_scc 0.4129 | n=15 | 107.8s
+    [23/40] 18.3m elapsed, eta 13.5m
+[+] esm2_150m_pep_res | boltz_BF                   s44 | allele_scc 0.4319 | allele_pcc 0.4111 | median_scc 0.4550 | n=15 | 101.2s
+    [24/40] 20.0m elapsed, eta 13.3m
+[+] peptide-only null                              s45 | allele_scc 0.3192 | allele_pcc 0.3238 | median_scc 0.3308 | n=15
+[+] blosum_pep | blosum_hla                        s45 | allele_scc 0.4738 | allele_pcc 0.4837 | median_scc 0.4341 | n=15 | 58.1s
+    [26/40] 21.0m elapsed, eta 11.3m
+[+] blosum_pep | boltz_BF                          s45 | allele_scc 0.4046 | allele_pcc 0.4163 | median_scc 0.3182 | n=15 | 4553.2s
+    [27/40] 96.9m elapsed, eta 46.6m
+[+] blosum_pep | blosum_hla+boltz_BF               s45 | allele_scc 0.4086 | allele_pcc 0.4106 | median_scc 0.4041 | n=15 | 38.9s
+    [28/40] 97.5m elapsed, eta 41.8m
+[+] blosum_pep | esm2_150m_hla_mean                s45 | allele_scc 0.3156 | allele_pcc 0.3180 | median_scc 0.2874 | n=15 | 26.1s
+    [29/40] 97.9m elapsed, eta 37.2m
+[+] blosum_pep | onehot_hla                        s45 | allele_scc 0.3249 | allele_pcc 0.3249 | median_scc 0.3383 | n=15 | 22.4s
+    [30/40] 98.3m elapsed, eta 32.8m
+[+] esm2_150m_pep_res | blosum_hla                 s45 | allele_scc 0.4396 | allele_pcc 0.4481 | median_scc 0.4439 | n=15 | 60.8s
+    [31/40] 99.3m elapsed, eta 28.8m
+[+] esm2_150m_pep_res | boltz_BF                   s45 | allele_scc 0.4703 | allele_pcc 0.4727 | median_scc 0.4681 | n=15 | 58.8s
+    [32/40] 100.3m elapsed, eta 25.1m
+[+] peptide-only null                              s46 | allele_scc 0.3035 | allele_pcc 0.3202 | median_scc 0.2285 | n=15
+[+] blosum_pep | blosum_hla                        s46 | allele_scc 0.4765 | allele_pcc 0.4734 | median_scc 0.5040 | n=15 | 33.7s
+    [34/40] 100.9m elapsed, eta 17.8m
+[+] blosum_pep | boltz_BF                          s46 | allele_scc 0.4103 | allele_pcc 0.3977 | median_scc 0.4028 | n=15 | 32.3s
+    [35/40] 101.4m elapsed, eta 14.5m
+[+] blosum_pep | blosum_hla+boltz_BF               s46 | allele_scc 0.4276 | allele_pcc 0.4194 | median_scc 0.3962 | n=15 | 37.7s
+    [36/40] 102.0m elapsed, eta 11.3m
+[+] blosum_pep | esm2_150m_hla_mean                s46 | allele_scc 0.3729 | allele_pcc 0.3443 | median_scc 0.4192 | n=15 | 29.6s
+    [37/40] 102.5m elapsed, eta 8.3m
+[+] blosum_pep | onehot_hla                        s46 | allele_scc 0.3120 | allele_pcc 0.3113 | median_scc 0.3309 | n=15 | 23.9s
+    [38/40] 102.9m elapsed, eta 5.4m
+[+] esm2_150m_pep_res | blosum_hla                 s46 | allele_scc 0.3931 | allele_pcc 0.4143 | median_scc 0.3521 | n=15 | 54.6s
+    [39/40] 103.9m elapsed, eta 2.7m
+[+] esm2_150m_pep_res | boltz_BF                   s46 | allele_scc 0.4433 | allele_pcc 0.4555 | median_scc 0.4378 | n=15 | 59.5s
+    [40/40] 104.8m elapsed, eta 0.0m
+
+[+] done in 104.8 min
