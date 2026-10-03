@@ -393,3 +393,76 @@ Actions taken:
 Timing note: phase 2's ETA estimates were badly wrong (predicted ~38 min, ran ~80 min) because
 the 100-epoch and wide-head runs are far slower than the 25-epoch runs the average was seeded
 from. Recorded so later estimates are not trusted blindly.
+
+---
+
+## Entry 6 — DECISIVE: the HLA-side gain does not survive proper training
+
+This is the result the whole sprint turns on. Phase 1 found that replacing the BLOSUM
+pseudosequence with Boltz-2 pocket embeddings gained +0.032 mean per-allele PCC on the random
+split (t = +4.1), and ESM2-HLA +0.018 (t = +2.9). Both were measured at the published
+25-epoch protocol, which Entry 5 showed to be **undertrained**. Re-running the same arms at
+100 epochs:
+
+### Random split, mean per-allele PCC (5 seeds, paired per seed)
+
+| HLA representation | 25 epochs | Δ vs BLOSUM | 100 epochs | Δ vs BLOSUM |
+|---|---|---|---|---|
+| BLOSUM pseudosequence | 0.5362 | — | **0.6293** | — |
+| Boltz-2 pockets (B+F) | 0.5683 | **+0.0321** (t=+4.05) * | 0.6141 | **−0.0152** (t=−2.13) |
+| ESM-2 HLA (mean-pooled) | 0.5546 | **+0.0184** (t=+2.87) * | 0.6086 | **−0.0208** (t=−7.33) * |
+| allele one-hot (control) | 0.2678 | −0.2684 (t=−34.1) * | 0.2764 | −0.3530 (t=−33.8) * |
+
+**The sign flips.** On global PCC the reversal is unambiguous for both: Boltz −0.0104
+(t = −10.9) and ESM2-HLA −0.0097 (t = −4.7), both significant losses at 100 epochs after
+being significant gains at 25.
+
+### All three splits at 100 epochs, Δ mean per-allele PCC vs BLOSUM-HLA
+
+| split | Boltz-HLA | ESM2-HLA |
+|---|---|---|
+| random | −0.0152 (t=−2.13, n.s.) | **−0.0208 (t=−7.33) \*** |
+| cluster | −0.0014 (t=−0.15, n.s.) | +0.0043 (t=+0.44, n.s.) |
+| allele | **−0.0548 (t=−2.79) \*** | — |
+
+Nowhere does a learned HLA representation beat the pseudosequence once the baseline is
+trained to convergence. It is **neutral at best** (peptide-grouped split, Δ ≈ 0) and
+**significantly worse** on the random and leave-allele-out splits.
+
+### Interpretation
+
+The phase-1 gain was **a convergence artifact, not information**. A 768-dim z-scored dense
+block is an easier optimisation target than a 680-dim sparse BLOSUM block, so it reaches a
+good solution in fewer epochs. Given 4x the epochs the BLOSUM baseline overtakes it and keeps
+going. This is precisely the failure mode that a fixed, short training budget manufactures —
+and it would have been reported as a positive result by any study that fixed epochs at the
+published value and did not check.
+
+**I would have published the wrong answer had I stopped after phase 1.** The single most
+valuable thing in this log is the 100-epoch control, which cost 45 runs and 25 minutes.
+
+### What stands, and what does not
+
+Still standing from phase 1:
+
+- **The one-hot control.** Allele identity alone is catastrophic (0.276 vs 0.629 at 100
+  epochs). The pseudosequence's value is the *similarity structure* it provides across
+  alleles, not identity. Boltz-2 simply does not improve on that structure.
+- **Global PCC is inflated.** An HLA-only arm that never sees the peptide reaches 0.543
+  global PCC. Mean per-allele PCC remains the honest metric.
+- **ESM-2 peptide features lose decisively** (−0.19 at 100 epochs), and the gap widens with
+  training rather than closing.
+
+Withdrawn:
+
+- "Boltz-2 pocket embeddings provide a better similarity space than the BLOSUM
+  pseudosequence." **False at convergence.** True only against an undertrained baseline.
+
+### Answer to the organisers' question, as it currently stands
+
+*Are open protein foundation models useful for predicting peptide-HLA class I stability?*
+**On this dataset, with frozen features and a small supervised head: no.** The HLA side gains
+nothing once the baseline is trained properly; the peptide side is actively harmed. The
+single largest improvement found anywhere in this sprint came from training the *existing*
+baseline four times longer (+0.093 mean per-allele PCC) — three times what any foundation-model
+feature offered, and free.
