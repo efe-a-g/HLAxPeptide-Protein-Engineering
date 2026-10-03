@@ -466,3 +466,161 @@ nothing once the baseline is trained properly; the peptide side is actively harm
 single largest improvement found anywhere in this sprint came from training the *existing*
 baseline four times longer (+0.093 mean per-allele PCC) — three times what any foundation-model
 feature offered, and free.
+
+---
+
+## Entry 7 — Phase 3 complete: the full ablation (330 runs, 0 failures)
+
+All deltas are **mean per-allele PCC vs the BLOSUM baseline at the same epoch budget**,
+paired per seed, 5 seeds. `*` = |t| > 2.5. Columns: random / peptide-grouped / leave-allele-out.
+
+### Peptide encoder (25 epochs)
+
+| peptide features | dims | random | cluster | allele |
+|---|---|---|---|---|
+| ESM-2 150M per-residue | 5760 | −0.1062 * | −0.1859 * | −0.0032 |
+| **ESM-2 150M PCA-180** | 180 | **−0.0265** | −0.0936 * | **+0.0065** |
+| ESM-2 150M mean-pooled | 640 | −0.1192 * | −0.2474 * | −0.0649 * |
+| ESM-2 35M per-residue | 4320 | −0.0894 * | −0.1648 * | −0.0053 |
+
+Three things fall out:
+
+1. **Dimensionality was a large part of the penalty, not the representation.** Compressing
+   ESM-2 to BLOSUM width recovers +0.080 (random) and leaves the gap statistically
+   indistinguishable from the baseline there and on leave-allele-out. It remains clearly
+   worse on the peptide-grouped split — the split that specifically tests unseen peptides.
+2. **Mean pooling is worse than per-residue, everywhere.** For 9-mers this is expected and
+   worth stating: peptide-MHC binding is driven by anchor residues at P2 and the C-terminus,
+   and averaging over 9 positions destroys exactly that. Anyone mean-pooling a PLM over a
+   short peptide is discarding the signal.
+3. **The bigger model is not better.** ESM-2 35M beats ESM-2 150M on every split
+   (−0.089 vs −0.106 random). No scaling benefit at this task size.
+
+### HLA encoder — replace the pseudosequence
+
+| | random | cluster | allele |
+|---|---|---|---|
+| Boltz-2 B+F, **25 ep** | **+0.0321** * | **+0.0338** * | −0.0147 |
+| Boltz-2 B+F, **100 ep** | −0.0152 | −0.0014 | **−0.0548** * |
+| ESM2-HLA, **25 ep** | **+0.0184** * | **+0.0342** * | −0.0558 * |
+| ESM2-HLA, **100 ep** | −0.0208 * | +0.0043 | −0.1216 * |
+| allele one-hot, 25 ep | −0.2684 * | −0.2568 * | −0.1202 * |
+
+### HLA encoder — augment (keep pseudosequence, add learned block)
+
+| | random | cluster | allele |
+|---|---|---|---|
+| BLOSUM + Boltz-2, **25 ep** | **+0.0313** * | **+0.0371** * | −0.0089 |
+| BLOSUM + Boltz-2, **100 ep** | −0.0112 | +0.0003 | −0.0554 * |
+| BLOSUM + ESM2-HLA, **25 ep** | +0.0138 | +0.0171 | −0.0561 * |
+| BLOSUM + ESM2-HLA, **100 ep** | −0.0247 * | −0.0012 | −0.0978 * |
+
+**Augmentation behaves exactly like replacement**: a clear gain at 25 epochs, gone at 100.
+This matters because augmentation is the configuration anyone would actually ship — "keep what
+works, add the embedding" — and it is subject to the identical artifact.
+
+### And the intervention that actually works
+
+| | random | cluster | allele |
+|---|---|---|---|
+| **unchanged baseline, 100 ep vs 25 ep** | **+0.0931** * | **+0.0780** * | **+0.0661** * |
+
+## Final answer to the organisers' question
+
+> *Are open protein foundation models useful for predicting peptide-HLA class I stability?*
+
+**On this dataset, with frozen embeddings and a small supervised head: no.**
+
+- **HLA side.** Boltz-2 pocket embeddings and ESM-2 HLA embeddings appear to help (+0.03) at
+  the published 25-epoch protocol, whether replacing or augmenting the pseudosequence. The
+  effect **reverses once the baseline is trained to convergence** and is negative or neutral
+  everywhere at 100 epochs. It was optimisation speed, not information.
+- **Peptide side.** ESM-2 never beats BLOSUM50. At matched dimensionality it draws level on
+  two splits and loses on the one that tests unseen peptides. Mean pooling makes it worse; a
+  bigger ESM-2 makes it worse.
+- **The honest headline is not about foundation models at all.** The largest, cheapest and
+  most reliable improvement found anywhere in 330 runs was training the existing baseline four
+  times longer: **+0.093 / +0.078 / +0.066** mean per-allele PCC across the three splits, all
+  significant — roughly three times what the best foundation-model feature ever delivered, and
+  it costs nothing but epochs.
+
+### Limits of this conclusion — what would change it
+
+1. **Frozen features only.** No fine-tuning was tested; that is where PLMs usually earn their
+   keep, and it needs a GPU this machine does not have (Intel Arc iGPU, no CUDA).
+2. **Boltz-2 embeddings are per-allele** — 75 vectors for 28,166 rows. They cannot represent
+   peptide-specific structure by construction. A **per-complex** embedding (one structure per
+   peptide-HLA pair) is a genuinely different and untested experiment, and is the single most
+   promising follow-up.
+3. **Leave-allele-out is underpowered.** Baseline seed SD there is 0.081, 61x the random
+   split; 15 held-out alleles per seed means which alleles are drawn matters more than the
+   model. Proper leave-one-allele-out CV over all 75 alleles is needed to settle the
+   unseen-allele case, and nothing here should be read as settling it.
+4. **One architecture.** A 60-unit MLP; results may differ for a model with capacity to
+   exploit 5,760-dim inputs — though the 100-epoch and PCA probes both argue the input
+   representation, not capacity, is the binding constraint.
+
+---
+
+## Entry 8 — Deliverables, and how to regenerate everything
+
+### The report
+
+`outputs/report/index.html` — open it directly in a browser, no server needed. Self-contained:
+all 330 runs are embedded as JSON, charts are hand-built SVG drawn in vanilla JS, and both
+NGL (`ngl.js`) and the six PDB coordinate files (`structures/`) are bundled alongside.
+
+**Why bundled rather than CDN.** The brief suggested loading NGL and structures from a CDN.
+NGL itself loads fine that way, but its `rcsb://` datasource **failed to fetch coordinates
+from a `file://` origin** — verified by a standalone smoke test, which returned
+`error loading file: 'network error'` and would have left every 3D panel blank for anyone
+opening the page. Bundling makes the report work offline and removes the failure mode. The
+RCSB usage policy is linked in the page and recorded in `.licenses/pdb_database_LICENSE.txt`.
+
+Contents: verdict tiles showing the 25-epoch vs 100-epoch sign flip; the noise-floor table;
+per-split ablation bars with a metric selector (mean per-allele PCC default, global PCC, AUC,
+RMSE) and a training-protocol selector (published / 100 epochs / PCA-180); paired-delta charts
+with the noise floor drawn as a shaded band; per-allele dot plots; six interactive 3D
+complexes; and table views of everything for accessibility.
+
+Palette validated for colour-vision deficiency in both light and dark mode with the dataviz
+validator (3 slots, all-pairs, worst CVD delta-E 9.2 light / 9.4 dark against a >= 8 target).
+Rendered and visually checked by headless-Chrome screenshot rather than assumed — which is how
+the blank-3D-panel bug was caught.
+
+### Verification performed, not assumed
+
+| check | result |
+|---|---|
+| embedding parquets load, row order matches CSV | yes, after binary re-extraction |
+| Boltz embeddings are per-allele | 75 distinct rows / 28,166 |
+| cluster split peptide leakage | 0 shared, all 5 seeds |
+| allele split allele leakage | 0 shared, all 5 seeds |
+| baseline reproduces committed metrics | yes, within init noise |
+| grid failures | 0 of 330 |
+| report JSON parses, charts/tables/viewers render | yes, by screenshot |
+| 3D coordinates load | yes, from bundled local files |
+
+### Regenerate
+
+```
+bash scripts/extract_embeddings.sh      # binary-safe; verifies PAR1 head and tail
+uv run python python/verify_data.py     # dataset + embedding facts
+uv run python python/verify_splits.py   # leakage audit
+uv run python python/embed_esm.py       # ESM-2 cache (minutes, CPU)
+uv run python python/run_grid.py        # phase 1: 135 runs, ~26 min
+uv run python python/run_phase2.py --probes noise capacity
+uv run python python/run_phase3.py      # 150 runs, ~70 min
+uv run python python/noise_floor.py
+uv run python python/aggregate.py       # console tables + CSVs
+uv run python python/build_report.py    # outputs/report/index.html
+```
+
+### Known gaps, stated rather than hidden
+
+- The 256-unit-head probe (`h256`) was stopped after 7 runs and only its baseline completed,
+  so it is excluded from the report. The hypothesis it tested was answered by the 100-epoch
+  probe; it is not a missing result so much as an abandoned duplicate.
+- Leave-allele-out remains underpowered (seed SD 0.081, 61x the random split). Proper
+  leave-one-allele-out CV over all 75 alleles is the correct experiment and was not run.
+- No fine-tuning of any foundation model was attempted — no CUDA on this machine.

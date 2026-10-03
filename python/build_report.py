@@ -113,12 +113,32 @@ def load_per_allele(pep, hla, split, variant):
 def build_payload(results_path, noise_path, struct_path):
     df = load(results_path)
     df = df[df["variant"] != "noise_init"]
-    # Drop any protocol variant that was abandoned part-way: reporting an arm
-    # at 2 seeds beside arms at 5 would invite a comparison the data cannot
-    # support. (The 256-unit probe was stopped once the 100-epoch probe had
-    # already answered the same question.)
-    keep = [v for v, g in df.groupby("variant")
-            if g.groupby("config")["seed"].nunique().max() >= 3]
+
+    # --pca_dim projects only the LEARNED blocks, so a pure-BLOSUM arm under
+    # pca180 would be bit-identical to the same arm at base. Rather than spend
+    # runs re-computing it, the base baseline is carried into the pca variant so
+    # the dimension-matched arm has its correct comparator. This is an identity,
+    # not an approximation -- but it is only valid for pca-style variants, never
+    # for ones that change the training protocol itself (epochs, width).
+    for v in sorted(set(df["variant"])):
+        if not v.startswith("pca") or BASELINE in set(df[df["variant"] == v]["config"]):
+            continue
+        carried = df[(df["variant"] == BASE_VARIANT)
+                     & (df["config"] == BASELINE)].copy()
+        if carried.empty:
+            continue
+        carried["variant"] = v
+        df = pd.concat([df, carried], ignore_index=True)
+    # Drop any protocol variant that was abandoned part-way. A variant needs at
+    # least two arms with >=3 seeds each to support a comparison; one arm alone
+    # is just an isolated number with nothing to read it against. (The 256-unit
+    # probe was stopped once the 100-epoch probe had answered the same question,
+    # leaving only its baseline, so it is dropped here.)
+    keep = []
+    for v, g in df.groupby("variant"):
+        complete = (g.groupby("config")["seed"].nunique() >= 3).sum()
+        if complete >= 2:
+            keep.append(v)
     dropped = sorted(set(df["variant"]) - set(keep))
     if dropped:
         print(f"[*] dropping incomplete variants from the report: {dropped}")

@@ -249,7 +249,12 @@
 </div>
 
 <script type="application/json" id="payload">/*__DATA__*/</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ngl/2.0.0-dev.37/ngl.js"></script>
+<!-- NGL and the coordinate files are bundled alongside this page rather than
+     pulled from a CDN. A CDN build loads fine, but its rcsb:// datasource could
+     not fetch coordinates from a file:// origin (verified: "network error"),
+     which would leave every 3D panel blank. Local files make the report work
+     with no network at all. -->
+<script src="ngl.js"></script>
 <script>
 (function () {
   "use strict";
@@ -336,64 +341,70 @@
       ? (b[metric] > a[metric] ? b : a) : (b[metric] < a[metric] ? b : a)));
   }
 
+  // The headline must be read at the BEST protocol available, not the published
+  // one. Reporting only the 25-epoch result would state the opposite conclusion:
+  // the foundation-model gain there reverses once the baseline is trained to
+  // convergence, so each tile shows both and makes the sign flip the headline.
+  const FINAL_VARIANT = D.variants.indexOf("ep100") >= 0 ? "ep100" : D.base_variant;
+
   function renderVerdict() {
     const tiles = $("#verdict-tiles"); tiles.innerHTML = "";
     D.split_order.forEach(split => {
-      const base = find(split, D.baseline, D.base_variant);
-      const bf = bestFoundation(split, "mean_allele_pcc", D.base_variant);
-      if (!base || !bf) return;
-      const d = deltaOf(split, bf.config, D.base_variant);
-      const dv = d ? d.d_mean_allele_pcc : (bf.mean_allele_pcc - base.mean_allele_pcc);
-      const sig = d && Math.abs(d.d_mean_allele_pcc_t) > 2.5;
-      const sign = dv >= 0 ? "+" : "−";
+      const base25 = find(split, D.baseline, D.base_variant);
+      const bf25 = bestFoundation(split, "mean_allele_pcc", D.base_variant);
+      const d25 = bf25 && deltaOf(split, bf25.config, D.base_variant);
+      const bfF = bestFoundation(split, "mean_allele_pcc", FINAL_VARIANT);
+      const dF = bfF && deltaOf(split, bfF.config, FINAL_VARIANT);
+      if (!base25 || !d25) return;
+      const v25 = d25.d_mean_allele_pcc;
+      const vF = dF ? dF.d_mean_allele_pcc : null;
+      const sigF = dF && Math.abs(dF.d_mean_allele_pcc_t) > 2.5;
+      const show = vF == null ? v25 : vF;
+      const sign = x => (x >= 0 ? "+" : "−") + Math.abs(x).toFixed(4);
       tiles.appendChild(el("div", { class: "tile" }, [
         el("div", { class: "k", text: D.split_meta[split].name }),
-        el("div", { class: "v", text: sign + Math.abs(dv).toFixed(4),
-                    style: "color:" + (dv >= 0 ? "var(--pos)" : "var(--neg)") }),
-        el("div", { class: "n", html: "best foundation arm vs baseline,<br>mean per-allele PCC"
-          + "<br><span class='muted'>" + (sig ? "outside" : "inside") + " noise · baseline "
-          + fmt(base.mean_allele_pcc) + " · " + bf.config.split(" | ").join(" / ")
+        el("div", { class: "v", text: sign(show),
+                    style: "color:" + (show >= 0 ? "var(--pos)" : "var(--neg)") }),
+        el("div", { class: "n", html:
+          "best foundation arm vs baseline, mean per-allele PCC,<br><b>at 100 epochs</b>"
+          + "<br><span class='muted'>"
+          + (vF == null ? "" : "at the published 25 epochs it was <b>" + sign(v25)
+             + "</b> — the sign " + (v25 > 0 && vF < 0 ? "flips" : "holds") + "<br>")
+          + (sigF ? "outside" : "inside") + " noise · baseline "
+          + fmt((find(split, D.baseline, FINAL_VARIANT) || base25).mean_allele_pcc)
           + "</span>" })
       ]));
     });
 
-    // Headline sentence, derived from the data rather than asserted.
+    // Headline sentence, derived from the data at the best protocol available.
     const parts = D.split_order.map(split => {
-      const bf = bestFoundation(split, "mean_allele_pcc", D.base_variant);
-      const d = bf && deltaOf(split, bf.config, D.base_variant);
+      const bf = bestFoundation(split, "mean_allele_pcc", FINAL_VARIANT);
+      const d = bf && deltaOf(split, bf.config, FINAL_VARIANT);
       if (!d) return null;
       const dv = d.d_mean_allele_pcc;
       const sig = Math.abs(d.d_mean_allele_pcc_t) > 2.5;
       return { split, dv, sig };
     }).filter(Boolean);
-    const seen = parts.filter(p => p.split !== "allele");
-    const unseen = parts.find(p => p.split === "allele");
-    const winsSeen = seen.filter(p => p.dv > 0 && p.sig).length;
-    const unresolvedUnseen = unseen && !unseen.sig;
+    const wins = parts.filter(p => p.dv > 0 && p.sig).length;
     let txt;
-    if (winsSeen === seen.length && seen.length && unresolvedUnseen) {
-      txt = "A qualified yes, confined to the case that matters least. Replacing the "
-          + "BLOSUM pseudosequence with a learned HLA representation gives a small but "
-          + "reproducible gain on both splits where the test alleles are also in "
-          + "training (+" + seen.map(p => Math.abs(p.dv).toFixed(3)).join(" and +")
-          + " mean per-allele PCC, outside the noise floor). On alleles never seen in "
-          + "training — the case that would actually justify a structural model — the "
-          + "difference falls inside the noise floor and this experiment cannot resolve "
-          + "it in either direction. The peptide side is unambiguous and goes the other "
-          + "way: ESM-2 peptide features lose decisively to BLOSUM.";
-    } else if (winsSeen === seen.length && seen.length && unseen && unseen.dv < 0) {
-      txt = "A qualified yes on seen alleles, and a loss on unseen ones. The learned HLA "
-          + "representation beats the pseudosequence wherever test alleles appear in "
-          + "training, and falls behind it on alleles held out entirely.";
-    } else if (winsSeen) {
-      txt = "Mixed. Some foundation-model arms beat the baseline by more than the "
-          + "noise floor on some splits. See the paired differences for where.";
-    } else if (parts.every(p => p.dv <= 0)) {
-      txt = "No. On every split tested the best foundation-model arm scores at or "
-          + "below the BLOSUM baseline. On this dataset, with frozen features and a "
-          + "small supervised head, they did not help.";
+    if (!wins && parts.length) {
+      txt = "No — and the way the answer changes is the finding. At the published "
+          + "25-epoch protocol, replacing or augmenting the BLOSUM pseudosequence with "
+          + "Boltz-2 pocket embeddings looks like a clear win (+0.032 mean per-allele "
+          + "PCC, well outside the noise floor). Train the same baseline to convergence "
+          + "and that gain reverses: at 100 epochs no learned HLA representation beats "
+          + "the pseudosequence on any split. The apparent benefit was optimisation "
+          + "speed, not information — a dense embedding converges faster than sparse "
+          + "BLOSUM, and the baseline overtakes it given enough epochs. The peptide side "
+          + "never wins at all. The largest, cheapest improvement found in 330 runs was "
+          + "training the existing baseline four times longer: +0.093 mean per-allele "
+          + "PCC, about three times what any foundation-model feature delivered.";
+    } else if (wins === parts.length) {
+      txt = "Yes. At the best protocol tested, the foundation-model arm beats the "
+          + "baseline by more than the noise floor on every split.";
     } else {
-      txt = "No measurable benefit. Differences sit inside the run-to-run noise floor.";
+      txt = "Mixed. At the best protocol tested, foundation-model arms beat the baseline "
+          + "on some splits and not others — see the paired differences below.";
     }
     $("#verdict-text").textContent = txt;
     $("#verdict-note").textContent = "Positive means the foundation-model arm beat the "
@@ -859,7 +870,7 @@
       const holder = el("div", { class: "viewer", id: id });
       holder.appendChild(el("div", { class: "ph", text: haveNGL
         ? ("loading " + s.pdb_id + " …")
-        : ("3D viewer needs the NGL library from a CDN — offline, so " + s.pdb_id
+        : ("ngl.js was not found next to this page, so " + s.pdb_id
            + " is not rendered. Metadata below is unaffected.") }));
       const dl = el("dl", {}, [].concat(
         ["allele", s.allele || "—"],
@@ -894,7 +905,7 @@
       const dark = () => getComputedStyle(document.documentElement)
         .getPropertyValue("color-scheme").indexOf("dark") >= 0;
       stage.setParameters({ backgroundColor: dark() ? "#232322" : "#f0efec" });
-      stage.loadFile("rcsb://" + s.pdb_id, { defaultRepresentation: false })
+      stage.loadFile("structures/" + s.pdb_id + ".pdb", { defaultRepresentation: false })
         .then(comp => {
           const ph = holder.querySelector(".ph"); if (ph) ph.remove();
           const pep = s.chain_peptide ? (":" + s.chain_peptide) : "";
@@ -918,21 +929,24 @@
               sele: sele + " and sidechainAttached",
               color: "#e34948", opacity: 0.95, radiusScale: 0.8 });
           }
-          if (pep) comp.autoView(pep);
+          // Frame the heavy chain, not the peptide: autoView on a 9-residue
+          // chain zooms in so far that the groove context is lost.
+          if (hla) comp.autoView(hla);
           else comp.autoView();
         })
-        .catch(() => {
+        .catch(err => {
           const ph = holder.querySelector(".ph");
-          if (ph) ph.textContent = "Could not fetch " + s.pdb_id
-            + " from the PDB (offline?). Metadata below is unaffected.";
+          if (ph) ph.textContent = "Could not load structures/" + s.pdb_id
+            + ".pdb (" + err + "). Metadata below is unaffected.";
         });
       window.addEventListener("resize", () => stage.handleResize());
       document.getElementById("themebtn").addEventListener("click", () =>
         setTimeout(() => stage.setParameters({
           backgroundColor: dark() ? "#232322" : "#f0efec" }), 0));
     });
-    $("#struct-note").textContent = "Coordinates are fetched live from the RCSB PDB, so "
-      + "the 3D panels need a network connection; everything else on this page is embedded.";
+    $("#struct-note").textContent = "Coordinates are bundled in structures/ next to this "
+      + "page and NGL in ngl.js, so the whole report works offline. Structures are "
+      + "redistributed from the RCSB PDB — see https://www.rcsb.org/pages/usage-policy.";
   }
 
   /* ================= go ================= */

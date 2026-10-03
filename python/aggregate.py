@@ -23,8 +23,8 @@ import json
 import numpy as np
 import pandas as pd
 
-METRICS = ["mean_allele_pcc", "global_pcc_score", "global_scc_score",
-           "auc_1h", "auc_2h", "rmse_hours", "mae_hours"]
+METRICS = ["mean_allele_pcc", "mean_allele_scc", "global_pcc_score",
+           "global_scc_score", "auc_1h", "auc_2h", "rmse_hours", "mae_hours"]
 SPLIT_ORDER = ["random", "cluster", "allele"]
 BASE_VARIANT = "base"
 
