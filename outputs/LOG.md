@@ -624,3 +624,52 @@ uv run python python/build_report.py    # outputs/report/index.html
 - Leave-allele-out remains underpowered (seed SD 0.081, 61x the random split). Proper
   leave-one-allele-out CV over all 75 alleles is the correct experiment and was not run.
 - No fine-tuning of any foundation model was attempted — no CUDA on this machine.
+
+---
+
+## Entry 9 — Report switched to Spearman, and made a single shareable file
+
+### Spearman is now the headline metric
+
+The report defaults to **mean per-allele SCC**; PCC, global SCC, global PCC, AUC and RMSE
+remain selectable. Rationale, which is worth stating because it is not merely taste:
+
+- **Per-allele rather than global** — an HLA-only arm that never sees the peptide reaches
+  ~0.54 global correlation. Global is dominated by between-allele differences in mean
+  stability, so it rewards modelling the allele marginal rather than the interaction.
+- **Spearman rather than Pearson** — 20.2% of the measurements sit at t-half exactly 0 and the
+  rest is heavily right-skewed (median 1.1 h, max 256.7 h). Pearson therefore depends on which
+  scale you compute it on: **0.540 on the transformed score vs 0.333 on raw hours**, same runs,
+  a 0.22 gap. Spearman has no such ambiguity, and I verified it is invariant to the target
+  transform here: `global_scc_score` and `global_scc_thalf` agree to **max |difference|
+  0.000012** across 182 runs. So the reported SCC *is* the ordering of half-lives in hours.
+
+Every conclusion is unchanged under SCC, which is itself worth recording — the findings are
+not an artifact of the correlation measure:
+
+| | PCC | SCC |
+|---|---|---|
+| baseline, random, 25 ep | 0.5362 | 0.5333 |
+| baseline, random, 100 ep | 0.6293 | 0.6302 |
+| Boltz-HLA delta, 25 ep | +0.0321 * | +0.0372 * |
+| Boltz-HLA delta, 100 ep | −0.0152 | −0.0142 |
+| training longer, random | +0.0931 * | +0.0969 * |
+
+### Two viewer bugs found by actually opening the page
+
+1. **The 3D panels were blank on a normal double-click.** Chrome refuses a `file://` page
+   permission to read sibling `file://` resources, so `loadFile("structures/<id>.pdb")` failed
+   silently. My first check missed it because the headless run passed
+   `--allow-file-access-from-files`, which grants exactly the permission a real double-click
+   lacks — **I had verified under conditions friendlier than the user's.** Fixed by embedding
+   the coordinates and loading them from an in-memory Blob.
+2. **Sharing the HTML alone would have broken it**, since `ngl.js` was a sibling `<script src>`.
+   Now inlined.
+
+To keep the page affordable with coordinates embedded, each PDB is reduced to what is actually
+drawn: the three rendered chains only, first model, primary altloc, no ANISOU records, no
+waters, no header metadata. 4.4 MB of raw PDB becomes a 2.9 MB single file carrying all six
+structures *and* the viewer library.
+
+`outputs/report/index.html` is now **one self-contained file** — no sibling files, no network,
+no server. `--no-inline-ngl` restores the split layout if ever wanted.

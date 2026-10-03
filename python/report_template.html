@@ -188,7 +188,9 @@
 
   <div class="controls" role="group" aria-label="Metric">
     <span class="muted" style="margin-right:4px">Metric</span>
-    <button class="seg" data-metric="mean_allele_pcc" aria-pressed="true">Mean per-allele PCC</button>
+    <button class="seg" data-metric="mean_allele_scc" aria-pressed="true">Mean per-allele SCC</button>
+    <button class="seg" data-metric="mean_allele_pcc" aria-pressed="false">Mean per-allele PCC</button>
+    <button class="seg" data-metric="global_scc_score" aria-pressed="false">Global SCC</button>
     <button class="seg" data-metric="global_pcc_score" aria-pressed="false">Global PCC</button>
     <button class="seg" data-metric="auc_1h" aria-pressed="false">AUC (t½ ≥ 1h)</button>
     <button class="seg" data-metric="rmse_hours" aria-pressed="false">RMSE (hours)</button>
@@ -215,8 +217,9 @@
 <section id="perallele">
   <h2>Per-allele performance</h2>
   <p class="lede">A global correlation hides which alleles a model fails on.
-  Each dot is one HLA allele; position is its per-allele Pearson correlation,
-  averaged over seeds. Alleles are ordered by baseline performance.</p>
+  Each dot is one HLA allele; position is its per-allele rank correlation,
+  averaged over seeds, and it follows the metric selected above. Alleles are
+  ordered by baseline performance.</p>
   <div class="controls" role="group" aria-label="Split" id="pa-controls"></div>
   <div class="facets" id="pa-facets"></div>
 </section>
@@ -284,7 +287,16 @@
   const METRIC_LABEL = { global_pcc_score: "Global PCC", mean_allele_pcc: "Mean per-allele PCC",
                          auc_1h: "AUC (t½ ≥ 1h)", auc_2h: "AUC (t½ ≥ 2h)",
                          rmse_hours: "RMSE (hours)", mae_hours: "MAE (hours)",
-                         global_scc_score: "Global SCC" };
+                         global_scc_score: "Global SCC",
+                         mean_allele_scc: "Mean per-allele SCC" };
+  // Spearman ranks the values instead of using them directly. On this target
+  // that matters: 20% of rows sit at t-half exactly 0 and the rest is heavily
+  // right-skewed, so Pearson depends on which scale you compute it on (0.54 on
+  // the transformed score vs 0.33 on raw hours, same runs). Spearman is
+  // invariant to the monotonic target transform -- verified to 4 decimal places
+  // against Spearman on raw hours -- so it has a single unambiguous reading:
+  // does the model put the complexes in the right stability order?
+  const PRIMARY_METRIC = "mean_allele_scc";
   const DEC = m => (m === "rmse_hours" || m === "mae_hours") ? 2 : 4;
 
   /* ---------------- tooltip ---------------- */
@@ -351,14 +363,14 @@
     const tiles = $("#verdict-tiles"); tiles.innerHTML = "";
     D.split_order.forEach(split => {
       const base25 = find(split, D.baseline, D.base_variant);
-      const bf25 = bestFoundation(split, "mean_allele_pcc", D.base_variant);
+      const bf25 = bestFoundation(split, PRIMARY_METRIC, D.base_variant);
       const d25 = bf25 && deltaOf(split, bf25.config, D.base_variant);
-      const bfF = bestFoundation(split, "mean_allele_pcc", FINAL_VARIANT);
+      const bfF = bestFoundation(split, PRIMARY_METRIC, FINAL_VARIANT);
       const dF = bfF && deltaOf(split, bfF.config, FINAL_VARIANT);
       if (!base25 || !d25) return;
-      const v25 = d25.d_mean_allele_pcc;
-      const vF = dF ? dF.d_mean_allele_pcc : null;
-      const sigF = dF && Math.abs(dF.d_mean_allele_pcc_t) > 2.5;
+      const v25 = d25["d_" + PRIMARY_METRIC];
+      const vF = dF ? dF["d_" + PRIMARY_METRIC] : null;
+      const sigF = dF && Math.abs(dF["d_" + PRIMARY_METRIC + "_t"]) > 2.5;
       const show = vF == null ? v25 : vF;
       const sign = x => (x >= 0 ? "+" : "−") + Math.abs(x).toFixed(4);
       tiles.appendChild(el("div", { class: "tile" }, [
@@ -366,23 +378,23 @@
         el("div", { class: "v", text: sign(show),
                     style: "color:" + (show >= 0 ? "var(--pos)" : "var(--neg)") }),
         el("div", { class: "n", html:
-          "best foundation arm vs baseline, mean per-allele PCC,<br><b>at 100 epochs</b>"
+          "best foundation arm vs baseline, mean per-allele " + (PRIMARY_METRIC.indexOf("scc") >= 0 ? "Spearman" : "Pearson") + ",<br><b>at 100 epochs</b>"
           + "<br><span class='muted'>"
           + (vF == null ? "" : "at the published 25 epochs it was <b>" + sign(v25)
              + "</b> — the sign " + (v25 > 0 && vF < 0 ? "flips" : "holds") + "<br>")
           + (sigF ? "outside" : "inside") + " noise · baseline "
-          + fmt((find(split, D.baseline, FINAL_VARIANT) || base25).mean_allele_pcc)
+          + fmt((find(split, D.baseline, FINAL_VARIANT) || base25)[PRIMARY_METRIC])
           + "</span>" })
       ]));
     });
 
     // Headline sentence, derived from the data at the best protocol available.
     const parts = D.split_order.map(split => {
-      const bf = bestFoundation(split, "mean_allele_pcc", FINAL_VARIANT);
+      const bf = bestFoundation(split, PRIMARY_METRIC, FINAL_VARIANT);
       const d = bf && deltaOf(split, bf.config, FINAL_VARIANT);
       if (!d) return null;
-      const dv = d.d_mean_allele_pcc;
-      const sig = Math.abs(d.d_mean_allele_pcc_t) > 2.5;
+      const dv = d["d_" + PRIMARY_METRIC];
+      const sig = Math.abs(d["d_" + PRIMARY_METRIC + "_t"]) > 2.5;
       return { split, dv, sig };
     }).filter(Boolean);
     const wins = parts.filter(p => p.dv > 0 && p.sig).length;
@@ -390,15 +402,15 @@
     if (!wins && parts.length) {
       txt = "No — and the way the answer changes is the finding. At the published "
           + "25-epoch protocol, replacing or augmenting the BLOSUM pseudosequence with "
-          + "Boltz-2 pocket embeddings looks like a clear win (+0.032 mean per-allele "
-          + "PCC, well outside the noise floor). Train the same baseline to convergence "
+          + "Boltz-2 pocket embeddings looks like a clear win (+0.038 mean per-allele "
+          + "Spearman, well outside the noise floor). Train the same baseline to convergence "
           + "and that gain reverses: at 100 epochs no learned HLA representation beats "
           + "the pseudosequence on any split. The apparent benefit was optimisation "
           + "speed, not information — a dense embedding converges faster than sparse "
           + "BLOSUM, and the baseline overtakes it given enough epochs. The peptide side "
           + "never wins at all. The largest, cheapest improvement found in 330 runs was "
-          + "training the existing baseline four times longer: +0.093 mean per-allele "
-          + "PCC, about three times what any foundation-model feature delivered.";
+          + "training the existing baseline four times longer: +0.097 mean per-allele "
+          + "Spearman, about three times what any foundation-model feature delivered.";
     } else if (wins === parts.length) {
       txt = "Yes. At the best protocol tested, the foundation-model arm beats the "
           + "baseline by more than the noise floor on every split.";
@@ -407,12 +419,20 @@
           + "on some splits and not others — see the paired differences below.";
     }
     $("#verdict-text").textContent = txt;
-    $("#verdict-note").textContent = "Positive means the foundation-model arm beat the "
-      + "baseline. \"Inside noise\" means the paired per-seed difference is not "
-      + "distinguishable from run-to-run variation (|t| ≤ 2.5 over "
-      + D.seeds.length + " seeds). Mean per-allele PCC is used rather than global "
-      + "PCC because an HLA-only model that never sees the peptide still reaches "
-      + "~0.54 global PCC — see below.";
+    $("#verdict-note").innerHTML = "Positive means the foundation-model arm beat the "
+      + "baseline. &ldquo;Inside noise&rdquo; means the paired per-seed difference is not "
+      + "distinguishable from run-to-run variation (|t| &le; 2.5 over "
+      + D.seeds.length + " seeds).<br>"
+      + "<b>Mean per-allele Spearman</b> is the headline metric for two reasons. "
+      + "<em>Per-allele</em> rather than global, because an HLA-only model that never "
+      + "sees the peptide still reaches ~0.54 global correlation — global is dominated "
+      + "by between-allele differences in mean stability. <em>Spearman</em> rather than "
+      + "Pearson, because 20% of the measurements sit at t½ exactly 0 and the rest is "
+      + "heavily right-skewed, so Pearson depends on which scale you compute it on "
+      + "(0.54 on the transformed score vs 0.33 on raw hours, same runs). Spearman is "
+      + "invariant to the monotonic target transform — verified identical to 4 decimal "
+      + "places against Spearman on raw hours — so it has one unambiguous reading: "
+      + "does the model rank the complexes in the right stability order?";
   }
 
   /* ================= noise floor ================= */
@@ -451,7 +471,7 @@
   }
 
   /* ================= grouped bar facets ================= */
-  let METRIC = "mean_allele_pcc";
+  let METRIC = PRIMARY_METRIC;
 
   function barFacet(split, metric) {
     const all = bySplit(split);
@@ -680,14 +700,20 @@
     const host = $("#pa-facets"); host.innerHTML = "";
     const pa = D.per_allele[PA_SPLIT];
     if (!pa) { host.appendChild(el("p", { class: "muted", text: "No per-allele data." })); return; }
-    const rows = pa.rows.filter(r => r.pcc_base !== null && r.pcc_base !== undefined)
-      .slice().sort((a, b) => b.pcc_base - a.pcc_base);
-    const hasFM = rows.some(r => r.pcc_fm !== null && r.pcc_fm !== undefined);
+    // Follow the metric selector: Spearman keys when a rank metric is chosen,
+    // Pearson otherwise, falling back to Pearson if SCC was not recorded.
+    let fam = METRIC.indexOf("scc") >= 0 ? "scc" : "pcc";
+    if (fam === "scc" && !pa.rows.some(r => r.scc_base != null)) fam = "pcc";
+    const PA_B = fam + "_base", PA_F = fam + "_fm";
+    const PA_LABEL = fam === "scc" ? "Spearman" : "Pearson";
+    const rows = pa.rows.filter(r => r[PA_B] !== null && r[PA_B] !== undefined)
+      .slice().sort((a, b) => b[PA_B] - a[PA_B]);
+    const hasFM = rows.some(r => r[PA_F] !== null && r[PA_F] !== undefined);
 
     const padL = 150, padR = 24, padT = 14, padB = 40;
     const rowH = 17, h = padT + rows.length * rowH + padB, w = 860;
-    const lo = Math.min(0, ...rows.flatMap(r => [r.pcc_base, r.pcc_fm].filter(v => v != null))) - 0.05;
-    const hi = Math.max(...rows.flatMap(r => [r.pcc_base, r.pcc_fm].filter(v => v != null))) + 0.05;
+    const lo = Math.min(0, ...rows.flatMap(r => [r[PA_B], r[PA_F]].filter(v => v != null))) - 0.05;
+    const hi = Math.max(...rows.flatMap(r => [r[PA_B], r[PA_F]].filter(v => v != null))) + 0.05;
     const x = v => padL + (v - lo) / (hi - lo) * (w - padL - padR);
 
     const g = [];
@@ -699,12 +725,12 @@
     }
     if (lo < 0) g.push(el("line", { class: "axis", x1: x(0), x2: x(0), y1: padT, y2: padT + rows.length * rowH }));
     g.push(el("text", { class: "tick", x: (padL + w - padR) / 2, y: padT + rows.length * rowH + 32,
-      "text-anchor": "middle", text: "per-allele Pearson correlation (mean over seeds)" }));
+      "text-anchor": "middle", text: "per-allele " + PA_LABEL + " correlation (mean over seeds)" }));
 
     rows.forEach((r, i) => {
       const yc = padT + i * rowH + rowH / 2;
-      if (hasFM && r.pcc_fm != null) {
-        g.push(el("line", { x1: x(r.pcc_base), x2: x(r.pcc_fm), y1: yc, y2: yc,
+      if (hasFM && r[PA_F] != null) {
+        g.push(el("line", { x1: x(r[PA_B]), x2: x(r[PA_F]), y1: yc, y2: yc,
           stroke: "var(--border)", "stroke-width": 1.5 }));
       }
       const mk = (v, color, label) => {
@@ -714,13 +740,13 @@
         hook(c, "<b>" + r.allele + "</b><br>" + label + ": <b>" + fmt(v) + "</b>"
           + "<br>n = " + Math.round(r.n_samples) + " test measurements"
           + "<br>held out in " + (r.n_seeds || 1) + " of " + D.seeds.length + " seeds"
-          + (hasFM && r.pcc_fm != null && r.pcc_base != null
-            ? "<br>Δ (foundation − baseline): " + ((r.pcc_fm - r.pcc_base) >= 0 ? "+" : "−")
-              + Math.abs(r.pcc_fm - r.pcc_base).toFixed(4) : ""));
+          + (hasFM && r[PA_F] != null && r[PA_B] != null
+            ? "<br>Δ (foundation − baseline): " + ((r[PA_F] - r[PA_B]) >= 0 ? "+" : "−")
+              + Math.abs(r[PA_F] - r[PA_B]).toFixed(4) : ""));
         g.push(c);
       };
-      mk(r.pcc_base, "var(--series-2)", pa.baseline);
-      if (hasFM) mk(r.pcc_fm, "var(--series-1)", pa.foundation);
+      mk(r[PA_B], "var(--series-2)", pa.baseline);
+      if (hasFM) mk(r[PA_F], "var(--series-1)", pa.foundation);
       g.push(el("text", { class: "lab", x: padL - 10, y: yc + 4,
         "text-anchor": "end", text: r.allele }));
     });
@@ -732,7 +758,7 @@
         el("span", { text: pa.foundation })]) : null
     ]);
     const svg = el("svg", { viewBox: "0 0 " + w + " " + h, role: "img",
-      "aria-label": "Per-allele Pearson correlation, " + D.split_meta[PA_SPLIT].name }, g);
+      "aria-label": "Per-allele " + PA_LABEL + " correlation, " + D.split_meta[PA_SPLIT].name }, g);
     const fig = el("figure", {}, [
       el("figcaption", { text: D.split_meta[PA_SPLIT].name + " — " + rows.length + " alleles" }),
       el("p", { class: "cap", text: "Alleles with fewer than 3 test measurements, or with no "
@@ -754,10 +780,10 @@
         el("td", { text: r.allele }),
         el("td", { text: String(Math.round(r.n_samples)) }),
         el("td", { text: String(r.n_seeds || 1) }),
-        el("td", { text: fmt(r.pcc_base) }),
-        hasFM ? el("td", { text: fmt(r.pcc_fm) }) : null,
-        hasFM ? el("td", { text: (r.pcc_fm != null && r.pcc_base != null)
-          ? ((r.pcc_fm - r.pcc_base >= 0 ? "+" : "−") + Math.abs(r.pcc_fm - r.pcc_base).toFixed(4))
+        el("td", { text: fmt(r[PA_B]) }),
+        hasFM ? el("td", { text: fmt(r[PA_F]) }) : null,
+        hasFM ? el("td", { text: (r[PA_F] != null && r[PA_B] != null)
+          ? ((r[PA_F] - r[PA_B] >= 0 ? "+" : "−") + Math.abs(r[PA_F] - r[PA_B]).toFixed(4))
           : "—" }) : null
       ].filter(Boolean))))
     ]);
@@ -769,12 +795,12 @@
 
   /* ================= summary table ================= */
   function renderSummaryTable() {
-    const cols = ["mean_allele_pcc", "global_pcc_score", "global_scc_score",
+    const cols = ["mean_allele_scc", "mean_allele_pcc", "global_scc_score", "global_pcc_score",
                   "auc_1h", "auc_2h", "rmse_hours", "mae_hours"];
     const rows = D.summary.slice().sort((a, b) =>
       D.variants.indexOf(a.variant) - D.variants.indexOf(b.variant)
       || D.split_order.indexOf(a.split) - D.split_order.indexOf(b.split)
-      || (b.mean_allele_pcc || -9) - (a.mean_allele_pcc || -9));
+      || ((b[PRIMARY_METRIC] || -9) - (a[PRIMARY_METRIC] || -9)));
     const t = el("table", {}, [
       el("thead", {}, [el("tr", {}, ["protocol", "split", "configuration", "dims", "seeds"]
         .concat(cols.map(c => METRIC_LABEL[c])).map(h => el("th", { text: h })))]),

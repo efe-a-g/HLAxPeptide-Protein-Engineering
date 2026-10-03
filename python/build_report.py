@@ -150,9 +150,13 @@ def load_per_allele(pep, hla, split, variant):
     if not frames:
         return None
     allc = pd.concat(frames)
-    return allc.groupby("allele").agg(
-        n_samples=("n_samples", "mean"), pcc=("pcc", "mean"),
-        pcc_sd=("pcc", "std"), n_seeds=("pcc", "size")).reset_index()
+    agg = {"n_samples": ("n_samples", "mean"),
+           "pcc": ("pcc", "mean"), "pcc_sd": ("pcc", "std"),
+           "n_seeds": ("pcc", "size")}
+    if "scc" in allc.columns:
+        agg["scc"] = ("scc", "mean")
+        agg["scc_sd"] = ("scc", "std")
+    return allc.groupby("allele").agg(**agg).reset_index()
 
 
 def build_payload(results_path, noise_path, struct_path):
@@ -212,14 +216,17 @@ def build_payload(results_path, noise_path, struct_path):
         b = load_per_allele(bp, bh, split, BASE_VARIANT)
         if b is None:
             continue
-        merged = b.rename(columns={"pcc": "pcc_base", "pcc_sd": "pcc_base_sd"})
+        merged = b.rename(columns={"pcc": "pcc_base", "pcc_sd": "pcc_base_sd",
+                                   "scc": "scc_base", "scc_sd": "scc_base_sd"})
         if best_cfg:
             fp, fh = cfgmap[best_cfg]
             f = load_per_allele(fp, fh, split, BASE_VARIANT)
             if f is not None:
+                cols = [c for c in ["allele", "pcc", "pcc_sd", "scc", "scc_sd"]
+                        if c in f.columns]
                 merged = merged.merge(
-                    f[["allele", "pcc", "pcc_sd"]].rename(
-                        columns={"pcc": "pcc_fm", "pcc_sd": "pcc_fm_sd"}),
+                    f[cols].rename(columns={"pcc": "pcc_fm", "pcc_sd": "pcc_fm_sd",
+                                            "scc": "scc_fm", "scc_sd": "scc_fm_sd"}),
                     on="allele", how="outer")
         per_allele[split] = {
             "baseline": BASELINE, "foundation": best_cfg,
@@ -255,6 +262,8 @@ def main():
     ap.add_argument("--structures", default="outputs/report/structures.json")
     ap.add_argument("--out", default="outputs/report/index.html")
     ap.add_argument("--template", default="python/report_template.html")
+    ap.add_argument("--no-inline-ngl", dest="inline_ngl", action="store_false",
+                    help="keep ngl.js as a separate file instead of inlining it")
     args = ap.parse_args()
 
     payload = build_payload(args.results, args.noise, args.structures)
@@ -280,8 +289,26 @@ def main():
     # The blob sits inside <script type="application/json">; neutralise any
     # sequence that could close that element early.
     blob = blob.replace("</", "<\\/")
+    html = tpl.replace("/*__DATA__*/", blob)
+
+    # Inline the viewer library so the report is ONE file that can be emailed or
+    # dropped in a shared folder. A separate <script src> works locally but is
+    # silently lost the moment someone sends just the .html, which is what people
+    # actually do.
+    if args.inline_ngl:
+        lib = os.path.join(os.path.dirname(args.out), "ngl.js")
+        if os.path.isfile(lib):
+            js = open(lib, encoding="utf-8", errors="replace").read()
+            # Inside a classic <script>, these sequences would end or confuse the
+            # element; neither appears in a JS context where the escape matters.
+            js = js.replace("</script", "<\\/script").replace("<!--", "<\\!--")
+            html = html.replace('<script src="ngl.js"></script>',
+                                "<script>\n" + js + "\n</script>")
+        else:
+            print(f"[!] {lib} not found - page will still reference ngl.js")
+
     with open(args.out, "w", encoding="utf-8") as f:
-        f.write(tpl.replace("/*__DATA__*/", blob))
+        f.write(html)
 
     kb = os.path.getsize(args.out) / 1024
     print(f"[+] wrote {args.out} ({kb:.0f} KB) | {payload['n_runs']} runs, "
