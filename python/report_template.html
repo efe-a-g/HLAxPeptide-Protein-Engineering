@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Peptide-HLA Stability</title>
+<style>
+  :root {
+    color-scheme: light;
+    --bg:            #f6f5f2;
+    --surface-1:     #fcfcfb;
+    --surface-2:     #f0efec;
+    --border:        #dcdbd6;
+    --text-primary:  #0b0b0b;
+    --text-secondary:#52514e;
+    --text-muted:    #7a7975;
+    --series-1:      #2a78d6;  /* foundation-model arms */
+    --series-2:      #eb6834;  /* published baseline */
+    --series-3:      #1baf7a;  /* controls / ablations */
+    --pos:           #2a78d6;
+    --neg:           #e34948;
+    --grid:          #e6e5e1;
+    --band:          #e9e8e4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --bg:            #121211;
+      --surface-1:     #1a1a19;
+      --surface-2:     #232322;
+      --border:        #383835;
+      --text-primary:  #ffffff;
+      --text-secondary:#c3c2b7;
+      --text-muted:    #918f86;
+      --series-1:      #3987e5;
+      --series-2:      #d95926;
+      --series-3:      #199e70;
+      --pos:           #3987e5;
+      --neg:           #e66767;
+      --grid:          #2c2c2a;
+      --band:          #2a2a28;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg:#121211; --surface-1:#1a1a19; --surface-2:#232322; --border:#383835;
+    --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#918f86;
+    --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70;
+    --pos:#3987e5; --neg:#e66767; --grid:#2c2c2a; --band:#2a2a28;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text-primary);
+    font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px 96px; }
+  header { padding: 48px 0 24px; }
+  h1 { font-size: clamp(26px, 4vw, 40px); line-height: 1.15; margin: 0 0 12px; letter-spacing: -0.02em; }
+  .sub { color: var(--text-secondary); font-size: 17px; max-width: 72ch; margin: 0; }
+  h2 { font-size: clamp(20px, 2.6vw, 26px); margin: 56px 0 6px; letter-spacing: -0.01em; }
+  h3 { font-size: 16px; margin: 28px 0 6px; }
+  p { color: var(--text-secondary); max-width: 78ch; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.9em;
+         background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+  a { color: var(--series-1); }
+  .lede { font-size: 16px; color: var(--text-secondary); max-width: 80ch; }
+  .card { background: var(--surface-1); border: 1px solid var(--border);
+          border-radius: 12px; padding: 20px; margin: 16px 0; }
+  .muted { color: var(--text-muted); font-size: 13px; }
+
+  /* verdict tiles */
+  .tiles { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); margin: 20px 0 8px; }
+  .tile { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+  .tile .k { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--text-muted); }
+  .tile .v { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .tile .n { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* controls */
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 20px 0 4px; }
+  button.seg { background: var(--surface-1); color: var(--text-secondary);
+    border: 1px solid var(--border); border-radius: 999px; padding: 6px 13px;
+    font: inherit; font-size: 13px; cursor: pointer; }
+  button.seg[aria-pressed="true"] { background: var(--text-primary); color: var(--bg); border-color: var(--text-primary); }
+  .spacer { flex: 1 1 auto; }
+
+  /* legend */
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 10px 0 2px; font-size: 13px; color: var(--text-secondary); }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+
+  /* charts */
+  .facets { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  figure { margin: 0; background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  figcaption { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  figcaption + .cap { font-size: 13px; color: var(--text-secondary); margin: 0 0 10px; max-width: 70ch; }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .tick { font-size: 11px; fill: var(--text-muted); }
+  .lab  { font-size: 12px; fill: var(--text-secondary); }
+  .val  { font-size: 11.5px; fill: var(--text-primary); font-variant-numeric: tabular-nums; }
+  .axis { stroke: var(--border); stroke-width: 1; }
+  .gridline { stroke: var(--grid); stroke-width: 1; }
+  .bar { transition: opacity .12s; }
+  .bar:hover { opacity: .78; }
+  .err { stroke: var(--text-primary); stroke-width: 1.4; opacity: .55; }
+
+  /* tooltip */
+  #tip { position: fixed; pointer-events: none; opacity: 0; transition: opacity .1s;
+    background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px; font-size: 12.5px; line-height: 1.45;
+    box-shadow: 0 6px 20px rgba(0,0,0,.18); z-index: 50; max-width: 300px; }
+  #tip b { font-weight: 600; }
+
+  /* tables */
+  details { margin: 12px 0; }
+  summary { cursor: pointer; font-size: 13.5px; color: var(--series-1); }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; margin-top: 10px; }
+  th, td { text-align: right; padding: 6px 8px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+  th:first-child, td:first-child { text-align: left; font-variant-numeric: normal; }
+  th { color: var(--text-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+  tbody tr:hover { background: var(--surface-2); }
+  .scroll { overflow-x: auto; }
+
+  /* structures */
+  .structs { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  @media (min-width: 760px) { .structs { grid-template-columns: 1fr 1fr; } }
+  .viewer { width: 100%; height: 320px; border-radius: 10px; background: var(--surface-2);
+            border: 1px solid var(--border); position: relative; }
+  .viewer .ph { position: absolute; inset: 0; display: grid; place-items: center;
+                font-size: 13px; color: var(--text-muted); text-align: center; padding: 16px; }
+  .meta { font-size: 12.5px; color: var(--text-secondary); margin-top: 8px; }
+  .meta dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 6px 0 0; }
+  .meta dt { color: var(--text-muted); }
+  .meta dd { margin: 0; }
+  .pill { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 999px;
+          background: var(--surface-2); border: 1px solid var(--border); color: var(--text-secondary); }
+  .chainkey { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; margin-top: 8px; color: var(--text-secondary); }
+  footer { margin-top: 72px; padding-top: 20px; border-top: 1px solid var(--border);
+           color: var(--text-muted); font-size: 13px; }
+  .warn { border-left: 3px solid var(--series-2); padding-left: 14px; }
+</style>
+</head>
+<body>
+<div id="tip" role="status" aria-live="polite"></div>
+<div class="wrap">
+
+<header>
+  <div class="controls" style="margin:0 0 18px">
+    <span class="pill" id="runstamp">local report</span>
+    <div class="spacer"></div>
+    <button class="seg" id="themebtn" aria-pressed="false">Toggle theme</button>
+  </div>
+  <h1>Do protein foundation models help predict peptide-HLA stability?</h1>
+  <p class="sub">An ablation study on 28,166 peptide-HLA class&nbsp;I half-life
+  measurements (Rasmussen et al. 2016). The question asked was <em>are they
+  useful for this problem</em> — not <em>prove they are useful</em>. This page
+  reports what the experiments actually showed, including where the foundation
+  models lose.</p>
+</header>
+
+<section id="verdict">
+  <h2>Verdict</h2>
+  <p class="lede" id="verdict-text"></p>
+  <div class="tiles" id="verdict-tiles"></div>
+  <p class="muted" id="verdict-note"></p>
+</section>
+
+<section id="noise">
+  <h2>The noise floor comes first</h2>
+  <p class="lede">No difference below this threshold counts as a result. The
+  published baseline script seeds NumPy but never calls
+  <code>torch.manual_seed</code>, so its <code>--seed</code> fixes the data split
+  while leaving weight initialisation and batch shuffling free. Repeat runs at a
+  <em>fixed seed and fixed split</em> therefore still disagree — and that
+  disagreement is the floor every comparison on this page must clear.</p>
+  <div class="card" id="noise-card"></div>
+</section>
+
+<section id="ablation">
+  <h2>Which part helps?</h2>
+  <p class="lede">The Boltz-2 embeddings are <strong>per-allele</strong>: 75
+  distinct vectors across 28,166 rows, carrying zero peptide information. They can
+  only replace the HLA side, so the peptide side needs its own representation and
+  the two sides are varied independently. Every arm uses an identical 60-unit
+  sigmoid MLP, identical target transform <code>s = 2^(-t0/thalf)</code>, identical
+  loss, epochs and optimiser — only the input features change.</p>
+
+  <div class="controls" role="group" aria-label="Metric">
+    <span class="muted" style="margin-right:4px">Metric</span>
+    <button class="seg" data-metric="global_pcc_score" aria-pressed="true">Global PCC</button>
+    <button class="seg" data-metric="mean_allele_pcc" aria-pressed="false">Mean per-allele PCC</button>
+    <button class="seg" data-metric="auc_1h" aria-pressed="false">AUC (t½ ≥ 1h)</button>
+    <button class="seg" data-metric="rmse_hours" aria-pressed="false">RMSE (hours)</button>
+  </div>
+  <div class="legend" id="legend"></div>
+  <div class="facets" id="facets"></div>
+  <details>
+    <summary>Table view — all configurations, all splits (mean ± SD over seeds)</summary>
+    <div class="scroll" id="summary-table"></div>
+  </details>
+</section>
+
+<section id="deltas">
+  <h2>Paired difference from the baseline</h2>
+  <p class="lede">Each arm is compared with the baseline <em>at the same seed</em>,
+  so both see the same split; the per-seed differences are then averaged. This
+  removes split-to-split variance, which is far larger than the effects being
+  chased. The shaded band is the noise floor — anything inside it is not a
+  result. Bars show mean ± SD of the paired difference.</p>
+  <div class="facets" id="delta-facets"></div>
+</section>
+
+<section id="perallele">
+  <h2>Per-allele performance</h2>
+  <p class="lede">A global correlation hides which alleles a model fails on.
+  Each dot is one HLA allele; position is its per-allele Pearson correlation,
+  averaged over seeds. Alleles are ordered by baseline performance.</p>
+  <div class="controls" role="group" aria-label="Split" id="pa-controls"></div>
+  <div class="facets" id="pa-facets"></div>
+</section>
+
+<section id="structures">
+  <h2>What the model is actually looking at</h2>
+  <p class="lede">Experimental peptide-HLA class&nbsp;I complexes from the PDB.
+  The peptide sits in a groove formed by the HLA α1/α2 domains — the same 182
+  residues the dataset supplies as <code>hla_seq</code>. The <strong>B
+  pocket</strong> anchors peptide position&nbsp;2 and the <strong>F pocket</strong>
+  anchors the C-terminus; those two pockets are what the Boltz-2 pocket
+  embeddings were pooled over. Drag to rotate, scroll to zoom.</p>
+  <div class="chainkey" id="chainkey"></div>
+  <div class="structs" id="structs"></div>
+  <p class="muted" id="struct-note"></p>
+</section>
+
+<section id="methods">
+  <h2>Methods and honest caveats</h2>
+  <div class="card" id="methods-card"></div>
+</section>
+
+<footer>
+  <p>Generated locally from <code>outputs/ablation/results.jsonl</code>. Not published anywhere.
+  Dataset: Rasmussen et al. (2016), <em>Pan-specific prediction of peptide-MHC class I complex
+  stability, a correlate of T cell immunogenicity</em>, J Immunol 197(4):1517–1524.
+  Structures rendered with <a href="https://nglviewer.org/">NGL</a>; coordinates fetched live from
+  the RCSB PDB.</p>
+</footer>
+</div>
+
+<script type="application/json" id="payload">/*__DATA__*/</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ngl/2.0.0-dev.37/ngl.js"></script>
+<script>
+(function () {
+  "use strict";
+  const D = JSON.parse(document.getElementById("payload").textContent);
+  const $ = (s, r) => (r || document).querySelector(s);
+  const el = (t, a, kids) => {
+    const n = document.createElementNS(t === "svg" || SVG_TAGS.has(t)
+      ? "http://www.w3.org/2000/svg" : "http://www.w3.org/1999/xhtml", t);
+    for (const k in (a || {})) {
+      if (k === "text") n.textContent = a[k];
+      else if (k === "html") n.innerHTML = a[k];
+      else n.setAttribute(k, a[k]);
+    }
+    (kids || []).forEach(c => c && n.appendChild(c));
+    return n;
+  };
+  const SVG_TAGS = new Set(["svg","g","rect","line","text","circle","path","polyline","defs","clipPath"]);
+  const fmt = (v, d) => (v === null || v === undefined || isNaN(v)) ? "—" : (+v).toFixed(d === undefined ? 4 : d);
+
+  const GROUP_COLOR = { foundation: "var(--series-1)", baseline: "var(--series-2)",
+                        control: "var(--series-3)", ablation: "var(--series-3)" };
+  const GROUP_LABEL = { baseline: "Published baseline (BLOSUM both sides)",
+                        foundation: "Foundation-model arm",
+                        control: "Control", ablation: "Single-side ablation" };
+  const HIGHER_BETTER = m => m !== "rmse_hours" && m !== "mae_hours";
+  const METRIC_LABEL = { global_pcc_score: "Global PCC", mean_allele_pcc: "Mean per-allele PCC",
+                         auc_1h: "AUC (t½ ≥ 1h)", auc_2h: "AUC (t½ ≥ 2h)",
+                         rmse_hours: "RMSE (hours)", mae_hours: "MAE (hours)",
+                         global_scc_score: "Global SCC" };
+  const DEC = m => (m === "rmse_hours" || m === "mae_hours") ? 2 : 4;
+
+  /* ---------------- tooltip ---------------- */
+  const tip = $("#tip");
+  function showTip(e, html) {
+    tip.innerHTML = html; tip.style.opacity = 1;
+    const r = tip.getBoundingClientRect();
+    let x = e.clientX + 14, y = e.clientY + 14;
+    if (x + r.width > innerWidth - 8) x = e.clientX - r.width - 14;
+    if (y + r.height > innerHeight - 8) y = e.clientY - r.height - 14;
+    tip.style.left = x + "px"; tip.style.top = y + "px";
+  }
+  const hideTip = () => { tip.style.opacity = 0; };
+  function hook(node, html) {
+    node.addEventListener("mousemove", e => showTip(e, html));
+    node.addEventListener("mouseleave", hideTip);
+    node.setAttribute("tabindex", "0");
+    node.addEventListener("focus", e => {
+      const b = node.getBoundingClientRect();
+      showTip({ clientX: b.right, clientY: b.top }, html);
+    });
+    node.addEventListener("blur", hideTip);
+  }
+
+  /* ---------------- theme ---------------- */
+  const tb = $("#themebtn");
+  tb.addEventListener("click", () => {
+    const dark = document.documentElement.getAttribute("data-theme") === "dark";
+    document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+    tb.setAttribute("aria-pressed", String(!dark));
+    renderAll();
+  });
+
+  /* ================= verdict ================= */
+  function bySplit(split) { return D.summary.filter(r => r.split === split); }
+  function find(split, cfg) { return D.summary.find(r => r.split === split && r.config === cfg); }
+  function deltaOf(split, cfg) { return D.deltas.find(r => r.split === split && r.config === cfg); }
+
+  function bestFoundation(split, metric) {
+    const f = bySplit(split).filter(r => r.group === "foundation");
+    if (!f.length) return null;
+    return f.reduce((a, b) => (HIGHER_BETTER(metric)
+      ? (b[metric] > a[metric] ? b : a) : (b[metric] < a[metric] ? b : a)));
+  }
+
+  function renderVerdict() {
+    const tiles = $("#verdict-tiles"); tiles.innerHTML = "";
+    const noiseSd = (D.noise && D.noise.global_pcc_score_sd) || 0.005;
+    D.split_order.forEach(split => {
+      const base = find(split, D.baseline);
+      const bf = bestFoundation(split, "global_pcc_score");
+      if (!base || !bf) return;
+      const d = deltaOf(split, bf.config);
+      const dv = d ? d.d_global_pcc_score : (bf.global_pcc_score - base.global_pcc_score);
+      const sig = d && Math.abs(d.d_global_pcc_score_t) > 2.5;
+      const sign = dv >= 0 ? "+" : "−";
+      tiles.appendChild(el("div", { class: "tile" }, [
+        el("div", { class: "k", text: D.split_meta[split].name }),
+        el("div", { class: "v", text: sign + Math.abs(dv).toFixed(4),
+                    style: "color:" + (dv >= 0 ? "var(--pos)" : "var(--neg)") }),
+        el("div", { class: "n", html: "best foundation arm vs baseline, global PCC<br>"
+          + "<span class='muted'>" + (sig ? "outside" : "inside") + " noise; baseline "
+          + fmt(base.global_pcc_score) + "</span>" })
+      ]));
+    });
+
+    // Headline sentence, derived from the data rather than asserted.
+    const parts = D.split_order.map(split => {
+      const bf = bestFoundation(split, "global_pcc_score");
+      const d = bf && deltaOf(split, bf.config);
+      if (!d) return null;
+      const dv = d.d_global_pcc_score;
+      const sig = Math.abs(d.d_global_pcc_score_t) > 2.5;
+      return { split, dv, sig };
+    }).filter(Boolean);
+    const anyWin = parts.some(p => p.dv > 0 && p.sig);
+    const allLose = parts.every(p => p.dv <= 0);
+    let txt;
+    if (allLose) {
+      txt = "No. On every split tested, the best foundation-model arm scores at or "
+          + "below the BLOSUM baseline, and the deficits on the harder splits are "
+          + "larger than the noise floor. On this dataset, with this head and this "
+          + "training budget, the foundation-model features did not help.";
+    } else if (anyWin) {
+      txt = "Partly. At least one foundation-model arm beats the baseline by more "
+          + "than the noise floor on at least one split — see the paired differences "
+          + "below for where, and by how little.";
+    } else {
+      txt = "No measurable benefit. Differences between the best foundation-model arm "
+          + "and the baseline sit inside the run-to-run noise floor on every split.";
+    }
+    $("#verdict-text").textContent = txt;
+    $("#verdict-note").textContent = "Positive means the foundation-model arm beat the "
+      + "baseline. \"Inside noise\" means the paired per-seed difference is not "
+      + "distinguishable from run-to-run variation (|t| ≤ 2.5 over "
+      + D.seeds.length + " seeds).";
+  }
+
+  /* ================= noise floor ================= */
+  function renderNoise() {
+    const c = $("#noise-card");
+    const n = D.noise || {};
+    const rows = [];
+    if (n.unseeded) {
+      rows.push(["Unseeded repeats of the published script (fixed seed 42, fixed split)",
+        n.unseeded.n, fmt(n.unseeded.global_pcc_score_mean), fmt(n.unseeded.global_pcc_score_sd),
+        fmt(n.unseeded.global_pcc_score_range)]);
+    }
+    if (n.init) {
+      rows.push(["Initialisation only (split fixed, torch seed varied)",
+        n.init.n, fmt(n.init.global_pcc_score_mean), fmt(n.init.global_pcc_score_sd),
+        fmt(n.init.global_pcc_score_range)]);
+    }
+    if (n.split) {
+      rows.push(["Split + initialisation (both varied — the seed spread used throughout)",
+        n.split.n, fmt(n.split.global_pcc_score_mean), fmt(n.split.global_pcc_score_sd),
+        fmt(n.split.global_pcc_score_range)]);
+    }
+    if (!rows.length) { c.innerHTML = "<p class='muted'>Noise-floor measurements not available.</p>"; return; }
+    const t = el("table", {}, [
+      el("thead", {}, [el("tr", {}, ["Source of variation", "runs", "mean global PCC", "SD", "range"]
+        .map(h => el("th", { text: h })))]),
+      el("tbody", {}, rows.map(r => el("tr", {}, r.map((v, i) =>
+        el("td", { text: String(v) })))))
+    ]);
+    c.innerHTML = "";
+    c.appendChild(el("div", { class: "scroll" }, [t]));
+    c.appendChild(el("p", { class: "muted", text:
+      "All on the random split. The threshold used on this page is |t| > 2.5 on the "
+      + "paired per-seed difference, which is stricter than comparing means against "
+      + "the SD above." }));
+  }
+
+  /* ================= grouped bar facets ================= */
+  let METRIC = "global_pcc_score";
+
+  function barFacet(split, metric) {
+    const rows = bySplit(split).slice().sort((a, b) =>
+      HIGHER_BETTER(metric) ? b[metric] - a[metric] : a[metric] - b[metric]);
+    if (!rows.length) return null;
+
+    const padL = 230, padR = 64, padT = 10, padB = 34;
+    const rowH = 26, h = padT + rows.length * rowH + padB;
+    const w = 860;
+    const vals = rows.map(r => r[metric] + (r[metric + "_sd"] || 0));
+    let lo = 0, hi = Math.max.apply(null, vals) * 1.06;
+    if (metric === "auc_1h" || metric === "auc_2h") lo = 0.5;
+    const x = v => padL + (v - lo) / (hi - lo) * (w - padL - padR);
+
+    const g = [];
+    // gridlines + ticks
+    const nT = 5;
+    for (let i = 0; i <= nT; i++) {
+      const v = lo + (hi - lo) * i / nT;
+      g.push(el("line", { class: "gridline", x1: x(v), x2: x(v), y1: padT, y2: padT + rows.length * rowH }));
+      g.push(el("text", { class: "tick", x: x(v), y: padT + rows.length * rowH + 15,
+        "text-anchor": "middle", text: fmt(v, DEC(metric) === 2 ? 1 : 2) }));
+    }
+    g.push(el("line", { class: "axis", x1: padL, x2: padL, y1: padT, y2: padT + rows.length * rowH }));
+
+    rows.forEach((r, i) => {
+      const y = padT + i * rowH + 4, bh = rowH - 10;
+      const bw = Math.max(1, x(r[metric]) - padL);
+      const color = GROUP_COLOR[r.group] || "var(--series-3)";
+      const bar = el("rect", { class: "bar", x: padL, y: y, width: bw, height: bh,
+        rx: 4, fill: color });
+      const sd = r[metric + "_sd"] || 0;
+      hook(bar, "<b>" + r.config + "</b><br>" + D.split_meta[split].name
+        + "<br>" + METRIC_LABEL[metric] + ": <b>" + fmt(r[metric], DEC(metric))
+        + "</b> ± " + fmt(sd, DEC(metric)) + " SD"
+        + "<br>input width: " + r.n_features + " dims"
+        + "<br>" + r.n_seeds + " seeds · " + Math.round(r.runtime_s) + "s/run");
+      g.push(bar);
+      if (sd > 0) {
+        const x1 = x(Math.max(lo, r[metric] - sd)), x2 = x(r[metric] + sd), yc = y + bh / 2;
+        g.push(el("line", { class: "err", x1: x1, x2: x2, y1: yc, y2: yc }));
+        g.push(el("line", { class: "err", x1: x1, x2: x1, y1: yc - 4, y2: yc + 4 }));
+        g.push(el("line", { class: "err", x1: x2, x2: x2, y1: yc - 4, y2: yc + 4 }));
+      }
+      g.push(el("text", { class: "lab", x: padL - 10, y: y + bh / 2 + 4,
+        "text-anchor": "end", text: r.config }));
+      g.push(el("text", { class: "val", x: x(r[metric] + sd) + 7, y: y + bh / 2 + 4,
+        text: fmt(r[metric], DEC(metric)) }));
+    });
+
+    const svg = el("svg", { viewBox: "0 0 " + w + " " + h, role: "img",
+      "aria-label": METRIC_LABEL[metric] + " by configuration, " + D.split_meta[split].name }, g);
+    return el("figure", {}, [
+      el("figcaption", { text: D.split_meta[split].name }),
+      el("p", { class: "cap", text: D.split_meta[split].blurb }),
+      svg
+    ]);
+  }
+
+  function renderFacets() {
+    const host = $("#facets"); host.innerHTML = "";
+    D.split_order.forEach(s => { const f = barFacet(s, METRIC); if (f) host.appendChild(f); });
+    const lg = $("#legend"); lg.innerHTML = "";
+    ["baseline", "foundation", "control"].forEach(k => {
+      lg.appendChild(el("span", {}, [
+        el("span", { class: "swatch", style: "background:" + GROUP_COLOR[k] }),
+        el("span", { text: GROUP_LABEL[k] })
+      ]));
+    });
+    lg.appendChild(el("span", {}, [el("span", { class: "muted",
+      text: "error bars = ±1 SD over " + D.seeds.length + " seeds" })]));
+  }
+
+  document.querySelectorAll("[data-metric]").forEach(b => {
+    b.addEventListener("click", () => {
+      document.querySelectorAll("[data-metric]").forEach(o =>
+        o.setAttribute("aria-pressed", String(o === b)));
+      METRIC = b.dataset.metric;
+      renderFacets();
+    });
+  });
+
+  /* ================= delta facets ================= */
+  function deltaFacet(split) {
+    const rows = D.deltas.filter(r => r.split === split)
+      .slice().sort((a, b) => b.d_global_pcc_score - a.d_global_pcc_score);
+    if (!rows.length) return null;
+    const noise = (D.noise && D.noise.global_pcc_score_sd) || 0.005;
+
+    const padL = 230, padR = 70, padT = 12, padB = 34;
+    const rowH = 26, h = padT + rows.length * rowH + padB, w = 860;
+    const ext = Math.max(noise * 1.5, ...rows.map(r =>
+      Math.abs(r.d_global_pcc_score) + (r.d_global_pcc_score_sd || 0))) * 1.12;
+    const x = v => padL + (v + ext) / (2 * ext) * (w - padL - padR);
+
+    const g = [];
+    g.push(el("rect", { x: x(-noise), y: padT, width: x(noise) - x(-noise),
+      height: rows.length * rowH, fill: "var(--band)" }));
+    const nT = 4;
+    for (let i = 0; i <= nT; i++) {
+      const v = -ext + 2 * ext * i / nT;
+      g.push(el("text", { class: "tick", x: x(v), y: padT + rows.length * rowH + 15,
+        "text-anchor": "middle", text: (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(3) }));
+    }
+    g.push(el("line", { class: "axis", x1: x(0), x2: x(0), y1: padT, y2: padT + rows.length * rowH }));
+
+    rows.forEach((r, i) => {
+      const y = padT + i * rowH + 4, bh = rowH - 10;
+      const v = r.d_global_pcc_score, sd = r.d_global_pcc_score_sd || 0;
+      const sig = Math.abs(r.d_global_pcc_score_t) > 2.5;
+      const x0 = x(0), x1 = x(v);
+      const bar = el("rect", { class: "bar", x: Math.min(x0, x1), y: y,
+        width: Math.max(1, Math.abs(x1 - x0)), height: bh, rx: 4,
+        fill: v >= 0 ? "var(--pos)" : "var(--neg)",
+        opacity: sig ? 1 : 0.42 });
+      hook(bar, "<b>" + r.config + "</b><br>" + D.split_meta[split].name
+        + "<br>Δ global PCC vs baseline: <b>" + (v >= 0 ? "+" : "−")
+        + Math.abs(v).toFixed(4) + "</b> ± " + fmt(sd) + " SD"
+        + "<br>paired t = " + r.d_global_pcc_score_t.toFixed(2)
+        + " over " + r.n_paired + " seeds"
+        + "<br>Δ mean per-allele PCC: " + (r.d_mean_allele_pcc >= 0 ? "+" : "−")
+        + Math.abs(r.d_mean_allele_pcc).toFixed(4)
+        + "<br><span style='opacity:.75'>" + (sig ? "outside the noise floor"
+        : "inside the noise floor — not a result") + "</span>");
+      g.push(bar);
+      if (sd > 0) {
+        const a = x(v - sd), b2 = x(v + sd), yc = y + bh / 2;
+        g.push(el("line", { class: "err", x1: a, x2: b2, y1: yc, y2: yc }));
+        g.push(el("line", { class: "err", x1: a, x2: a, y1: yc - 4, y2: yc + 4 }));
+        g.push(el("line", { class: "err", x1: b2, x2: b2, y1: yc - 4, y2: yc + 4 }));
+      }
+      g.push(el("text", { class: "lab", x: padL - 10, y: y + bh / 2 + 4,
+        "text-anchor": "end", text: r.config }));
+      const tx = v >= 0 ? x(v + sd) + 7 : x(v - sd) - 7;
+      g.push(el("text", { class: "val", x: tx, y: y + bh / 2 + 4,
+        "text-anchor": v >= 0 ? "start" : "end",
+        text: (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(4) + (sig ? " *" : "") }));
+    });
+
+    const svg = el("svg", { viewBox: "0 0 " + w + " " + h, role: "img",
+      "aria-label": "Paired difference in global PCC versus baseline, " + D.split_meta[split].name }, g);
+    return el("figure", {}, [
+      el("figcaption", { text: D.split_meta[split].name }),
+      el("p", { class: "cap", text: "Shaded band = ±" + noise.toFixed(3)
+        + " noise floor. Faded bars and unmarked values are inside it. "
+        + "An asterisk marks |t| > 2.5." }),
+      svg
+    ]);
+  }
+
+  function renderDeltas() {
+    const host = $("#delta-facets"); host.innerHTML = "";
+    D.split_order.forEach(s => { const f = deltaFacet(s); if (f) host.appendChild(f); });
+  }
+
+  /* ================= per-allele ================= */
+  let PA_SPLIT = null;
+  function renderPAControls() {
+    const host = $("#pa-controls"); host.innerHTML = "";
+    const avail = D.split_order.filter(s => D.per_allele[s]);
+    if (!avail.length) return;
+    if (!PA_SPLIT || !D.per_allele[PA_SPLIT]) PA_SPLIT = avail[avail.length - 1];
+    host.appendChild(el("span", { class: "muted", style: "margin-right:4px", text: "Split" }));
+    avail.forEach(s => {
+      const b = el("button", { class: "seg", text: D.split_meta[s].name,
+        "aria-pressed": String(s === PA_SPLIT) });
+      b.addEventListener("click", () => { PA_SPLIT = s; renderPAControls(); renderPA(); });
+      host.appendChild(b);
+    });
+  }
+
+  function renderPA() {
+    const host = $("#pa-facets"); host.innerHTML = "";
+    const pa = D.per_allele[PA_SPLIT];
+    if (!pa) { host.appendChild(el("p", { class: "muted", text: "No per-allele data." })); return; }
+    const rows = pa.rows.filter(r => r.pcc_base !== null && r.pcc_base !== undefined)
+      .slice().sort((a, b) => b.pcc_base - a.pcc_base);
+    const hasFM = rows.some(r => r.pcc_fm !== null && r.pcc_fm !== undefined);
+
+    const padL = 150, padR = 24, padT = 14, padB = 40;
+    const rowH = 17, h = padT + rows.length * rowH + padB, w = 860;
+    const lo = Math.min(0, ...rows.flatMap(r => [r.pcc_base, r.pcc_fm].filter(v => v != null))) - 0.05;
+    const hi = Math.max(...rows.flatMap(r => [r.pcc_base, r.pcc_fm].filter(v => v != null))) + 0.05;
+    const x = v => padL + (v - lo) / (hi - lo) * (w - padL - padR);
+
+    const g = [];
+    for (let i = 0; i <= 6; i++) {
+      const v = lo + (hi - lo) * i / 6;
+      g.push(el("line", { class: "gridline", x1: x(v), x2: x(v), y1: padT, y2: padT + rows.length * rowH }));
+      g.push(el("text", { class: "tick", x: x(v), y: padT + rows.length * rowH + 15,
+        "text-anchor": "middle", text: v.toFixed(2) }));
+    }
+    if (lo < 0) g.push(el("line", { class: "axis", x1: x(0), x2: x(0), y1: padT, y2: padT + rows.length * rowH }));
+    g.push(el("text", { class: "tick", x: (padL + w - padR) / 2, y: padT + rows.length * rowH + 32,
+      "text-anchor": "middle", text: "per-allele Pearson correlation (mean over seeds)" }));
+
+    rows.forEach((r, i) => {
+      const yc = padT + i * rowH + rowH / 2;
+      if (hasFM && r.pcc_fm != null) {
+        g.push(el("line", { x1: x(r.pcc_base), x2: x(r.pcc_fm), y1: yc, y2: yc,
+          stroke: "var(--border)", "stroke-width": 1.5 }));
+      }
+      const mk = (v, color, label) => {
+        if (v == null) return;
+        const c = el("circle", { cx: x(v), cy: yc, r: 4.5, fill: color,
+          stroke: "var(--surface-1)", "stroke-width": 2 });
+        hook(c, "<b>" + r.allele + "</b><br>" + label + ": <b>" + fmt(v) + "</b>"
+          + "<br>n = " + Math.round(r.n_samples) + " measurements"
+          + (hasFM && r.pcc_fm != null && r.pcc_base != null
+            ? "<br>Δ (foundation − baseline): " + ((r.pcc_fm - r.pcc_base) >= 0 ? "+" : "−")
+              + Math.abs(r.pcc_fm - r.pcc_base).toFixed(4) : ""));
+        g.push(c);
+      };
+      mk(r.pcc_base, "var(--series-2)", pa.baseline);
+      if (hasFM) mk(r.pcc_fm, "var(--series-1)", pa.foundation);
+      g.push(el("text", { class: "lab", x: padL - 10, y: yc + 4,
+        "text-anchor": "end", text: r.allele }));
+    });
+
+    const lg = el("div", { class: "legend" }, [
+      el("span", {}, [el("span", { class: "swatch", style: "background:var(--series-2)" }),
+        el("span", { text: pa.baseline })]),
+      hasFM ? el("span", {}, [el("span", { class: "swatch", style: "background:var(--series-1)" }),
+        el("span", { text: pa.foundation })]) : null
+    ]);
+    const svg = el("svg", { viewBox: "0 0 " + w + " " + h, role: "img",
+      "aria-label": "Per-allele Pearson correlation, " + D.split_meta[PA_SPLIT].name }, g);
+    const fig = el("figure", {}, [
+      el("figcaption", { text: D.split_meta[PA_SPLIT].name + " — " + rows.length + " alleles" }),
+      el("p", { class: "cap", text: "Alleles with fewer than 3 test measurements, or with no "
+        + "variance in the measured half-life, cannot yield a correlation and are omitted." }),
+      lg, svg
+    ]);
+    host.appendChild(fig);
+
+    const tbl = el("table", {}, [
+      el("thead", {}, [el("tr", {}, ["allele", "n", pa.baseline,
+        hasFM ? pa.foundation : null, hasFM ? "Δ" : null].filter(Boolean)
+        .map(t => el("th", { text: t })))]),
+      el("tbody", {}, rows.map(r => el("tr", {}, [
+        el("td", { text: r.allele }),
+        el("td", { text: String(Math.round(r.n_samples)) }),
+        el("td", { text: fmt(r.pcc_base) }),
+        hasFM ? el("td", { text: fmt(r.pcc_fm) }) : null,
+        hasFM ? el("td", { text: (r.pcc_fm != null && r.pcc_base != null)
+          ? ((r.pcc_fm - r.pcc_base >= 0 ? "+" : "−") + Math.abs(r.pcc_fm - r.pcc_base).toFixed(4))
+          : "—" }) : null
+      ].filter(Boolean))))
+    ]);
+    host.appendChild(el("details", {}, [
+      el("summary", { text: "Table view — per-allele correlations" }),
+      el("div", { class: "scroll" }, [tbl])
+    ]));
+  }
+
+  /* ================= summary table ================= */
+  function renderSummaryTable() {
+    const cols = ["global_pcc_score", "mean_allele_pcc", "global_scc_score",
+                  "auc_1h", "auc_2h", "rmse_hours", "mae_hours"];
+    const rows = D.summary.slice().sort((a, b) =>
+      D.split_order.indexOf(a.split) - D.split_order.indexOf(b.split)
+      || b.global_pcc_score - a.global_pcc_score);
+    const t = el("table", {}, [
+      el("thead", {}, [el("tr", {}, ["split", "configuration", "dims", "seeds"]
+        .concat(cols.map(c => METRIC_LABEL[c])).map(h => el("th", { text: h })))]),
+      el("tbody", {}, rows.map(r => el("tr", {}, [
+        el("td", { text: D.split_meta[r.split].name }),
+        el("td", { text: r.config }),
+        el("td", { text: String(r.n_features) }),
+        el("td", { text: String(r.n_seeds) })
+      ].concat(cols.map(c => el("td", {
+        text: fmt(r[c], DEC(c)) + " ± " + fmt(r[c + "_sd"], DEC(c))
+      }))))))
+    ]);
+    $("#summary-table").innerHTML = "";
+    $("#summary-table").appendChild(t);
+  }
+
+  /* ================= methods ================= */
+  function renderMethods() {
+    const c = $("#methods-card");
+    c.innerHTML = ""
+      + "<h3>Protocol held constant across every arm</h3>"
+      + "<p>60-unit single-hidden-layer MLP with sigmoid activation and sigmoid output; "
+      + "MSE loss on the NetMHC-style target <code>s = 2^(-t0/t½)</code> with t0 = 1 h; "
+      + "Adam, lr 1e-3, weight decay 1e-5, batch 128, 25 epochs, "
+      + "best-validation-loss checkpoint; 80/20 train/test with 10% of train held out "
+      + "for validation. The model, loss, target transform, metrics and split logic are "
+      + "imported from the published <code>train_baseline.py</code> rather than "
+      + "reimplemented, so only the input features differ between arms.</p>"
+      + "<h3>Features</h3>"
+      + "<p><strong>BLOSUM-pep</strong> 9×20 = 180 dims; <strong>BLOSUM-HLA</strong> "
+      + "34×20 = 680 dims (NetMHCpan pseudosequence) — together these are the 860-dim "
+      + "published baseline. <strong>ESM2-pep</strong> per-residue ESM-2 t30_150M "
+      + "representations, 9×640 = 5,760 dims, the positional analogue of BLOSUM. "
+      + "<strong>ESM2-HLA</strong> mean-pooled ESM-2 over the 182-residue α1/α2 domain, "
+      + "640 dims. <strong>Boltz-HLA</strong> Boltz-2 pocket embeddings, B pocket "
+      + "(P2 anchor) and F pocket (C-terminal anchor) concatenated, 2×384 = 768 dims. "
+      + "<strong>onehot-HLA</strong> 75-dim allele indicator.</p>"
+      + "<h3>Why learned features are standardised and BLOSUM is not</h3>"
+      + "<p>The Boltz-2 features reach magnitude ~1000 with a mean L2 norm of 1656, "
+      + "against BLOSUM50/5 values in roughly [−1, 3]. Fed raw into a sigmoid MLP the "
+      + "first layer saturates and no gradient flows — that alone would manufacture a "
+      + "false negative. All learned blocks are therefore z-scored with statistics fit "
+      + "on the training subset only. BLOSUM blocks are left raw so the baseline arm "
+      + "reproduces the published script exactly.</p>"
+      + "<h3>Caveats, stated plainly</h3>"
+      + "<ul>"
+      + "<li><strong>The Boltz-2 embeddings carry no peptide information.</strong> "
+      + "75 distinct vectors for 28,166 rows: they are a per-allele lookup. On the "
+      + "random and peptide-grouped splits every test allele is also in training, so "
+      + "such a vector can act as a memorised key. The allele one-hot control exists "
+      + "to measure exactly that, and only the leave-allele-out split separates "
+      + "structural information from allele identity.</li>"
+      + "<li><strong>A fifth of the target is a single point mass.</strong> 5,679 of "
+      + "28,166 rows have t½ exactly 0.0, which the transform maps to s = 0. This caps "
+      + "attainable correlation and makes RMSE-in-hours a poor headline metric.</li>"
+      + "<li><strong>Capacity is not matched by default.</strong> The ESM-2 peptide arm "
+      + "feeds 5,760 dims where BLOSUM feeds 180, at a fixed 60-unit head and a fixed "
+      + "25-epoch budget. A win could be capacity and a loss could be underfitting, so "
+      + "neither should be read as representation quality without the dimension-matched "
+      + "run.</li>"
+      + "<li><strong>Frozen features, shallow head, no fine-tuning.</strong> Nothing "
+      + "here tests what a fine-tuned foundation model could do — only what its frozen "
+      + "representations offer a small supervised head. There is no CUDA on this "
+      + "machine; all training is CPU.</li>"
+      + "<li><strong>Three engineered constructs are invisible to the pseudosequence.</strong> "
+      + "The C67S mutants differ from their wild types at a residue outside the 34 "
+      + "NetMHCpan contact positions, so the baseline encoding cannot distinguish them.</li>"
+      + "</ul>";
+  }
+
+  /* ================= structures (NGL) ================= */
+  function renderStructures() {
+    const host = $("#structs"); host.innerHTML = "";
+    const S = D.structures || [];
+    const key = $("#chainkey"); key.innerHTML = "";
+    if (!S.length) {
+      host.appendChild(el("p", { class: "muted",
+        text: "No structure metadata available (outputs/report/structures.json missing)." }));
+      return;
+    }
+    [["#2a78d6", "HLA heavy chain (α1/α2 groove)"],
+     ["#eb6834", "bound peptide — shown as spheres"],
+     ["#1baf7a", "β2-microglobulin"],
+     ["#e34948", "B pocket (P2 anchor) / F pocket (C-term anchor) residues"]
+    ].forEach(([c, t]) => key.appendChild(el("span", {}, [
+      el("span", { class: "swatch", style: "background:" + c }), el("span", { text: t })])));
+
+    const haveNGL = typeof window.NGL !== "undefined";
+    S.forEach(s => {
+      const id = "v_" + s.pdb_id;
+      const holder = el("div", { class: "viewer", id: id });
+      holder.appendChild(el("div", { class: "ph", text: haveNGL
+        ? ("loading " + s.pdb_id + " …")
+        : ("3D viewer needs the NGL library from a CDN — offline, so " + s.pdb_id
+           + " is not rendered. Metadata below is unaffected.") }));
+      const dl = el("dl", {}, [].concat(
+        ["allele", s.allele || "—"],
+        ["peptide", (s.peptide || "—") + (s.peptide_length ? " (" + s.peptide_length + "-mer)" : "")],
+        ["resolution", s.resolution ? s.resolution + " Å" : "—"],
+        ["method", s.method || "—"],
+        ["chains", "HLA " + (s.chain_hla || "?") + " · peptide " + (s.chain_peptide || "?")
+          + " · β2m " + (s.chain_b2m || "?")],
+        ["citation", s.citation || "—"]
+      ).reduce((acc, v, i, arr) => {
+        if (i % 2 === 0) acc.push(el("dt", { text: v }));
+        else acc.push(el("dd", { text: v }));
+        return acc;
+      }, []));
+      host.appendChild(el("figure", {}, [
+        el("figcaption", { text: s.pdb_id + " — " + (s.allele || "peptide-HLA complex") }),
+        el("p", { class: "cap", text: s.title || "" }),
+        holder,
+        el("div", { class: "meta" }, [dl,
+          el("p", { class: "muted", style: "margin:8px 0 0" }, [
+            el("a", { href: "https://www.rcsb.org/structure/" + s.pdb_id,
+              target: "_blank", rel: "noopener", text: "RCSB PDB entry " + s.pdb_id })])])
+      ]));
+    });
+
+    if (!haveNGL) return;
+    S.forEach(s => {
+      const holder = document.getElementById("v_" + s.pdb_id);
+      let stage;
+      try { stage = new NGL.Stage(holder, { backgroundColor: "white" }); }
+      catch (e) { return; }
+      const dark = () => getComputedStyle(document.documentElement)
+        .getPropertyValue("color-scheme").indexOf("dark") >= 0;
+      stage.setParameters({ backgroundColor: dark() ? "#232322" : "#f0efec" });
+      stage.loadFile("rcsb://" + s.pdb_id, { defaultRepresentation: false })
+        .then(comp => {
+          const ph = holder.querySelector(".ph"); if (ph) ph.remove();
+          const pep = s.chain_peptide ? (":" + s.chain_peptide) : "";
+          const hla = s.chain_hla ? (":" + s.chain_hla) : "";
+          const b2m = s.chain_b2m ? (":" + s.chain_b2m) : "";
+          if (hla) comp.addRepresentation("cartoon", {
+            sele: hla + " and polymer", color: "#2a78d6", opacity: 0.86 });
+          if (b2m) comp.addRepresentation("cartoon", {
+            sele: b2m + " and polymer", color: "#1baf7a", opacity: 0.5 });
+          if (pep) {
+            comp.addRepresentation("spacefill", {
+              sele: pep + " and polymer", color: "#eb6834", opacity: 0.95, radiusScale: 0.72 });
+            comp.addRepresentation("licorice", { sele: pep + " and polymer", color: "#eb6834" });
+          }
+          const pockets = (s.pocket_residues_b || []).concat(s.pocket_residues_f || []);
+          if (pockets.length) {
+            // NGL selection: "(7 or 9 or 24) and :A and sidechainAttached"
+            let sele = "(" + pockets.join(" or ") + ")";
+            if (hla) sele += " and " + hla;
+            comp.addRepresentation("licorice", {
+              sele: sele + " and sidechainAttached",
+              color: "#e34948", opacity: 0.95, radiusScale: 0.8 });
+          }
+          if (pep) comp.autoView(pep);
+          else comp.autoView();
+        })
+        .catch(() => {
+          const ph = holder.querySelector(".ph");
+          if (ph) ph.textContent = "Could not fetch " + s.pdb_id
+            + " from the PDB (offline?). Metadata below is unaffected.";
+        });
+      window.addEventListener("resize", () => stage.handleResize());
+      document.getElementById("themebtn").addEventListener("click", () =>
+        setTimeout(() => stage.setParameters({
+          backgroundColor: dark() ? "#232322" : "#f0efec" }), 0));
+    });
+    $("#struct-note").textContent = "Coordinates are fetched live from the RCSB PDB, so "
+      + "the 3D panels need a network connection; everything else on this page is embedded.";
+  }
+
+  /* ================= go ================= */
+  function renderAll() {
+    renderVerdict(); renderNoise(); renderFacets(); renderDeltas();
+    renderPAControls(); renderPA(); renderSummaryTable(); renderMethods();
+  }
+  renderAll();
+  renderStructures();
+  $("#runstamp").textContent = D.runs.length + " runs · " + D.seeds.length
+    + " seeds · " + new Set(D.summary.map(r => r.config)).size + " configurations";
+})();
+</script>
+</body>
+</html>

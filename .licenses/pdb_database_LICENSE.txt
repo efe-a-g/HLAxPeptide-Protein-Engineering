@@ -1,0 +1,17 @@
+RCSB PDB — usage notification record
+====================================
+
+Structure metadata and coordinates used in this project were obtained from the
+RCSB Protein Data Bank via the science-skills:pdb-database skill.
+
+Users of this data should review the RCSB PDB usage policy:
+
+    https://www.rcsb.org/pages/usage-policy
+
+Notification shown: 2026-10-03
+
+Entries referenced in outputs/report/structures.json:
+  1M6O, 6PYJ, 1DUZ, 1X7Q, 3BO8, 4MJI
+
+The HTML report fetches coordinates live from the RCSB PDB at view time
+(rcsb://<id> via NGL); no coordinate files are redistributed in this repository.

@@ -1,0 +1,233 @@
+﻿[*] 9 configs x 3 splits x 5 seeds = 135 runs
+[+] blosum_pep + blosum_hla                        random   s42 | allele_pcc 0.5329 | global_pcc 0.7199 | auc1h 0.8720 | rmse 10.75 | 9.5s
+    [1/135] elapsed 0.2m, eta 21.2m
+[+] blosum_pep + blosum_hla                        random   s43 | allele_pcc 0.5230 | global_pcc 0.7228 | auc1h 0.8768 | rmse 11.94 | 8.3s
+    [2/135] elapsed 0.3m, eta 19.8m
+[+] blosum_pep + blosum_hla                        random   s44 | allele_pcc 0.5522 | global_pcc 0.7223 | auc1h 0.8713 | rmse 11.82 | 10.2s
+    [3/135] elapsed 0.5m, eta 20.6m
+[+] blosum_pep + blosum_hla                        random   s45 | allele_pcc 0.5288 | global_pcc 0.7225 | auc1h 0.8709 | rmse 11.32 | 9.2s
+    [4/135] elapsed 0.6m, eta 20.3m
+[+] blosum_pep + blosum_hla                        random   s46 | allele_pcc 0.5443 | global_pcc 0.7204 | auc1h 0.8709 | rmse 13.55 | 8.6s
+    [5/135] elapsed 0.8m, eta 19.9m
+uv : C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:
+373: UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not
+ guaranteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after 
+shuffling.
+At line:4 char:1
++ uv run python python\run_grid.py --groups main controls --splits rand ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Users\theo\N...fter shuffling.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  np.random.shuffle(unique_peptides)
+[*] Peptide-grouped split: 1126 unique peptides held out.
+[+] blosum_pep + blosum_hla                        cluster  s42 | allele_pcc 0.5176 | global_pcc 0.6901 | auc1h 0.8546 | rmse 10.26 | 9.1s
+    [6/135] elapsed 0.9m, eta 19.7m
+C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:373: 
+UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not guar
+anteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after shuff
+ling.
+  np.random.shuffle(unique_peptides)
+[*] Peptide-grouped split: 1126 unique peptides held out.
+[+] blosum_pep + blosum_hla                        cluster  s43 | allele_pcc 0.4929 | global_pcc 0.6898 | auc1h 0.8544 | rmse 12.73 | 8.9s
+    [7/135] elapsed 1.1m, eta 19.5m
+C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:373: 
+UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not guar
+anteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after shuff
+ling.
+  np.random.shuffle(unique_peptides)
+[*] Peptide-grouped split: 1126 unique peptides held out.
+[+] blosum_pep + blosum_hla                        cluster  s44 | allele_pcc 0.4515 | global_pcc 0.7035 | auc1h 0.8590 | rmse 11.95 | 8.9s
+    [8/135] elapsed 1.2m, eta 19.3m
+C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:373: 
+UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not guar
+anteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after shuff
+ling.
+  np.random.shuffle(unique_peptides)
+[*] Peptide-grouped split: 1126 unique peptides held out.
+[+] blosum_pep + blosum_hla                        cluster  s45 | allele_pcc 0.5082 | global_pcc 0.7211 | auc1h 0.8688 | rmse 12.00 | 9.1s
+    [9/135] elapsed 1.4m, eta 19.1m
+C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:373: 
+UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not guar
+anteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after shuff
+ling.
+  np.random.shuffle(unique_peptides)
+[*] Peptide-grouped split: 1126 unique peptides held out.
+[+] blosum_pep + blosum_hla                        cluster  s46 | allele_pcc 0.5015 | global_pcc 0.7093 | auc1h 0.8679 | rmse 11.92 | 9.1s
+    [10/135] elapsed 1.5m, eta 19.0m
+[*] Leave-allele-out split: 15 held-out alleles in test set.
+[+] blosum_pep + blosum_hla                        allele   s42 | allele_pcc 0.3632 | global_pcc 0.4421 | auc1h 0.7347 | rmse 8.55 | 8.3s
+    [11/135] elapsed 1.7m, eta 18.7m
+[*] Leave-allele-out split: 15 held-out alleles in test set.
+[+] blosum_pep + blosum_hla                        allele   s43 | allele_pcc 0.2152 | global_pcc 0.3528 | auc1h 0.6718 | rmse 7.70 | 8.1s
+    [12/135] elapsed 1.8m, eta 18.3m
+[*] Leave-allele-out split: 15 held-out alleles in test set.
+[+] blosum_pep + blosum_hla                        allele   s44 | allele_pcc 0.2640 | global_pcc 0.5693 | auc1h 0.7982 | rmse 8.68 | 8.6s
+    [13/135] elapsed 1.9m, eta 18.2m
+[*] Leave-allele-out split: 15 held-out alleles in test set.
+[+] blosum_pep + blosum_hla                        allele   s45 | allele_pcc 0.3880 | global_pcc 0.5078 | auc1h 0.7639 | rmse 15.22 | 8.9s
+    [14/135] elapsed 2.1m, eta 18.0m
+[*] Leave-allele-out split: 15 held-out alleles in test set.
+[+] blosum_pep + blosum_hla                        allele   s46 | allele_pcc 0.3274 | global_pcc 0.4405 | auc1h 0.7101 | rmse 14.22 | 8.7s
+    [15/135] elapsed 2.2m, eta 17.8m
+[+] blosum_pep + boltz_BF                          random   s42 | allele_pcc 0.5384 | global_pcc 0.7280 | auc1h 0.8752 | rmse 10.51 | 9.0s
+    [16/135] elapsed 2.4m, eta 17.7m
+[+] blosum_pep + boltz_BF                          random   s43 | allele_pcc 0.5660 | global_pcc 0.7474 | auc1h 0.8891 | rmse 11.92 | 8.6s
+    [17/135] elapsed 2.5m, eta 17.5m
+[+] blosum_pep + boltz_BF                          random   s44 | allele_pcc 0.6008 | global_pcc 0.7389 | auc1h 0.8813 | rmse 11.51 | 8.5s
+    [18/135] elapsed 2.7m, eta 17.3m
+[+] blosum_pep + boltz_BF                          random   s45 | allele_pcc 0.5692 | global_pcc 0.7283 | auc1h 0.8751 | rmse 11.23 | 8.5s
+    [19/135] elapsed 2.8m, eta 17.1m
+[+] blosum_pep + boltz_BF                          random   s46 | allele_pcc 0.5671 | global_pcc 0.7450 | auc1h 0.8806 | rmse 13.22 | 9.0s
+    [20/135] elapsed 3.0m, eta 17.0m
+C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:373: 
+UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not guar
+anteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after shuff
+ling.
+  np.random.shuffle(unique_peptides)
+[*] Peptide-grouped split: 1126 unique peptides held out.
+[+] blosum_pep + boltz_BF                          cluster  s42 | allele_pcc 0.5156 | global_pcc 0.7013 | auc1h 0.8592 | rmse 10.27 | 10.0s
+    [21/135] elapsed 3.1m, eta 16.9m
+C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:373: 
+UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not guar
+anteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after shuff
+ling.
+  np.random.shuffle(unique_peptides)
+[*] Peptide-grouped split: 1126 unique peptides held out.
+[+] blosum_pep + boltz_BF                          cluster  s43 | allele_pcc 0.5351 | global_pcc 0.7087 | auc1h 0.8623 | rmse 12.26 | 9.5s
+    [22/135] elapsed 3.3m, eta 16.9m
+C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:373: 
+UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not guar
+anteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after shuff
+ling.
+  np.random.shuffle(unique_peptides)
+[*] Peptide-grouped split: 1126 unique peptides held out.
+[+] blosum_pep + boltz_BF                          cluster  s44 | allele_pcc 0.5052 | global_pcc 0.7178 | auc1h 0.8643 | rmse 11.68 | 9.1s
+    [23/135] elapsed 3.4m, eta 16.7m
+C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:373: 
+UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not guar
+anteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after shuff
+ling.
+  np.random.shuffle(unique_peptides)
+[*] Peptide-grouped split: 1126 unique peptides held out.
+[+] blosum_pep + boltz_BF                          cluster  s45 | allele_pcc 0.5327 | global_pcc 0.7330 | auc1h 0.8770 | rmse 12.00 | 9.3s
+    [24/135] elapsed 3.6m, eta 16.6m
+C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:373: 
+UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not guar
+anteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after shuff
+ling.
+  np.random.shuffle(unique_peptides)
+[*] Peptide-grouped split: 1126 unique peptides held out.
+[+] blosum_pep + boltz_BF                          cluster  s46 | allele_pcc 0.5521 | global_pcc 0.7160 | auc1h 0.8706 | rmse 11.64 | 8.7s
+    [25/135] elapsed 3.7m, eta 16.4m
+[*] Leave-allele-out split: 15 held-out alleles in test set.
+[+] blosum_pep + boltz_BF                          allele   s42 | allele_pcc 0.3477 | global_pcc 0.4398 | auc1h 0.7338 | rmse 8.00 | 8.0s
+    [26/135] elapsed 3.9m, eta 16.2m
+[*] Leave-allele-out split: 15 held-out alleles in test set.
+[+] blosum_pep + boltz_BF                          allele   s43 | allele_pcc 0.2430 | global_pcc 0.3533 | auc1h 0.6873 | rmse 7.85 | 8.6s
+    [27/135] elapsed 4.0m, eta 16.0m
+[*] Leave-allele-out split: 15 held-out alleles in test set.
+[+] blosum_pep + boltz_BF                          allele   s44 | allele_pcc 0.2637 | global_pcc 0.2017 | auc1h 0.6020 | rmse 8.84 | 8.6s
+    [28/135] elapsed 4.2m, eta 15.9m
+[*] Leave-allele-out split: 15 held-out alleles in test set.
+[+] blosum_pep + boltz_BF                          allele   s45 | allele_pcc 0.3604 | global_pcc 0.2418 | auc1h 0.6266 | rmse 14.58 | 8.7s
+    [29/135] elapsed 4.3m, eta 15.7m
+[*] Leave-allele-out split: 15 held-out alleles in test set.
+[+] blosum_pep + boltz_BF                          allele   s46 | allele_pcc 0.2693 | global_pcc 0.1902 | auc1h 0.6042 | rmse 14.68 | 8.6s
+    [30/135] elapsed 4.4m, eta 15.5m
+[+] esm2_150m_pep_res + blosum_hla                 random   s42 | allele_pcc 0.4381 | global_pcc 0.6425 | auc1h 0.8318 | rmse 10.47 | 17.6s
+    [31/135] elapsed 4.7m, eta 15.9m
+[+] esm2_150m_pep_res + blosum_hla                 random   s43 | allele_pcc 0.3981 | global_pcc 0.6383 | auc1h 0.8311 | rmse 11.82 | 16.8s
+    [32/135] elapsed 5.0m, eta 16.2m
+[+] esm2_150m_pep_res + blosum_hla                 random   s44 | allele_pcc 0.4343 | global_pcc 0.6527 | auc1h 0.8355 | rmse 11.35 | 16.2s
+    [33/135] elapsed 5.3m, eta 16.3m
+[+] esm2_150m_pep_res + blosum_hla                 random   s45 | allele_pcc 0.4506 | global_pcc 0.6486 | auc1h 0.8353 | rmse 11.21 | 16.2s
+    [34/135] elapsed 5.6m, eta 16.5m
+[+] esm2_150m_pep_res + blosum_hla                 random   s46 | allele_pcc 0.4290 | global_pcc 0.6236 | auc1h 0.8168 | rmse 13.62 | 15.8s
+    [35/135] elapsed 5.8m, eta 16.6m
+C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:373: 
+UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not guar
+anteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after shuff
+ling.
+  np.random.shuffle(unique_peptides)
+[*] Peptide-grouped split: 1126 unique peptides held out.
+[+] esm2_150m_pep_res + blosum_hla                 cluster  s42 | allele_pcc 0.2988 | global_pcc 0.5675 | auc1h 0.7929 | rmse 10.46 | 16.2s
+    [36/135] elapsed 6.1m, eta 16.8m
+C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:373: 
+UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not guar
+anteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after shuff
+ling.
+  np.random.shuffle(unique_peptides)
+[*] Peptide-grouped split: 1126 unique peptides held out.
+[+] esm2_150m_pep_res + blosum_hla                 cluster  s43 | allele_pcc 0.3323 | global_pcc 0.5895 | auc1h 0.8020 | rmse 12.54 | 16.6s
+    [37/135] elapsed 6.4m, eta 16.9m
+C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:373: 
+UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not guar
+anteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after shuff
+ling.
+  np.random.shuffle(unique_peptides)
+[*] Peptide-grouped split: 1126 unique peptides held out.
+[+] esm2_150m_pep_res + blosum_hla                 cluster  s44 | allele_pcc 0.2876 | global_pcc 0.5864 | auc1h 0.7975 | rmse 12.12 | 18.5s
+    [38/135] elapsed 6.7m, eta 17.1m
+C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:373: 
+UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not guar
+anteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after shuff
+ling.
+  np.random.shuffle(unique_peptides)
+[*] Peptide-grouped split: 1126 unique peptides held out.
+[+] esm2_150m_pep_res + blosum_hla                 cluster  s45 | allele_pcc 0.3221 | global_pcc 0.5974 | auc1h 0.8101 | rmse 12.14 | 18.0s
+    [39/135] elapsed 7.0m, eta 17.2m
+C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:373: 
+UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not guar
+anteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after shuff
+ling.
+  np.random.shuffle(unique_peptides)
+[*] Peptide-grouped split: 1126 unique peptides held out.
+[+] esm2_150m_pep_res + blosum_hla                 cluster  s46 | allele_pcc 0.3013 | global_pcc 0.5795 | auc1h 0.8039 | rmse 11.83 | 16.5s
+    [40/135] elapsed 7.3m, eta 17.2m
+[*] Leave-allele-out split: 15 held-out alleles in test set.
+[+] esm2_150m_pep_res + blosum_hla                 allele   s42 | allele_pcc 0.3945 | global_pcc 0.5058 | auc1h 0.7607 | rmse 7.72 | 19.0s
+    [41/135] elapsed 7.6m, eta 17.4m
+[*] Leave-allele-out split: 15 held-out alleles in test set.
+[+] esm2_150m_pep_res + blosum_hla                 allele   s43 | allele_pcc 0.2429 | global_pcc 0.3488 | auc1h 0.6705 | rmse 7.52 | 16.3s
+    [42/135] elapsed 7.8m, eta 17.4m
+[*] Leave-allele-out split: 15 held-out alleles in test set.
+[+] esm2_150m_pep_res + blosum_hla                 allele   s44 | allele_pcc 0.2241 | global_pcc 0.3835 | auc1h 0.7010 | rmse 8.65 | 17.1s
+    [43/135] elapsed 8.1m, eta 17.4m
+[*] Leave-allele-out split: 15 held-out alleles in test set.
+[+] esm2_150m_pep_res + blosum_hla                 allele   s45 | allele_pcc 0.3779 | global_pcc 0.4427 | auc1h 0.7383 | rmse 14.97 | 16.9s
+    [44/135] elapsed 8.4m, eta 17.4m
+[*] Leave-allele-out split: 15 held-out alleles in test set.
+[+] esm2_150m_pep_res + blosum_hla                 allele   s46 | allele_pcc 0.3021 | global_pcc 0.4056 | auc1h 0.6898 | rmse 14.33 | 16.0s
+    [45/135] elapsed 8.7m, eta 17.4m
+[+] esm2_150m_pep_res + boltz_BF                   random   s42 | allele_pcc 0.5052 | global_pcc 0.7107 | auc1h 0.8682 | rmse 11.39 | 15.8s
+    [46/135] elapsed 8.9m, eta 17.3m
+[+] esm2_150m_pep_res + boltz_BF                   random   s43 | allele_pcc 0.5026 | global_pcc 0.7197 | auc1h 0.8721 | rmse 12.52 | 17.4s
+    [47/135] elapsed 9.2m, eta 17.3m
+[+] esm2_150m_pep_res + boltz_BF                   random   s44 | allele_pcc 0.5267 | global_pcc 0.7153 | auc1h 0.8678 | rmse 11.52 | 18.5s
+    [48/135] elapsed 9.5m, eta 17.3m
+[+] esm2_150m_pep_res + boltz_BF                   random   s45 | allele_pcc 0.5039 | global_pcc 0.7144 | auc1h 0.8680 | rmse 10.86 | 15.2s
+    [49/135] elapsed 9.8m, eta 17.2m
+[+] esm2_150m_pep_res + boltz_BF                   random   s46 | allele_pcc 0.5103 | global_pcc 0.7062 | auc1h 0.8603 | rmse 13.12 | 18.0s
+    [50/135] elapsed 10.1m, eta 17.2m
+C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:373: 
+UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not guar
+anteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after shuff
+ling.
+  np.random.shuffle(unique_peptides)
+[*] Peptide-grouped split: 1126 unique peptides held out.
+[+] esm2_150m_pep_res + boltz_BF                   cluster  s42 | allele_pcc 0.3734 | global_pcc 0.6265 | auc1h 0.8208 | rmse 10.57 | 16.8s
+    [51/135] elapsed 10.4m, eta 17.1m
+C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:373: 
+UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not guar
+anteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after shuff
+ling.
+  np.random.shuffle(unique_peptides)
+[*] Peptide-grouped split: 1126 unique peptides held out.
+[+] esm2_150m_pep_res + boltz_BF                   cluster  s43 | allele_pcc 0.3945 | global_pcc 0.6494 | auc1h 0.8309 | rmse 12.34 | 16.0s
+    [52/135] elapsed 10.7m, eta 17.0m
+C:\Users\theo\Nextcloud\documents\25-29_ox\5_projects\0_hackathons\london_ai+science\exp\python\train_baseline.py:373: 
+UserWarning: you are shuffling a 'ArrowStringArray' object which is not a subclass of 'Sequence'; `shuffle` is not guar
+anteed to behave correctly. E.g., non-numpy array/tensor objects with view semantics may contain duplicates after shuff
+ling.
+  np.random.shuffle(unique_peptides)
