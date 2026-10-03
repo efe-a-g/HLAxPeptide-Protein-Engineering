@@ -1,0 +1,91 @@
+{
+  "unseeded": {
+    "n": 3,
+    "global_pcc_score_mean": 0.7209,
+    "global_pcc_score_sd": 0.0028687976575561868,
+    "global_pcc_score_range": 0.005199999999999982,
+    "mean_allele_pcc_mean": 0.5294,
+    "mean_allele_pcc_sd": 0.0032419130154894477,
+    "mean_allele_pcc_range": 0.006399999999999961,
+    "rmse_hours_mean": 10.876666666666665,
+    "rmse_hours_sd": 0.11060440015358074,
+    "rmse_hours_range": 0.22000000000000064
+  },
+  "init": {
+    "n": 8,
+    "global_pcc_score_mean": 0.7207868471741676,
+    "global_pcc_score_sd": 0.0027951851552853457,
+    "global_pcc_score_range": 0.007229208946228027,
+    "mean_allele_pcc_mean": 0.5282083079218864,
+    "mean_allele_pcc_sd": 0.007186989641083938,
+    "mean_allele_pcc_range": 0.020081639289855957,
+    "rmse_hours_mean": 10.86614804644439,
+    "rmse_hours_sd": 0.08467166135134697,
+    "rmse_hours_range": 0.24938201881995603,
+    "auc_1h_mean": 0.8715309800723086,
+    "auc_1h_sd": 0.001304468361078086,
+    "auc_1h_range": 0.002972828854813203,
+    "torch_seeds": [
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108
+    ]
+  },
+  "split": {
+    "n": 5,
+    "global_pcc_score_mean": 0.721563196182251,
+    "global_pcc_score_sd": 0.0013319077712411643,
+    "global_pcc_score_range": 0.0029119253158569336,
+    "mean_allele_pcc_mean": 0.5362349152565002,
+    "mean_allele_pcc_sd": 0.011834574509214721,
+    "mean_allele_pcc_range": 0.02917945384979248,
+    "rmse_hours_mean": 11.87765990111873,
+    "rmse_hours_sd": 1.0449449109062399,
+    "rmse_hours_range": 2.7944606222439567,
+    "auc_1h_mean": 0.8723795323074732,
+    "auc_1h_sd": 0.0025284643255337556,
+    "auc_1h_range": 0.005955560560605755,
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ]
+  },
+  "global_pcc_score_sd": 0.0028687976575561868,
+  "per_split_seed_spread": {
+    "random": {
+      "n": 5,
+      "global_pcc_score_mean": 0.721563196182251,
+      "global_pcc_score_sd": 0.0013319077712411643,
+      "global_pcc_score_range": 0.0029119253158569336,
+      "mean_allele_pcc_mean": 0.5362349152565002,
+      "mean_allele_pcc_sd": 0.011834574509214721,
+      "mean_allele_pcc_range": 0.02917945384979248
+    },
+    "cluster": {
+      "n": 5,
+      "global_pcc_score_mean": 0.702765166759491,
+      "global_pcc_score_sd": 0.013329331745425879,
+      "global_pcc_score_range": 0.031325578689575195,
+      "mean_allele_pcc_mean": 0.4943254470825195,
+      "mean_allele_pcc_sd": 0.025573615776258406,
+      "mean_allele_pcc_range": 0.06605061888694763
+    },
+    "allele": {
+      "n": 5,
+      "global_pcc_score_mean": 0.46246864199638366,
+      "global_pcc_score_sd": 0.08123804801469654,
+      "global_pcc_score_range": 0.21651771664619446,
+      "mean_allele_pcc_mean": 0.3115443497896194,
+      "mean_allele_pcc_sd": 0.07125339558851239,
+      "mean_allele_pcc_range": 0.17279304563999176
+    }
+  }
+}

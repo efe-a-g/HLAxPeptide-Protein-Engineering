@@ -188,11 +188,12 @@
 
   <div class="controls" role="group" aria-label="Metric">
     <span class="muted" style="margin-right:4px">Metric</span>
-    <button class="seg" data-metric="global_pcc_score" aria-pressed="true">Global PCC</button>
-    <button class="seg" data-metric="mean_allele_pcc" aria-pressed="false">Mean per-allele PCC</button>
+    <button class="seg" data-metric="mean_allele_pcc" aria-pressed="true">Mean per-allele PCC</button>
+    <button class="seg" data-metric="global_pcc_score" aria-pressed="false">Global PCC</button>
     <button class="seg" data-metric="auc_1h" aria-pressed="false">AUC (t½ ≥ 1h)</button>
     <button class="seg" data-metric="rmse_hours" aria-pressed="false">RMSE (hours)</button>
   </div>
+  <div class="controls" role="group" aria-label="Training protocol" id="variant-controls"></div>
   <div class="legend" id="legend"></div>
   <div class="facets" id="facets"></div>
   <details>
@@ -272,7 +273,8 @@
                         control: "var(--series-3)", ablation: "var(--series-3)" };
   const GROUP_LABEL = { baseline: "Published baseline (BLOSUM both sides)",
                         foundation: "Foundation-model arm",
-                        control: "Control", ablation: "Single-side ablation" };
+                        control: "Control / single-side ablation",
+                        ablation: "Control / single-side ablation" };
   const HIGHER_BETTER = m => m !== "rmse_hours" && m !== "mae_hours";
   const METRIC_LABEL = { global_pcc_score: "Global PCC", mean_allele_pcc: "Mean per-allele PCC",
                          auc_1h: "AUC (t½ ≥ 1h)", auc_2h: "AUC (t½ ≥ 2h)",
@@ -312,12 +314,23 @@
   });
 
   /* ================= verdict ================= */
-  function bySplit(split) { return D.summary.filter(r => r.split === split); }
-  function find(split, cfg) { return D.summary.find(r => r.split === split && r.config === cfg); }
-  function deltaOf(split, cfg) { return D.deltas.find(r => r.split === split && r.config === cfg); }
+  let VARIANT = D.base_variant;
+  function bySplit(split, variant) {
+    const v = variant || VARIANT;
+    return D.summary.filter(r => r.split === split && r.variant === v);
+  }
+  function find(split, cfg, variant) {
+    const v = variant || VARIANT;
+    return D.summary.find(r => r.split === split && r.config === cfg && r.variant === v);
+  }
+  function deltaOf(split, cfg, variant) {
+    const v = variant || VARIANT;
+    return D.deltas.find(r => r.split === split && r.config === cfg && r.variant === v);
+  }
 
-  function bestFoundation(split, metric) {
-    const f = bySplit(split).filter(r => r.group === "foundation");
+  function bestFoundation(split, metric, variant) {
+    const f = bySplit(split, variant).filter(r =>
+      r.group === "foundation" && r[metric] != null);
     if (!f.length) return null;
     return f.reduce((a, b) => (HIGHER_BETTER(metric)
       ? (b[metric] > a[metric] ? b : a) : (b[metric] < a[metric] ? b : a)));
@@ -325,55 +338,70 @@
 
   function renderVerdict() {
     const tiles = $("#verdict-tiles"); tiles.innerHTML = "";
-    const noiseSd = (D.noise && D.noise.global_pcc_score_sd) || 0.005;
     D.split_order.forEach(split => {
-      const base = find(split, D.baseline);
-      const bf = bestFoundation(split, "global_pcc_score");
+      const base = find(split, D.baseline, D.base_variant);
+      const bf = bestFoundation(split, "mean_allele_pcc", D.base_variant);
       if (!base || !bf) return;
-      const d = deltaOf(split, bf.config);
-      const dv = d ? d.d_global_pcc_score : (bf.global_pcc_score - base.global_pcc_score);
-      const sig = d && Math.abs(d.d_global_pcc_score_t) > 2.5;
+      const d = deltaOf(split, bf.config, D.base_variant);
+      const dv = d ? d.d_mean_allele_pcc : (bf.mean_allele_pcc - base.mean_allele_pcc);
+      const sig = d && Math.abs(d.d_mean_allele_pcc_t) > 2.5;
       const sign = dv >= 0 ? "+" : "−";
       tiles.appendChild(el("div", { class: "tile" }, [
         el("div", { class: "k", text: D.split_meta[split].name }),
         el("div", { class: "v", text: sign + Math.abs(dv).toFixed(4),
                     style: "color:" + (dv >= 0 ? "var(--pos)" : "var(--neg)") }),
-        el("div", { class: "n", html: "best foundation arm vs baseline, global PCC<br>"
-          + "<span class='muted'>" + (sig ? "outside" : "inside") + " noise; baseline "
-          + fmt(base.global_pcc_score) + "</span>" })
+        el("div", { class: "n", html: "best foundation arm vs baseline,<br>mean per-allele PCC"
+          + "<br><span class='muted'>" + (sig ? "outside" : "inside") + " noise · baseline "
+          + fmt(base.mean_allele_pcc) + " · " + bf.config.split(" | ").join(" / ")
+          + "</span>" })
       ]));
     });
 
     // Headline sentence, derived from the data rather than asserted.
     const parts = D.split_order.map(split => {
-      const bf = bestFoundation(split, "global_pcc_score");
-      const d = bf && deltaOf(split, bf.config);
+      const bf = bestFoundation(split, "mean_allele_pcc", D.base_variant);
+      const d = bf && deltaOf(split, bf.config, D.base_variant);
       if (!d) return null;
-      const dv = d.d_global_pcc_score;
-      const sig = Math.abs(d.d_global_pcc_score_t) > 2.5;
+      const dv = d.d_mean_allele_pcc;
+      const sig = Math.abs(d.d_mean_allele_pcc_t) > 2.5;
       return { split, dv, sig };
     }).filter(Boolean);
-    const anyWin = parts.some(p => p.dv > 0 && p.sig);
-    const allLose = parts.every(p => p.dv <= 0);
+    const seen = parts.filter(p => p.split !== "allele");
+    const unseen = parts.find(p => p.split === "allele");
+    const winsSeen = seen.filter(p => p.dv > 0 && p.sig).length;
+    const unresolvedUnseen = unseen && !unseen.sig;
     let txt;
-    if (allLose) {
-      txt = "No. On every split tested, the best foundation-model arm scores at or "
-          + "below the BLOSUM baseline, and the deficits on the harder splits are "
-          + "larger than the noise floor. On this dataset, with this head and this "
-          + "training budget, the foundation-model features did not help.";
-    } else if (anyWin) {
-      txt = "Partly. At least one foundation-model arm beats the baseline by more "
-          + "than the noise floor on at least one split — see the paired differences "
-          + "below for where, and by how little.";
+    if (winsSeen === seen.length && seen.length && unresolvedUnseen) {
+      txt = "A qualified yes, confined to the case that matters least. Replacing the "
+          + "BLOSUM pseudosequence with a learned HLA representation gives a small but "
+          + "reproducible gain on both splits where the test alleles are also in "
+          + "training (+" + seen.map(p => Math.abs(p.dv).toFixed(3)).join(" and +")
+          + " mean per-allele PCC, outside the noise floor). On alleles never seen in "
+          + "training — the case that would actually justify a structural model — the "
+          + "difference falls inside the noise floor and this experiment cannot resolve "
+          + "it in either direction. The peptide side is unambiguous and goes the other "
+          + "way: ESM-2 peptide features lose decisively to BLOSUM.";
+    } else if (winsSeen === seen.length && seen.length && unseen && unseen.dv < 0) {
+      txt = "A qualified yes on seen alleles, and a loss on unseen ones. The learned HLA "
+          + "representation beats the pseudosequence wherever test alleles appear in "
+          + "training, and falls behind it on alleles held out entirely.";
+    } else if (winsSeen) {
+      txt = "Mixed. Some foundation-model arms beat the baseline by more than the "
+          + "noise floor on some splits. See the paired differences for where.";
+    } else if (parts.every(p => p.dv <= 0)) {
+      txt = "No. On every split tested the best foundation-model arm scores at or "
+          + "below the BLOSUM baseline. On this dataset, with frozen features and a "
+          + "small supervised head, they did not help.";
     } else {
-      txt = "No measurable benefit. Differences between the best foundation-model arm "
-          + "and the baseline sit inside the run-to-run noise floor on every split.";
+      txt = "No measurable benefit. Differences sit inside the run-to-run noise floor.";
     }
     $("#verdict-text").textContent = txt;
     $("#verdict-note").textContent = "Positive means the foundation-model arm beat the "
       + "baseline. \"Inside noise\" means the paired per-seed difference is not "
       + "distinguishable from run-to-run variation (|t| ≤ 2.5 over "
-      + D.seeds.length + " seeds).";
+      + D.seeds.length + " seeds). Mean per-allele PCC is used rather than global "
+      + "PCC because an HLA-only model that never sees the peptide still reaches "
+      + "~0.54 global PCC — see below.";
   }
 
   /* ================= noise floor ================= */
@@ -412,16 +440,21 @@
   }
 
   /* ================= grouped bar facets ================= */
-  let METRIC = "global_pcc_score";
+  let METRIC = "mean_allele_pcc";
 
   function barFacet(split, metric) {
-    const rows = bySplit(split).slice().sort((a, b) =>
+    const all = bySplit(split);
+    // An arm with no defined value for this metric (HLA-only has no per-allele
+    // correlation: its prediction is constant within an allele) is listed as
+    // n/a rather than silently dropped or plotted as zero.
+    const rows = all.filter(r => r[metric] != null).slice().sort((a, b) =>
       HIGHER_BETTER(metric) ? b[metric] - a[metric] : a[metric] - b[metric]);
+    const undef = all.filter(r => r[metric] == null);
     if (!rows.length) return null;
 
-    const padL = 230, padR = 64, padT = 10, padB = 34;
+    const padL = 250, padR = 64, padT = 10, padB = 34;
     const rowH = 26, h = padT + rows.length * rowH + padB;
-    const w = 860;
+    const w = 880;
     const vals = rows.map(r => r[metric] + (r[metric + "_sd"] || 0));
     let lo = 0, hi = Math.max.apply(null, vals) * 1.06;
     if (metric === "auc_1h" || metric === "auc_2h") lo = 0.5;
@@ -465,11 +498,39 @@
 
     const svg = el("svg", { viewBox: "0 0 " + w + " " + h, role: "img",
       "aria-label": METRIC_LABEL[metric] + " by configuration, " + D.split_meta[split].name }, g);
-    return el("figure", {}, [
+    const kids = [
       el("figcaption", { text: D.split_meta[split].name }),
       el("p", { class: "cap", text: D.split_meta[split].blurb }),
       svg
-    ]);
+    ];
+    if (undef.length) {
+      kids.push(el("p", { class: "muted", text: "Not defined for this metric: "
+        + undef.map(r => r.config).join("; ")
+        + " — prediction is constant within an allele, so a per-allele "
+        + "correlation does not exist. That is the finding, not a gap." }));
+    }
+    return el("figure", {}, kids);
+  }
+
+  function renderVariantControls() {
+    const host = $("#variant-controls"); host.innerHTML = "";
+    if (D.variants.length < 2) return;
+    host.appendChild(el("span", { class: "muted", style: "margin-right:4px",
+      text: "Training protocol" }));
+    D.variants.forEach(v => {
+      const m = D.variant_meta[v] || { name: v };
+      const b = el("button", { class: "seg", text: m.name,
+        "aria-pressed": String(v === VARIANT) });
+      b.addEventListener("click", () => {
+        VARIANT = v; renderVariantControls(); renderFacets(); renderDeltas();
+      });
+      host.appendChild(b);
+    });
+    const m = D.variant_meta[VARIANT];
+    if (m && m.blurb) {
+      host.appendChild(el("span", { class: "muted",
+        style: "flex:1 1 100%; margin-top:6px", text: m.blurb }));
+    }
   }
 
   function renderFacets() {
@@ -492,20 +553,33 @@
         o.setAttribute("aria-pressed", String(o === b)));
       METRIC = b.dataset.metric;
       renderFacets();
+      renderDeltas();
     });
   });
 
   /* ================= delta facets ================= */
   function deltaFacet(split) {
-    const rows = D.deltas.filter(r => r.split === split)
-      .slice().sort((a, b) => b.d_global_pcc_score - a.d_global_pcc_score);
+    const metric = METRIC, K = "d_" + metric;
+    const rows = D.deltas.filter(r => r.split === split && r.variant === VARIANT
+        && r[K] != null)
+      .slice().sort((a, b) => (HIGHER_BETTER(metric) ? b[K] - a[K] : a[K] - b[K]));
     if (!rows.length) return null;
-    const noise = (D.noise && D.noise.global_pcc_score_sd) || 0.005;
+    // The floor is measured on global PCC; for other metrics scale it by the
+    // baseline's own spread so the band stays meaningful rather than fictional.
+    let noise = (D.noise && D.noise.global_pcc_score_sd) || 0.003;
+    if (metric !== "global_pcc_score") {
+      const b = find(split, D.baseline);
+      const ref = find(split, D.baseline, D.base_variant);
+      if (b && ref && ref.global_pcc_score_sd > 1e-9 && b[metric + "_sd"] != null) {
+        noise = noise * (b[metric + "_sd"] / ref.global_pcc_score_sd);
+      }
+      if (!isFinite(noise) || noise <= 0) noise = 0.005;
+    }
 
-    const padL = 230, padR = 70, padT = 12, padB = 34;
-    const rowH = 26, h = padT + rows.length * rowH + padB, w = 860;
+    const padL = 250, padR = 80, padT = 12, padB = 34;
+    const rowH = 26, h = padT + rows.length * rowH + padB, w = 880;
     const ext = Math.max(noise * 1.5, ...rows.map(r =>
-      Math.abs(r.d_global_pcc_score) + (r.d_global_pcc_score_sd || 0))) * 1.12;
+      Math.abs(r[K]) + (r[K + "_sd"] || 0))) * 1.12;
     const x = v => padL + (v + ext) / (2 * ext) * (w - padL - padR);
 
     const g = [];
@@ -521,20 +595,19 @@
 
     rows.forEach((r, i) => {
       const y = padT + i * rowH + 4, bh = rowH - 10;
-      const v = r.d_global_pcc_score, sd = r.d_global_pcc_score_sd || 0;
-      const sig = Math.abs(r.d_global_pcc_score_t) > 2.5;
+      const v = r[K], sd = r[K + "_sd"] || 0, t = r[K + "_t"];
+      const sig = t != null && Math.abs(t) > 2.5;
+      const good = HIGHER_BETTER(metric) ? v >= 0 : v < 0;
       const x0 = x(0), x1 = x(v);
       const bar = el("rect", { class: "bar", x: Math.min(x0, x1), y: y,
         width: Math.max(1, Math.abs(x1 - x0)), height: bh, rx: 4,
-        fill: v >= 0 ? "var(--pos)" : "var(--neg)",
+        fill: good ? "var(--pos)" : "var(--neg)",
         opacity: sig ? 1 : 0.42 });
       hook(bar, "<b>" + r.config + "</b><br>" + D.split_meta[split].name
-        + "<br>Δ global PCC vs baseline: <b>" + (v >= 0 ? "+" : "−")
-        + Math.abs(v).toFixed(4) + "</b> ± " + fmt(sd) + " SD"
-        + "<br>paired t = " + r.d_global_pcc_score_t.toFixed(2)
+        + "<br>Δ " + METRIC_LABEL[metric] + " vs baseline: <b>" + (v >= 0 ? "+" : "−")
+        + Math.abs(v).toFixed(DEC(metric)) + "</b> ± " + fmt(sd, DEC(metric)) + " SD"
+        + "<br>paired t = " + (t == null ? "n/a" : t.toFixed(2))
         + " over " + r.n_paired + " seeds"
-        + "<br>Δ mean per-allele PCC: " + (r.d_mean_allele_pcc >= 0 ? "+" : "−")
-        + Math.abs(r.d_mean_allele_pcc).toFixed(4)
         + "<br><span style='opacity:.75'>" + (sig ? "outside the noise floor"
         : "inside the noise floor — not a result") + "</span>");
       g.push(bar);
@@ -549,23 +622,31 @@
       const tx = v >= 0 ? x(v + sd) + 7 : x(v - sd) - 7;
       g.push(el("text", { class: "val", x: tx, y: y + bh / 2 + 4,
         "text-anchor": v >= 0 ? "start" : "end",
-        text: (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(4) + (sig ? " *" : "") }));
+        text: (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(DEC(metric)) + (sig ? " *" : "") }));
     });
 
     const svg = el("svg", { viewBox: "0 0 " + w + " " + h, role: "img",
-      "aria-label": "Paired difference in global PCC versus baseline, " + D.split_meta[split].name }, g);
+      "aria-label": "Paired difference in " + METRIC_LABEL[metric]
+        + " versus baseline, " + D.split_meta[split].name }, g);
     return el("figure", {}, [
       el("figcaption", { text: D.split_meta[split].name }),
-      el("p", { class: "cap", text: "Shaded band = ±" + noise.toFixed(3)
-        + " noise floor. Faded bars and unmarked values are inside it. "
-        + "An asterisk marks |t| > 2.5." }),
+      el("p", { class: "cap", text: "Δ " + METRIC_LABEL[metric]
+        + ". Shaded band ≈ ±" + noise.toFixed(DEC(metric))
+        + " noise floor. Faded bars are inside it and are not results. "
+        + "An asterisk marks |t| > 2.5. Blue = better than baseline." }),
       svg
     ]);
   }
 
   function renderDeltas() {
     const host = $("#delta-facets"); host.innerHTML = "";
-    D.split_order.forEach(s => { const f = deltaFacet(s); if (f) host.appendChild(f); });
+    let any = false;
+    D.split_order.forEach(s => {
+      const f = deltaFacet(s);
+      if (f) { host.appendChild(f); any = true; }
+    });
+    if (!any) host.appendChild(el("p", { class: "muted",
+      text: "No paired comparisons available for this metric and protocol." }));
   }
 
   /* ================= per-allele ================= */
@@ -677,21 +758,24 @@
 
   /* ================= summary table ================= */
   function renderSummaryTable() {
-    const cols = ["global_pcc_score", "mean_allele_pcc", "global_scc_score",
+    const cols = ["mean_allele_pcc", "global_pcc_score", "global_scc_score",
                   "auc_1h", "auc_2h", "rmse_hours", "mae_hours"];
     const rows = D.summary.slice().sort((a, b) =>
-      D.split_order.indexOf(a.split) - D.split_order.indexOf(b.split)
-      || b.global_pcc_score - a.global_pcc_score);
+      D.variants.indexOf(a.variant) - D.variants.indexOf(b.variant)
+      || D.split_order.indexOf(a.split) - D.split_order.indexOf(b.split)
+      || (b.mean_allele_pcc || -9) - (a.mean_allele_pcc || -9));
     const t = el("table", {}, [
-      el("thead", {}, [el("tr", {}, ["split", "configuration", "dims", "seeds"]
+      el("thead", {}, [el("tr", {}, ["protocol", "split", "configuration", "dims", "seeds"]
         .concat(cols.map(c => METRIC_LABEL[c])).map(h => el("th", { text: h })))]),
       el("tbody", {}, rows.map(r => el("tr", {}, [
+        el("td", { text: (D.variant_meta[r.variant] || {}).name || r.variant }),
         el("td", { text: D.split_meta[r.split].name }),
         el("td", { text: r.config }),
         el("td", { text: String(r.n_features) }),
         el("td", { text: String(r.n_seeds) })
       ].concat(cols.map(c => el("td", {
-        text: fmt(r[c], DEC(c)) + " ± " + fmt(r[c + "_sd"], DEC(c))
+        text: r[c] == null ? "n/a"
+          : fmt(r[c], DEC(c)) + " ± " + fmt(r[c + "_sd"], DEC(c))
       }))))))
     ]);
     $("#summary-table").innerHTML = "";
@@ -853,12 +937,13 @@
 
   /* ================= go ================= */
   function renderAll() {
-    renderVerdict(); renderNoise(); renderFacets(); renderDeltas();
-    renderPAControls(); renderPA(); renderSummaryTable(); renderMethods();
+    renderVerdict(); renderNoise(); renderVariantControls(); renderFacets();
+    renderDeltas(); renderPAControls(); renderPA(); renderSummaryTable();
+    renderMethods();
   }
   renderAll();
   renderStructures();
-  $("#runstamp").textContent = D.runs.length + " runs · " + D.seeds.length
+  $("#runstamp").textContent = D.n_runs + " runs · " + D.seeds.length
     + " seeds · " + new Set(D.summary.map(r => r.config)).size + " configurations";
 })();
 </script>

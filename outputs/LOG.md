@@ -287,3 +287,109 @@ the capacity probe lands** (phase 2: 100 epochs, 256-unit head, and PCA to 180 d
 - Phase 2 launched: noise floor (split fixed, torch seed varied), capacity probes,
   pooling (mean vs per-residue, 35M vs 150M), and **augmentation** (pseudosequence *plus*
   learned block, rather than replacement) — the configuration that matters in practice.
+
+---
+
+## Entry 4 — The noise floor, measured three ways (`python/noise_floor.py`)
+
+| source of variation | runs | mean global PCC | SD | range |
+|---|---|---|---|---|
+| Unseeded published script (seed 42, split fixed) | 3 | 0.7209 | 0.0029 | 0.0052 |
+| Initialisation only (split fixed, `--torch_seed` varied) | 8 | 0.7208 | **0.0028** | 0.0072 |
+| Seed varied (split + init), random split | 5 | 0.7216 | 0.0013 | 0.0029 |
+
+**Floor adopted: SD 0.0029 global PCC.** The controlled initialisation-only measurement
+(0.0028) agrees closely with the uncontrolled repeats of the published script (0.0029),
+which is reassuring — the unseeded nondeterminism in `train_baseline.py` is init noise and
+nothing stranger.
+
+### Correction to an earlier assumption
+
+I had expected split variance to dominate initialisation variance. On the random split it is
+the **opposite**: seed-to-seed SD is 0.0013 versus 0.0028 for init alone. A random 80/20 split
+of 28,166 rows is extremely stable, so re-drawing it changes almost nothing and the residual
+spread is weight init. Worth stating plainly because it inverts the usual intuition.
+
+### But the splits are not comparable in this respect at all
+
+Baseline arm, seed spread of global PCC per split:
+
+| split | mean | SD | range over 5 seeds |
+|---|---|---|---|
+| random | 0.7216 | 0.0013 | 0.0029 |
+| cluster | 0.7028 | 0.0133 | 0.0313 |
+| **allele** | **0.4625** | **0.0812** | **0.2165** |
+
+**Leave-allele-out seed SD is 61x the random-split seed SD.** The baseline's global PCC on
+that split ranges from roughly 0.37 to 0.58 depending only on which 15 alleles were held out.
+
+Consequences, which govern how every leave-allele-out claim on this project is worded:
+
+1. A **single-seed** leave-allele-out number is nearly meaningless. Any paper or leaderboard
+   reporting one should be treated with suspicion.
+2. Arms must be compared **paired within a seed** (same held-out alleles) and the differences
+   averaged. An unpaired comparison of means across seeds would be swamped.
+3. Even paired, 5 seeds on this split gives |t| ~ 2.4 for a point-estimate difference as large
+   as -0.18 global PCC. The honest conclusion for unseen alleles is therefore
+   **"not demonstrated either way"**, not "foundation models fail" — the experiment as designed
+   lacks the power to resolve it. More seeds, or proper leave-one-allele-out cross-validation
+   over all 75 alleles, would be the fix. Flagged as the main power limitation of this sprint.
+
+---
+
+## Entry 5 — Capacity probe: the ESM-2 peptide loss is real, and the published protocol is undertrained
+
+Phase 2 asked whether ESM-2's peptide-side deficit was a worse representation or merely an
+underfitted 5,760-dim input in a 60-unit head on a 25-epoch budget. Answer: **a worse
+representation**, and the 25-epoch budget was *flattering* to it.
+
+Mean per-allele PCC, BLOSUM-HLA on the HLA side throughout, 5 seeds:
+
+| peptide features | 25 epochs | 100 epochs | change |
+|---|---|---|---|
+| BLOSUM-pep (baseline) | 0.5362 | **0.6293** | **+0.093** |
+| ESM2-pep (t30_150M, per-residue) | 0.4300 | 0.4390 | +0.009 |
+| **paired Δ (ESM − BLOSUM)** | **−0.1062** (t=−12.4) | **−0.1904** (t=−21.3) | gap widens |
+
+Same direction on every split (cluster Δ −0.263, allele Δ −0.064, all |t| > 5). Four times the
+training budget buys BLOSUM **ten times** what it buys ESM-2. Hypothesis "ESM-2 peptide features
+were just undertrained" is **discarded**.
+
+### The more consequential finding, which is not about foundation models at all
+
+**The published 25-epoch protocol is undertrained.** Training the *unchanged* baseline for
+100 instead of 25 epochs:
+
+| split | mean allele PCC 25ep → 100ep | global PCC 25ep → 100ep |
+|---|---|---|
+| random | 0.5362 → **0.6293** (+0.093) | 0.7216 → 0.7868 (+0.065) |
+| cluster | 0.4943 → **0.5723** (+0.078) | 0.7028 → 0.7565 (+0.054) |
+| allele | 0.3115 → **0.3777** (+0.066) | 0.4625 → 0.4899 (+0.027) |
+
+**Training longer improves the baseline roughly 3x more than the best foundation-model feature
+does** (+0.093 vs +0.032 mean allele PCC on random). The cheapest available win on this problem
+is epochs, not embeddings. Any comparison run only at 25 epochs — including all of my phase 1 —
+is a comparison against a handicapped baseline.
+
+### Consequence: phase 2 was stopped and re-prioritised
+
+This invalidates the *framing* of phase 1, though not its arithmetic: the HLA-side gains
+(+0.032 Boltz, +0.018 ESM2-HLA) were measured against an undertrained baseline, and a feature
+that merely helps a model converge faster will show exactly that signature. The urgent question
+became **does the HLA-side gain survive at 100 epochs?**
+
+Actions taken:
+
+- **Killed the 256-unit-head probe** (`h256`) after 2 of 30 runs. It tested the same
+  underfitting hypothesis the 100-epoch probe had already answered, and it was the slowest
+  stage in the queue. Its 2 completed runs are retained in `results.jsonl` but excluded from
+  the report, which now drops any variant with fewer than 3 seeds rather than show a 2-seed
+  arm beside 5-seed arms.
+- **Launched phase 3** (`python/run_phase3.py`) ordered by value, so the most important result
+  lands first: (1) HLA-side arms at 100 epochs on all splits, (2) PCA-180 dimension-matched
+  ESM-2 peptide, (3) augmentation (pseudosequence *plus* learned block) at 25 and 100 epochs,
+  (4) pooling and model-size comparison.
+
+Timing note: phase 2's ETA estimates were badly wrong (predicted ~38 min, ran ~80 min) because
+the 100-epoch and wide-head runs are far slower than the 25-epoch runs the average was seeded
+from. Recorded so later estimates are not trusted blindly.
