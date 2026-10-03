@@ -8,3 +8,14 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Boltz-2 embeddings: 32 MB, already tracked on origin/dev.
+# Recreate with scripts/extract_embeddings.sh (binary-safe).
+embeddings/
+
+# Cached ESM-2 peptide embeddings (regenerable, keyed by sequence)
+cache/
+
+# Model checkpoints and bulk prediction dumps
+outputs/**/*.pt
+outputs/**/test_predictions.csv
