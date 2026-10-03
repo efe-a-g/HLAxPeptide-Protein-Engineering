@@ -1,0 +1,13 @@
+{
+  "global_pcc_score": 0.7151019665291425,
+  "global_scc_score": 0.7238605844915813,
+  "global_pcc_thalf": 0.439966228424013,
+  "global_scc_thalf": 0.7238605844915813,
+  "mean_allele_pcc": 0.5158158143904346,
+  "mean_allele_scc": 0.5034146462374505,
+  "auc_1h": 0.8686414301345824,
+  "auc_2h": 0.8774987990766001,
+  "rmse_hours": 10.706905312856929,
+  "mae_hours": 4.163748128866955,
+  "n_evaluated_alleles": 73
+}
