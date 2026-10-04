@@ -1,0 +1,1 @@
+Descriptive percentile bootstrap over alleles. Related alleles and overlapping training folds are not independent; no training-seed uncertainty or multiplicity correction is included. These intervals are not confirmatory significance tests.

@@ -1,0 +1,10 @@
+{
+  "prediction_rows": 315760,
+  "unique_keys": true,
+  "all_manifests_match": true,
+  "finite_learned_baselines": true,
+  "all75_loao": true,
+  "unsupported_loao_correctly_NA": true,
+  "targets_match_source": true,
+  "n_original_rows": 28166
+}

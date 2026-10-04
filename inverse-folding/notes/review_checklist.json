@@ -1,0 +1,96 @@
+{
+  "review_scope": "Independent statistical and report review before full conditional and augmented-model completion; source and saved outputs inspected without rerunning unchanged tests.",
+  "reviewed_artifacts": [
+    "scripts/build_report.py",
+    "scripts/baselines.py",
+    "scripts/evaluation.py",
+    "scripts/aggregate_results.py",
+    "scripts/structural_pipeline.py",
+    "scripts/structural_analysis.py",
+    "outputs/structure/report_section.html",
+    "outputs/structure/structural_summary.json",
+    "outputs/structure/native_vs_shared_templates.csv",
+    "outputs/structure/assembly_selection.json",
+    "results.csv"
+  ],
+  "passed_checks": [
+    "No repeated allele-peptide pairs are invented as replicates; numerical noise ceiling is explicitly unavailable.",
+    "Zeros are not asserted to be synthetic padding or unmeasured solely from their numerical value.",
+    "All four joint pseudosequence mappings and canonical prior selection are distinguished.",
+    "Six of seven originally named clamp positions already present in pseudosequence is reported.",
+    "Raw replicate noise-ceiling unavailability is marked on correlation figures.",
+    "Fold-local means, PWMs, feature scaling, and unsupported LOAO categorical/PWM predictions are handled correctly.",
+    "Average ranks handle ties; constant predictions operationally score zero only with at least three valid rows and variable targets; missing predictions remain unavailable.",
+    "All and positive-only metrics are separately reported, with macro and size-weighted aggregation.",
+    "Partial full-data LOAO runs are excluded from final aggregate results.",
+    "Structural decoder official equivalence, causality, immutable contexts, and incremental cache alignment passed independent tests.",
+    "Assembly decision uses a label-free predeclared score-stability criterion and is not described as establishing molecular equivalence.",
+    "Conditional-independent gap is not interpreted as proof of biological positional independence.",
+    "No gain is not interpreted as proof that representations contain identical information.",
+    "Bootstrap intervals are explicitly descriptive and omit training-seed uncertainty and related-allele dependence.",
+    "Report builder now reads actual structural PNG directory and correct audit anchor figure filename."
+  ],
+  "final_narrative_requirements": [
+    {
+      "priority": "important",
+      "topic": "Shared versus matching-template motif quality",
+      "evidence": "B*27:05 shared ensemble P2 favors L, with R probability 0.1128, versus 0.8741 in smoothed empirical high-stability motif. Matching template raises R to 0.4640, yet positive-only kinetic Spearman is 0.0929.",
+      "required_interpretation": "Report failed shared-template anchor recovery and partial matching-template recovery. Motif agreement is not sufficient evidence of kinetic prediction."
+    },
+    {
+      "priority": "important",
+      "topic": "Heterogeneous matching-template benefit",
+      "evidence": "Matching template improves positive-only Spearman versus non-native ensemble in four of five tested alleles. A*03:01 worsens to -0.0901 from +0.0456. Across these five, means are 0.1388 matching and 0.0607 non-native.",
+      "required_interpretation": "This limited descriptive control does not universally validate shared threading or native-template superiority."
+    },
+    {
+      "priority": "important",
+      "topic": "Position-wise constraint hypothesis",
+      "evidence": "Observed-residue mean log probability peaks at P2 and P9, but predicted motif entropy is lowest at P3 (2.8591 bits), versus P2 3.1778 and P9 3.2301.",
+      "required_interpretation": "Observed residues are best supported at P2/P9, yet predicted specificity is strongest at P3; the diagnostics only partly recover canonical anchor behavior. Observed-residue log probability and distribution entropy measure different properties, so do not describe the anchor pattern as wholly absent."
+    },
+    {
+      "priority": "important",
+      "topic": "Scrambled-HLA control",
+      "evidence": "Positive-only macro Spearman falls from 0.1218 to 0.0388. Original/shuffled score Spearman is 0.7719.",
+      "required_interpretation": "HLA context influences the scores. This does not by itself establish calibrated allele specificity, and scrambling is an out-of-distribution perturbation."
+    },
+    {
+      "priority": "important",
+      "topic": "Visible numerical ensemble spread",
+      "evidence": "Full independent per-row template/order score SD: mean 0.30737, median 0.29701, 5th-95th percentiles 0.13810-0.51271 log-probability units per residue.",
+      "required_interpretation": "Include numerical spread for both modes once complete, not only a statement that arrays were saved. This is model sensitivity, not experimental uncertainty."
+    },
+    {
+      "priority": "important",
+      "topic": "Final three-way model comparison",
+      "evidence": "At review time, full conditional scoring and augmented baselines are still running.",
+      "required_interpretation": "Regenerate aggregation and structural analysis only after final archives exist; report zero-shot structural score, baseline, and baseline plus features on all and positive-only rows. Do not carry the interim two-mode structural summary into the final report."
+    },
+    {
+      "priority": "caveat",
+      "topic": "Single-run augmentation attribution",
+      "evidence": "Representations use deterministic but representation-specific initialization seeds, and extra input dimensions change first-layer parameter counts.",
+      "required_interpretation": "Describe gains as fixed-budget single-run empirical differences rather than proof of orthogonal structural information."
+    },
+    {
+      "priority": "caveat",
+      "topic": "Across-split population and eligibility changes",
+      "evidence": "For current fully covered structural predictions, LOAO macro correlations include 75 alleles; random includes 74 all / 73 positive-only; peptide-disjoint includes 71 for both subsets.",
+      "required_interpretation": "Do not interpret numerical split-score differences alone as the magnitude of leakage; held-out observations and eligible allele populations differ."
+    }
+  ],
+  "deliverable_status_at_review": {
+    "audit": "complete",
+    "split_manifests": "complete",
+    "tests": "11 passing checks from latest independent verification",
+    "reproducibility_readme": "complete; final command/output consistency should be rechecked",
+    "full_unconditional_and_scrambled_scores": "complete",
+    "full_conditional_scores": "running",
+    "full_baseline_and_feature_ablations": "running",
+    "final_headline_findings_and_report_regeneration": "pending completed full results",
+    "similarity_reduced_peptide_split": "optional and not implemented; explicitly stated",
+    "replicate_noise_ceiling": "not estimable from supplied export; explicitly stated"
+  },
+  "no_report_overwrite": true
+}

@@ -1,0 +1,7 @@
+mode,subset,macro_spearman
+Peptide independent,all,0.13031932500703428
+Peptide independent,nonzero,0.12175913422455006
+Autoregressive,all,0.13368483640559892
+Autoregressive,nonzero,0.11702777918770556
+Scrambled HLA,all,0.03505351901603599
+Scrambled HLA,nonzero,0.0387598477344512

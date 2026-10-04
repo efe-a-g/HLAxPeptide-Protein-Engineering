@@ -1,0 +1,10 @@
+{
+  "all_three_modes_cover_all_28166_rows": true,
+  "all_15_members_present": true,
+  "all_features_finite": true,
+  "anchor_features_sum_to_one": true,
+  "main_and_conditional_controls_scoring_algorithm_identical": true,
+  "main_source_snapshot": "source_history/c5af6d6ed8b618db95e75a50bd9d6bf68509a6e09b38ca9315d2bf502ed77297.py",
+  "current_source_snapshot": "source_history/c85e3469777e2f40e48f65a2f04c01273b7a611e3cc7e60c32f492c29dc72f98.py",
+  "source_change": "Added conditional_controls CLI stage after main launch; scoring methods unchanged."
+}

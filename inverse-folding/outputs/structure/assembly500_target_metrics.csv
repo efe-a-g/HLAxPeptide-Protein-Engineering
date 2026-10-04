@@ -1,0 +1,5 @@
+assembly,subset,macro_spearman,n,used_for_selection
+truncated,all,0.07104054640914512,500,False
+truncated,nonzero,0.10915645282700152,402,False
+full,all,0.06353220714439418,500,False
+full,nonzero,0.09835889955195443,402,False

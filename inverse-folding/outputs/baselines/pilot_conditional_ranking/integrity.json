@@ -1,0 +1,7 @@
+{
+  "finite_predictions": true,
+  "all75_loao": true,
+  "n_loao_rows": 1000,
+  "combined_features_only": true,
+  "exploratory": true
+}

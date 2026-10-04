@@ -1,0 +1,190 @@
+{
+  "review_date": "2026-10-03",
+  "purpose": "Source-grounded interpretation corrections and implementation decisions; hypotheses are distinguished from verified observations.",
+  "references": [
+    {
+      "id": "rasmussen2016",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4976001/",
+      "title": "Pan-specific prediction of peptide-MHC-I complex stability; a correlate of T cell immunogenicity",
+      "observations": [
+        "Methods describe 28,166 measurements on 75 HLA molecules before augmentation with 1,000 predicted weak-binding peptides assigned zero per allele.",
+        "Published allele-level Table 2 already includes zero fifth percentiles; a zero in the measurement table does not establish membership in the artificial augmentation.",
+        "Reported half-lives are geometric means of two independent experiments, rather than raw replicate measurements.",
+        "Assay peptide panels were selected using predicted affinity and supertype groupings; empirical motifs describe this selected panel, not unbiased natural peptide prevalence.",
+        "Table 2 names C67S constructs for B*14:01, B*14:02 and B*39:06; these are assay-provenance considerations for sequence annotation."
+      ],
+      "inference": "Matching 28,166 rows and allele counts supports the pre-augmentation measurement table. Zero provenance and a quantitative censoring threshold still require original export metadata."
+    },
+    {
+      "id": "harndahl_assay",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4341823/",
+      "title": "Real-time, High-Throughput Measurements of Peptide-MHC-I Dissociation Using a Scintillation Proximity Assay",
+      "observations": [
+        "The assay monitors labelled beta2-microglobulin dissociation as a proxy for peptide dissociation at 37 C and fits a one-phase decay.",
+        "Depending on plate format, consecutive readings were possible every 9 or 34 minutes; one experiment used approximately 30-minute readings.",
+        "The authors nevertheless report fitted half-lives as short as 0.1 hours."
+      ],
+      "inference": "Measurement interval is not a validated hard detection limit. Do not set c=0.5 hours merely from a 30-minute interval or label all zeros definitively left-censored. Censoring-aware sensitivity analysis must identify an assumed threshold."
+    },
+    {
+      "id": "netmhcpan_pseudosequence",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1949492/",
+      "title": "NetMHCpan, a Method for Quantitative Predictions of Peptide Binding to Any HLA-A and -B Locus Protein of Known Sequence",
+      "observations": [
+        "The pseudosequence collects peptide-contacting residues that were polymorphic across known HLA-A, HLA-B and HLA-C sequences.",
+        "The authors explicitly acknowledge multiple conformations of central peptide residues and include their alternative contact residues."
+      ]
+    },
+    {
+      "id": "clamp_local_verification",
+      "kind": "direct computation on provided CSV",
+      "canonical_one_based_indices": [
+        7,
+        9,
+        24,
+        45,
+        59,
+        62,
+        63,
+        66,
+        67,
+        69,
+        70,
+        73,
+        74,
+        76,
+        77,
+        80,
+        81,
+        84,
+        95,
+        97,
+        99,
+        114,
+        116,
+        118,
+        143,
+        147,
+        150,
+        152,
+        156,
+        158,
+        159,
+        163,
+        167,
+        171
+      ],
+      "exact_matches": 28166,
+      "total_rows": 28166,
+      "claimed_clamp_residues_in_pseudosequence": [
+        7,
+        59,
+        159,
+        171,
+        143,
+        147
+      ],
+      "claimed_clamp_residues_absent": [
+        146
+      ],
+      "local_clamp_amino_acid_sets": {
+        "7": [
+          "Y"
+        ],
+        "59": [
+          "H",
+          "Y"
+        ],
+        "159": [
+          "Y"
+        ],
+        "171": [
+          "H",
+          "Y"
+        ],
+        "143": [
+          "S",
+          "T"
+        ],
+        "146": [
+          "K"
+        ],
+        "147": [
+          "L",
+          "W"
+        ]
+      },
+      "interpretation": "The pseudosequence already contains six of the seven proposed clamp positions. Four of these positions vary in this dataset. The central assertion that the baseline discards the conserved clamp is false; evaluate transfer from structural pretraining and geometry instead. Constant omitted residues also do not add varying information to a supervised input."
+    },
+    {
+      "id": "pseudosequence_invariant_subset",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4498290/",
+      "title": "Zooming into the binding groove of HLA molecules: which positions and which substitutions change peptide binding most?",
+      "observations": [
+        "The study explicitly includes pseudosequence positions 7, 59, 143, 147 and 159, some invariant in its selected allele subsets. This independently refutes equating the 34 selected sites with variable sites in every finite dataset."
+      ]
+    },
+    {
+      "id": "hla_b27_conformation",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2211767/",
+      "title": "Dual, HLA-B27 Subtype-dependent Conformation of a Self-peptide",
+      "observations": [
+        "The same nonamer can adopt distinct conformations associated with a buried HLA polymorphism; its central P5 arginine can contact HLA Asp116."
+      ],
+      "inference": "Universal backbone invariance and universal solvent exposure of odd peptide positions are unsafe assumptions. Template ensembles and allele-specific structure comparisons are empirical controls. A small conditional-versus-independent model gap does not establish biological positional independence."
+    },
+    {
+      "id": "proteinmpnn_code",
+      "url": "https://github.com/dauparas/ProteinMPNN/blob/main/protein_mpnn_utils.py",
+      "observations": [
+        "unconditional_probs takes coordinates, masks, residue indices and chain encodings, but no amino acid sequence."
+      ],
+      "inference": "True unconditional scoring on one shared backbone cannot distinguish threaded HLA sequences. The intended motif is p(peptide_i | backbone, fixed HLA sequence), excluding all peptide sequence. This requires an appropriate custom attention mask or scoring each i with fixed HLA decoded first, i next, and all remaining peptide sites later. Validate HLA sensitivity and peptide-sequence invariance explicitly."
+    },
+    {
+      "id": "ligandmpnn_code",
+      "url": "https://github.com/dauparas/LigandMPNN/blob/main/model_utils.py",
+      "observations": [
+        "The autoregressive score implementation with use_sequence=False excludes sequence embeddings from the decoder.",
+        "The single_aa_score implementation on main places the target last when use_sequence=False and first when True; this appears opposite to its documentation."
+      ],
+      "inference": "Use inspected, pinned code and invariance tests, not flag names alone, to establish conditioning. Backbone-only scoring differs from HLA-conditioned peptide-independent scoring."
+    },
+    {
+      "id": "ligandmpnn_paper",
+      "url": "https://www.nature.com/articles/s41592-025-02626-1",
+      "title": "Atomic context-conditioned protein sequence design using LigandMPNN",
+      "observations": [
+        "LigandMPNN adds nonprotein atomic context and was trained on PDB assemblies through 16 December 2022.",
+        "Its validated primary task is sequence design and recovery, rather than dissociation-half-life regression."
+      ],
+      "inference": "A backbone-only HLA/peptide preparation removes the context responsible for its advertised ligand advantage. It can still be tested as a pretrained representation. Zero-shot here means no stability labels used for fitting; it does not establish exclusion of HLA structures or homologs from pretraining."
+    },
+    {
+      "id": "censreg_documentation",
+      "url": "https://search.r-project.org/CRAN/refmans/censReg/html/censReg.html",
+      "title": "censReg: Censored Regression (Tobit) Model",
+      "observations": [
+        "Gaussian Tobit regression maximizes a likelihood with density terms for observed targets and CDF probability terms for censored observations."
+      ],
+      "inference": "The requested max(0, prediction-log(c)) squared is a one-sided squared surrogate, not the Tobit likelihood. Name it censored_hinge, or implement censored negative log likelihood -log Phi((log(c+eps)-mu)/sigma) with explicit assumptions."
+    }
+  ],
+  "statistical_corrections": [
+    "A constant per-allele prediction has undefined within-allele Spearman/Pearson, not numerical zero. Report NA and its lack of ranking ability explicitly.",
+    "Repeat-label agreement is not automatically a prediction ceiling. Under Y1=T+e1 and Y2=T+e2 with equal independent errors, reliability r_rep gives Corr(T,Y)=sqrt(r_rep); correlation against the mean of k replicates has ceiling sqrt(k*r_rep/(1+(k-1)*r_rep)). These assumptions do not yield a distribution-free Spearman ceiling.",
+    "If raw independent replicates are absent, mark empirical noise ceiling not identifiable on correlation plots; never draw an invented numeric line.",
+    "The nonzero subset is a sensitivity analysis, not proof that every retained value is accurately measured or that every zero has a common censoring mechanism.",
+    "Motif entropy measures positional constraint; the mean log probability of observed peptides also depends on how their identities match the learned motif. A flat mean-log-probability profile alone does not prove missing anchors.",
+    "Template, truncation and score-mode selection using all labels would contaminate later evaluation even for a zero-shot score. Fix structural choices using training/validation labels only and report any exploratory whole-dataset figures.",
+    "Differences between model variants require paired comparisons over held-out alleles; absence of improvement does not prove representations contain identical biological information."
+  ],
+  "local_challenge_pdf": {
+    "path": "resources/Serova Protein Engineering Track Challenge.pdf",
+    "observations": [
+      "Brief explicitly calls all 28,166 targets measurements and says three C67S engineered constructs retain suffixes.",
+      "Brief permits subsetting based on compute and prioritizes defensible evidence, including negative findings.",
+      "The PDB illustration 4MJI is explicitly from an eight-residue B*51:01 epitope."
+    ]
+  }
+}

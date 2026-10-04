@@ -1,0 +1,83 @@
+/Users/aryasaranathan/.matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /var/folders/g4/b7qvy1z53pxc46y5nrpbvd700000gn/T/matplotlib-qytored6 because there was an issue with the default path (/Users/aryasaranathan/.matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+Matplotlib is building the font cache; this may take a moment.
+/Users/aryasaranathan/Desktop/projects/aiXscience_hackathon/scripts/structural_analysis.py:73: Pandas4Warning: Starting with pandas version 4.0 all arguments of mean will be keyword-only.
+  profile=pd.DataFrame(z['per_position'],index=d.allele).groupby(level=0).mean().mean(0)
+{
+  "rows": 28166,
+  "features_suffix": "",
+  "assembly": {
+    "predeclared_rule": "Choose truncated only if mean absolute ensemble score difference <0.02 log units; otherwise full. No target values used.",
+    "mean_absolute_logp_difference": 0.016137097030878067,
+    "max_absolute_logp_difference": 0.06281399726867676,
+    "score_correlation": 0.9983185056458065,
+    "truncated_runtime_seconds": 46.2,
+    "full_runtime_seconds": 88.4,
+    "n": 500,
+    "selected_assembly": "truncated",
+    "labels_used_for_selection": false
+  },
+  "motifs": {
+    "HLA-A*02:01": {
+      "P2_top": "L",
+      "P9_top": "F",
+      "P2_R_probability_ensemble": 0.009953989647328854,
+      "P2_R_probability_native": 0.006540251430124044,
+      "P2_R_probability_empirical": 0.0008
+    },
+    "HLA-B*27:05": {
+      "P2_top": "L",
+      "P9_top": "Y",
+      "P2_R_probability_ensemble": 0.11276734620332718,
+      "P2_R_probability_native": 0.46396854519844055,
+      "P2_R_probability_empirical": 0.8741007194244604
+    },
+    "HLA-A*03:01": {
+      "P2_top": "L",
+      "P9_top": "Y",
+      "P2_R_probability_ensemble": 0.01370929554104805,
+      "P2_R_probability_native": 0.004580091219395399,
+      "P2_R_probability_empirical": 0.0014619883040935672
+    }
+  },
+  "metrics": [
+    {
+      "mode": "Peptide independent",
+      "subset": "all",
+      "macro_spearman": 0.13031932500703428
+    },
+    {
+      "mode": "Peptide independent",
+      "subset": "nonzero",
+      "macro_spearman": 0.12175913422455006
+    },
+    {
+      "mode": "Scrambled HLA",
+      "subset": "all",
+      "macro_spearman": 0.03505351901603599
+    },
+    {
+      "mode": "Scrambled HLA",
+      "subset": "nonzero",
+      "macro_spearman": 0.0387598477344512
+    }
+  ],
+  "position_motif_entropy_bits": [
+    3.1917830217001497,
+    3.177837636472288,
+    2.8591264391820164,
+    3.477259087659136,
+    3.906593825550638,
+    3.6594454691976352,
+    3.8112105275556156,
+    3.850789926894579,
+    3.2300821821860906
+  ],
+  "mean_unconditional_template_order_score_sd": 0.3073711097240448,
+  "native_template_comparison": "5 available real alleles, native vs common 1HHK and ensemble excluding native; descriptive, no template tuning",
+  "scrambled_control": {
+    "mean_abs_score_change": 0.1557677537202835,
+    "max_abs_score_change": 0.764230489730835,
+    "score_spearman": 0.7719262309226983
+  }
+}

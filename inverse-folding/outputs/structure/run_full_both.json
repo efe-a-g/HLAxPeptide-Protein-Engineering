@@ -1,0 +1,37 @@
+{
+  "args": {
+    "stage": "full",
+    "mode": "both",
+    "threads": 2,
+    "assembly": "truncated"
+  },
+  "rows": 28166,
+  "seeds": [
+    17,
+    29,
+    43
+  ],
+  "templates": [
+    "1HHK",
+    "5IB1",
+    "7MLE",
+    "4NQX",
+    "3LKN"
+  ],
+  "assembly": "truncated",
+  "provenance": {
+    "checkpoint": "ligandmpnn_v_32_010_25.pt",
+    "checkpoint_sha256": "161cd264061fda9680cbb940255522ae42f2966c552d045d87913d9452a80970",
+    "source_commit": "26ec57ac976ade5379920dbd43c7f97a91cf82de",
+    "pipeline_sha256": "c5af6d6ed8b618db95e75a50bd9d6bf68509a6e09b38ca9315d2bf502ed77297",
+    "model": "LigandMPNN",
+    "atom_context": false,
+    "side_chain_context": false,
+    "device": "cpu",
+    "threads": 2,
+    "unconditional_mode": "all peptide identities hidden; fixed HLA sequence retained",
+    "conditional_mode": "autoregressive; HLA fixed first, random peptide orders",
+    "scoring_algorithm_sha256": "2e9a5175bd9b4ec243259736560ce1700b603902a2c6a03e1d1b132bd265e714"
+  },
+  "complete": true
+}

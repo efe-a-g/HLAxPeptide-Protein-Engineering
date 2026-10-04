@@ -1,0 +1,52 @@
+{
+  "rows": 500,
+  "selected_assembly_fixed": "truncated",
+  "selection_uses_results": false,
+  "role": "Exploratory conditional sensitivity controls after main setup fixed",
+  "metrics": [
+    {
+      "variant": "native",
+      "subset": "all",
+      "n": 500,
+      "macro_spearman": 0.07378898248030627
+    },
+    {
+      "variant": "native",
+      "subset": "nonzero",
+      "n": 402,
+      "macro_spearman": 0.08899334003245778
+    },
+    {
+      "variant": "scrambled",
+      "subset": "all",
+      "n": 500,
+      "macro_spearman": -0.011756824237039679
+    },
+    {
+      "variant": "scrambled",
+      "subset": "nonzero",
+      "n": 402,
+      "macro_spearman": 0.003230323029030349
+    },
+    {
+      "variant": "full_assembly",
+      "subset": "all",
+      "n": 500,
+      "macro_spearman": 0.07349988611743628
+    },
+    {
+      "variant": "full_assembly",
+      "subset": "nonzero",
+      "n": 402,
+      "macro_spearman": 0.09773850056884041
+    }
+  ],
+  "scrambled": {
+    "mean_abs_score_change": 0.14937186241149902,
+    "score_spearman": 0.7782298969195877
+  },
+  "full_assembly": {
+    "mean_abs_score_change": 0.015478717163205147,
+    "score_spearman": 0.9977201828807315
+  }
+}

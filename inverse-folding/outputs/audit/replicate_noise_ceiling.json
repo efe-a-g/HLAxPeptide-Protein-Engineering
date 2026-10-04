@@ -1,0 +1,18 @@
+{
+  "n_unique_allele_peptide_pairs": 28166,
+  "n_repeated_pairs": 0,
+  "n_rows_in_repeated_pairs": 0,
+  "n_pairwise_replicate_comparisons": 0,
+  "pearson_log_target": null,
+  "spearman": null,
+  "estimated_single_measurement_reliability": null,
+  "ideal_latent_predictor_pearson_ceiling_sqrt_reliability": null,
+  "noise_ceiling_status": "not_estimable_no_replicates",
+  "plot_annotation": "Replicate noise ceiling: unavailable (no repeated allele-peptide pairs)",
+  "limitations": [
+    "Repeated peptides across different alleles are different biological complexes and cannot estimate replicate noise.",
+    "The input may have already averaged or deduplicated experimental replicates; their raw measurements are unavailable.",
+    "Replicate Pearson is reliability under independent exchangeable additive errors; sqrt(reliability), not reliability, bounds an ideal latent predictor's correlation with one noisy outcome under those assumptions.",
+    "Spearman replicate agreement is not a universal Spearman ceiling."
+  ]
+}

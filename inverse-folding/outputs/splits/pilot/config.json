@@ -1,0 +1,6 @@
+{
+  "seed": 20261003,
+  "test_fraction": 0.2,
+  "training_membership": "universe minus test rows",
+  "target_used_to_split": false
+}

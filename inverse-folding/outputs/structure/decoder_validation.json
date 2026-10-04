@@ -1,0 +1,7 @@
+{
+  "conditional_official_max_abs_error": 9.5367431640625e-07,
+  "unconditional_nine_official_calls_max_abs_error": 0.0,
+  "unconditional_peptide_mutation_max_abs_error": 0.0,
+  "unconditional_hla_shuffle_max_abs_change": 4.423996448516846,
+  "passed": true
+}

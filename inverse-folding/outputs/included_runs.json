@@ -1,0 +1,107 @@
+[
+  {
+    "path": "outputs/baselines/full/predictions.csv.gz",
+    "representation": "allele_embedding",
+    "loss": "censored_hinge"
+  },
+  {
+    "path": "outputs/baselines/full/predictions.csv.gz",
+    "representation": "allele_embedding",
+    "loss": "mse"
+  },
+  {
+    "path": "outputs/baselines/full/predictions.csv.gz",
+    "representation": "allele_embedding",
+    "loss": "ranking"
+  },
+  {
+    "path": "outputs/baselines/full/predictions.csv.gz",
+    "representation": "allele_mean",
+    "loss": "reference"
+  },
+  {
+    "path": "outputs/baselines/full/predictions.csv.gz",
+    "representation": "blosum_pseudoseq",
+    "loss": "censored_hinge"
+  },
+  {
+    "path": "outputs/baselines/full/predictions.csv.gz",
+    "representation": "blosum_pseudoseq",
+    "loss": "mse"
+  },
+  {
+    "path": "outputs/baselines/full/predictions.csv.gz",
+    "representation": "blosum_pseudoseq",
+    "loss": "ranking"
+  },
+  {
+    "path": "outputs/baselines/full/predictions.csv.gz",
+    "representation": "pwm",
+    "loss": "reference"
+  },
+  {
+    "path": "outputs/baselines/full_unconditional/predictions.csv.gz",
+    "representation": "baseline_plus_unconditional_all",
+    "loss": "mse"
+  },
+  {
+    "path": "outputs/baselines/full_unconditional/predictions.csv.gz",
+    "representation": "baseline_plus_unconditional_anchor_softmax",
+    "loss": "mse"
+  },
+  {
+    "path": "outputs/baselines/full_unconditional/predictions.csv.gz",
+    "representation": "baseline_plus_unconditional_logp_per_position",
+    "loss": "mse"
+  },
+  {
+    "path": "outputs/baselines/full_unconditional/predictions.csv.gz",
+    "representation": "baseline_plus_unconditional_mean_logp",
+    "loss": "mse"
+  },
+  {
+    "path": "outputs/baselines/full_conditional/predictions.csv.gz",
+    "representation": "baseline_plus_conditional_all",
+    "loss": "mse"
+  },
+  {
+    "path": "outputs/baselines/full_conditional/predictions.csv.gz",
+    "representation": "baseline_plus_conditional_anchor_softmax",
+    "loss": "mse"
+  },
+  {
+    "path": "outputs/baselines/full_conditional/predictions.csv.gz",
+    "representation": "baseline_plus_conditional_logp_per_position",
+    "loss": "mse"
+  },
+  {
+    "path": "outputs/baselines/full_conditional/predictions.csv.gz",
+    "representation": "baseline_plus_conditional_mean_logp",
+    "loss": "mse"
+  },
+  {
+    "path": "outputs/baselines/full_unconditional_ranking/predictions.csv.gz",
+    "representation": "baseline_plus_unconditional_all",
+    "loss": "ranking"
+  },
+  {
+    "path": "outputs/baselines/full_conditional_ranking/predictions.csv.gz",
+    "representation": "baseline_plus_conditional_all",
+    "loss": "ranking"
+  },
+  {
+    "path": "outputs/structure/features_unconditional.npz",
+    "representation": "ligandmpnn_unconditional",
+    "loss": "zero_shot"
+  },
+  {
+    "path": "outputs/structure/features_conditional.npz",
+    "representation": "ligandmpnn_conditional",
+    "loss": "zero_shot"
+  },
+  {
+    "path": "outputs/structure/features_scrambled.npz",
+    "representation": "ligandmpnn_scrambled",
+    "loss": "zero_shot"
+  }
+]

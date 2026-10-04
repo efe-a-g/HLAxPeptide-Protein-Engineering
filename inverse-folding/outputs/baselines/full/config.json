@@ -1,0 +1,31 @@
+{
+  "stage": "full",
+  "epochs": 20,
+  "batch_size": 1024,
+  "learning_rate": 0.001,
+  "censor_threshold": 0.1,
+  "losses": "mse,censored_hinge,ranking",
+  "representations": "allele_mean,pwm,allele_embedding,blosum_pseudoseq",
+  "structural": null,
+  "splits": null,
+  "max_folds": null,
+  "output": null,
+  "resume": false,
+  "seed": 20261003,
+  "n_rows": 28166,
+  "n_alleles": 75,
+  "epsilon": 0.05,
+  "amino_acid_order": "ACDEFGHIKLMNPQRSTVWY",
+  "peptide_encoding": "BLOSUM50 / 5, flattened 9x20",
+  "pseudo_encoding": "one-hot 34x20",
+  "embedding_dim": 32,
+  "hidden_widths": [
+    64,
+    32
+  ],
+  "torch_threads": 2,
+  "censoring_note": "Assumed zero censoring; c=0.1h is sensitivity assumption, not verified detection floor.",
+  "ranking_note": "Two random matchings per allele per batch, exact target ties skipped.",
+  "target_note": "No test-target use or test-driven early stopping; fixed epoch budget.",
+  "pwm_note": "Train half-life >2h only; 20 train-background pseudocounts per position."
+}

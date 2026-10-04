@@ -1,0 +1,340 @@
+{
+  "rows": 28166,
+  "features_suffix": "",
+  "assembly": {
+    "predeclared_rule": "Choose truncated only if mean absolute ensemble score difference <0.02 log units; otherwise full. No target values used.",
+    "mean_absolute_logp_difference": 0.016137097030878067,
+    "max_absolute_logp_difference": 0.06281399726867676,
+    "score_correlation": 0.9983185056458065,
+    "truncated_runtime_seconds": 46.2,
+    "full_runtime_seconds": 88.4,
+    "n": 500,
+    "selected_assembly": "truncated",
+    "labels_used_for_selection": false
+  },
+  "assembly_target_metrics": [
+    {
+      "assembly": "truncated",
+      "subset": "all",
+      "macro_spearman": 0.07104054640914512,
+      "n": 500,
+      "used_for_selection": false
+    },
+    {
+      "assembly": "truncated",
+      "subset": "nonzero",
+      "macro_spearman": 0.10915645282700152,
+      "n": 402,
+      "used_for_selection": false
+    },
+    {
+      "assembly": "full",
+      "subset": "all",
+      "macro_spearman": 0.06353220714439418,
+      "n": 500,
+      "used_for_selection": false
+    },
+    {
+      "assembly": "full",
+      "subset": "nonzero",
+      "macro_spearman": 0.09835889955195443,
+      "n": 402,
+      "used_for_selection": false
+    }
+  ],
+  "native_peptide_dataset_overlap": [
+    {
+      "pdb_id": "1HHK",
+      "native_peptide": "LLFGYPVYV",
+      "any_allele_rows": 0,
+      "native_allele_rows": 0
+    },
+    {
+      "pdb_id": "5IB1",
+      "native_peptide": "RRKWRRWHL",
+      "any_allele_rows": 7,
+      "native_allele_rows": 0
+    },
+    {
+      "pdb_id": "7MLE",
+      "native_peptide": "VVRPSVASK",
+      "any_allele_rows": 0,
+      "native_allele_rows": 0
+    },
+    {
+      "pdb_id": "4NQX",
+      "native_peptide": "CTELKLNDY",
+      "any_allele_rows": 0,
+      "native_allele_rows": 0
+    },
+    {
+      "pdb_id": "3LKN",
+      "native_peptide": "LPFERATIM",
+      "any_allele_rows": 0,
+      "native_allele_rows": 0
+    }
+  ],
+  "motifs": {
+    "HLA-A*02:01": {
+      "P2_top": "L",
+      "P9_top": "F",
+      "P2_top_native": "L",
+      "P9_top_native": "L",
+      "P9_KR_probability_ensemble": 0.013423541560769081,
+      "P9_KR_probability_native": 0.007589814718812704,
+      "P9_KR_probability_empirical": 0.0016,
+      "P2_R_probability_ensemble": 0.009953989647328854,
+      "P2_R_probability_native": 0.006540251430124044,
+      "P2_R_probability_native_scrambled": 0.00842772051692009,
+      "P2_top_native_scrambled": "P",
+      "P9_top_native_scrambled": "D",
+      "P2_R_probability_empirical": 0.0008
+    },
+    "HLA-B*27:05": {
+      "P2_top": "L",
+      "P9_top": "Y",
+      "P2_top_native": "R",
+      "P9_top_native": "F",
+      "P9_KR_probability_ensemble": 0.17305900156497955,
+      "P9_KR_probability_native": 0.050354957580566406,
+      "P9_KR_probability_empirical": 0.42446043165467623,
+      "P2_R_probability_ensemble": 0.11276734620332718,
+      "P2_R_probability_native": 0.46396854519844055,
+      "P2_R_probability_native_scrambled": 0.02350238710641861,
+      "P2_top_native_scrambled": "G",
+      "P9_top_native_scrambled": "D",
+      "P2_R_probability_empirical": 0.8741007194244604
+    },
+    "HLA-A*03:01": {
+      "P2_top": "L",
+      "P9_top": "Y",
+      "P2_top_native": "V",
+      "P9_top_native": "Y",
+      "P9_KR_probability_ensemble": 0.203010693192482,
+      "P9_KR_probability_native": 0.1956777274608612,
+      "P9_KR_probability_empirical": 0.8625730994152047,
+      "P2_R_probability_ensemble": 0.01370929554104805,
+      "P2_R_probability_native": 0.004580091219395399,
+      "P2_R_probability_native_scrambled": 0.005000649020075798,
+      "P2_top_native_scrambled": "P",
+      "P9_top_native_scrambled": "G",
+      "P2_R_probability_empirical": 0.0014619883040935672
+    }
+  },
+  "metrics": [
+    {
+      "mode": "Peptide independent",
+      "subset": "all",
+      "macro_spearman": 0.13031932500703428
+    },
+    {
+      "mode": "Peptide independent",
+      "subset": "nonzero",
+      "macro_spearman": 0.12175913422455006
+    },
+    {
+      "mode": "Autoregressive",
+      "subset": "all",
+      "macro_spearman": 0.13368483640559892
+    },
+    {
+      "mode": "Autoregressive",
+      "subset": "nonzero",
+      "macro_spearman": 0.11702777918770556
+    },
+    {
+      "mode": "Scrambled HLA",
+      "subset": "all",
+      "macro_spearman": 0.03505351901603599
+    },
+    {
+      "mode": "Scrambled HLA",
+      "subset": "nonzero",
+      "macro_spearman": 0.0387598477344512
+    }
+  ],
+  "position_motif_entropy_bits": [
+    3.1917830217001497,
+    3.177837636472288,
+    2.8591264391820164,
+    3.477259087659136,
+    3.906593825550638,
+    3.6594454691976352,
+    3.8112105275556156,
+    3.850789926894579,
+    3.2300821821860906
+  ],
+  "mean_unconditional_template_order_score_sd": 0.3073711097240448,
+  "native_template_comparison": "5 available real alleles, native vs common 1HHK and ensemble excluding native; descriptive, no template tuning",
+  "observed_runtime_seconds": {
+    "first_unconditional_motif_fill_seconds": 44.7,
+    "pilot_conditional_seconds": 74.7,
+    "full_conditional_expansion_seconds": 745.2
+  },
+  "scrambled_control": {
+    "mean_abs_score_change": 0.1557677537202835,
+    "max_abs_score_change": 0.764230489730835,
+    "score_spearman": 0.7719262309226983
+  },
+  "conditional_control": {
+    "mean_abs_score_change": 0.046331871300935745,
+    "mean_template_order_sd": 0.3027673065662384,
+    "score_spearman": 0.9825029275702399,
+    "conditional_minus_independent_macro_spearman": [
+      {
+        "subset": "all",
+        "delta_macro_spearman": 0.0033655113985646477,
+        "n_alleles": 75,
+        "ci_low": -0.0018918776399667722,
+        "ci_high": 0.007926650127019253,
+        "bootstrap_unit": "allele",
+        "caveat": "Descriptive; related alleles are not independent; not a kinetics mechanism test."
+      },
+      {
+        "subset": "nonzero",
+        "delta_macro_spearman": -0.004731355036844521,
+        "n_alleles": 75,
+        "ci_low": -0.012319401610032667,
+        "ci_high": 0.001301981066305388,
+        "bootstrap_unit": "allele",
+        "caveat": "Descriptive; related alleles are not independent; not a kinetics mechanism test."
+      }
+    ],
+    "mean_between_template_score_sd": 0.2995239794254303,
+    "mean_within_template_order_score_sd": 0.03488137945532799
+  },
+  "conditional500_controls": {
+    "rows": 500,
+    "selected_assembly_fixed": "truncated",
+    "selection_uses_results": false,
+    "role": "Exploratory conditional sensitivity controls after main setup fixed",
+    "metrics": [
+      {
+        "variant": "native",
+        "subset": "all",
+        "n": 500,
+        "macro_spearman": 0.07378898248030627
+      },
+      {
+        "variant": "native",
+        "subset": "nonzero",
+        "n": 402,
+        "macro_spearman": 0.08899334003245778
+      },
+      {
+        "variant": "scrambled",
+        "subset": "all",
+        "n": 500,
+        "macro_spearman": -0.011756824237039679
+      },
+      {
+        "variant": "scrambled",
+        "subset": "nonzero",
+        "n": 402,
+        "macro_spearman": 0.003230323029030349
+      },
+      {
+        "variant": "full_assembly",
+        "subset": "all",
+        "n": 500,
+        "macro_spearman": 0.07349988611743628
+      },
+      {
+        "variant": "full_assembly",
+        "subset": "nonzero",
+        "n": 402,
+        "macro_spearman": 0.09773850056884041
+      }
+    ],
+    "scrambled": {
+      "mean_abs_score_change": 0.14937186241149902,
+      "score_spearman": 0.7782298969195877
+    },
+    "full_assembly": {
+      "mean_abs_score_change": 0.015478717163205147,
+      "score_spearman": 0.9977201828807315
+    }
+  },
+  "per_row_ensemble_score_sd": {
+    "Peptide independent": {
+      "all": {
+        "mean": 0.3073711097240448,
+        "median": 0.2970092296600342,
+        "p05": 0.1380959451198578,
+        "p95": 0.5127101540565491
+      },
+      "nonzero": {
+        "mean": 0.3100261688232422,
+        "median": 0.2994142472743988,
+        "p05": 0.14055706560611725,
+        "p95": 0.5151185989379883
+      }
+    },
+    "Autoregressive": {
+      "all": {
+        "mean": 0.3027673065662384,
+        "median": 0.2915313243865967,
+        "p05": 0.1371557116508484,
+        "p95": 0.5024933815002441
+      },
+      "nonzero": {
+        "mean": 0.305539071559906,
+        "median": 0.29418036341667175,
+        "p05": 0.13918721675872803,
+        "p95": 0.5050512552261353
+      }
+    },
+    "Scrambled HLA": {
+      "all": {
+        "mean": 0.2772581875324249,
+        "median": 0.27158230543136597,
+        "p05": 0.17162825167179108,
+        "p95": 0.4039379358291626
+      },
+      "nonzero": {
+        "mean": 0.27825552225112915,
+        "median": 0.2724236845970154,
+        "p05": 0.17239658534526825,
+        "p95": 0.40486350655555725
+      }
+    }
+  },
+  "individual_ensemble_member_macro_spearman_range": [
+    {
+      "mode": "Autoregressive",
+      "subset": "all",
+      "minimum": 0.040178427140843936,
+      "maximum": 0.1325366214692959
+    },
+    {
+      "mode": "Autoregressive",
+      "subset": "nonzero",
+      "minimum": 0.04352012322856236,
+      "maximum": 0.12112775072062214
+    },
+    {
+      "mode": "Peptide independent",
+      "subset": "all",
+      "minimum": 0.03860330295535814,
+      "maximum": 0.12884203223867066
+    },
+    {
+      "mode": "Peptide independent",
+      "subset": "nonzero",
+      "minimum": 0.04009094176489066,
+      "maximum": 0.12226335057283914
+    },
+    {
+      "mode": "Scrambled HLA",
+      "subset": "all",
+      "minimum": -0.007622477821574005,
+      "maximum": 0.055715130813226175
+    },
+    {
+      "mode": "Scrambled HLA",
+      "subset": "nonzero",
+      "minimum": -0.00949827639050496,
+      "maximum": 0.061206980912079996
+    }
+  ]
+}

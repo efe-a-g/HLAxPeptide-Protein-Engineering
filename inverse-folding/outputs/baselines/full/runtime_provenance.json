@@ -1,0 +1,14 @@
+{
+  "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 17.0.0 (clang-1700.6.4.2)]",
+  "numpy": "2.5.3",
+  "torch": "2.14.1",
+  "training_function_sha256": {
+    "representations": "ac763b3d7d52e5653750a4f0181cf3bdc4ee8b800bb0a5e9527bdf87f9c86c3c",
+    "Head": "a3c48781c57d022f4a4f767d9cc111762ac4f8ede7754d35be73893fe1bb162a",
+    "ranking_pairs": "5dcb58c1bc125f1a2d5b7d6d2012612bacbd3d7ef153ad00c0e1b3cb54109cac",
+    "train_predict": "9ba0a185ace8a74ac1ace5ebeffd72396441f851ee3de8b0d40c40273f95594f",
+    "motif_predict": "ab8ebe54428c5a6ec58fdb20d7d2d2ecc72343fb8e4fba0cd97b7c1e9b5eb165",
+    "stable_seed": "bc6ed30f72607e9b7496c8ff62b86ebbb7eb96bfcf9a57143a60051d93cb96fd"
+  },
+  "note": "Numerical baseline training functions unchanged during pilot/full runs. Later script changes add structural NPZ alias support and metadata; function hashes identify numerical implementation."
+}

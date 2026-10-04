@@ -1,0 +1,354 @@
+<section class="callout"><h2>Observed result</h2><p><strong>Frozen LigandMPNN features improved the supervised baseline in this fixed-budget experiment.</strong> With MSE, the combined peptide-independent features raised held-out-allele mean Spearman from <strong>0.423 / 0.409</strong> to <strong>0.476 / 0.451</strong> on all / nonzero rows. In the exploratory ranking-loss comparison, the corresponding improvement was <strong>0.475 / 0.446 → 0.509 / 0.475</strong>. These are matched-loss comparisons; neither the best component ablation nor a random split was selected as the headline.</p>
+<p>The structural score alone was weak: <strong>0.130 / 0.122</strong> for independent positions and <strong>0.134 / 0.117</strong> for autoregressive scoring. Conditional likelihood did not rescue zero-shot kinetics prediction. Native-template motif recovery and HLA-scrambling controls show meaningful context sensitivity, but shared-template transfer dilutes some allele-specific preferences. The evidence supports using pretrained features with a supervised head in this setting; it does not isolate a geometry-specific mechanism or establish a universal benefit across foundation models.</p>
+<p>Autoregressive feature augmentation reached <strong>0.493 / 0.453</strong> with MSE and <strong>0.506 / 0.471</strong> with ranking loss. Its apparent MSE advantage over independent features is much smaller after zeros are excluded, and it reverses under ranking loss. Given the substantially larger scoring cost, these results favor the simpler independent-position features for this tested pipeline; they do not prove that biological position dependence is absent.</p>
+<p>The proposed missing-clamp rationale also needs correction: six of the seven cited clamp positions already occur in the supplied pseudosequence. No empirical replicate ceiling can be estimated because the export contains no repeated allele–peptide pairs.</p>
+<table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Model</th>
+      <th>Loss</th>
+      <th>Spearman · all</th>
+      <th>Spearman · nonzero</th>
+      <th>Weighted · all</th>
+      <th>Weighted · nonzero</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Structural score · independent</td>
+      <td>zero_shot</td>
+      <td>0.130</td>
+      <td>0.122</td>
+      <td>0.115</td>
+      <td>0.103</td>
+    </tr>
+    <tr>
+      <td>Structural score · autoregressive</td>
+      <td>zero_shot</td>
+      <td>0.134</td>
+      <td>0.117</td>
+      <td>0.120</td>
+      <td>0.102</td>
+    </tr>
+    <tr>
+      <td>BLOSUM + pseudosequence</td>
+      <td>mse</td>
+      <td>0.423</td>
+      <td>0.409</td>
+      <td>0.447</td>
+      <td>0.441</td>
+    </tr>
+    <tr>
+      <td>Baseline + independent features</td>
+      <td>mse</td>
+      <td>0.476</td>
+      <td>0.451</td>
+      <td>0.503</td>
+      <td>0.484</td>
+    </tr>
+    <tr>
+      <td>Baseline + autoregressive features</td>
+      <td>mse</td>
+      <td>0.493</td>
+      <td>0.453</td>
+      <td>0.509</td>
+      <td>0.487</td>
+    </tr>
+    <tr>
+      <td>BLOSUM + pseudosequence</td>
+      <td>ranking</td>
+      <td>0.475</td>
+      <td>0.446</td>
+      <td>0.500</td>
+      <td>0.491</td>
+    </tr>
+    <tr>
+      <td>Baseline + independent features</td>
+      <td>ranking</td>
+      <td>0.509</td>
+      <td>0.475</td>
+      <td>0.538</td>
+      <td>0.521</td>
+    </tr>
+    <tr>
+      <td>Baseline + autoregressive features</td>
+      <td>ranking</td>
+      <td>0.506</td>
+      <td>0.471</td>
+      <td>0.531</td>
+      <td>0.518</td>
+    </tr>
+  </tbody>
+</table><p>All 75 alleles are eligible in both subsets for these primary comparisons. “All” contains 28,166 rows; “nonzero” contains 22,487. The combined feature vector contains one scalar, nine observed-residue log probabilities and 40 anchor probabilities. MSE is the planned primary comparison; ranking augmentation is an exploratory follow-up. No numerical replicate noise ceiling can be estimated from this export.</p></section><h2>Paired changes across held-out alleles</h2><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>subset</th>
+      <th>baseline</th>
+      <th>variant</th>
+      <th>delta_macro_spearman</th>
+      <th>ci_low</th>
+      <th>ci_high</th>
+      <th>alleles_improved</th>
+      <th>n_alleles</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>all</td>
+      <td>blosum_pseudoseq | mse</td>
+      <td>baseline_plus_conditional_all | mse</td>
+      <td>0.070</td>
+      <td>0.045</td>
+      <td>0.097</td>
+      <td>59</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>all</td>
+      <td>blosum_pseudoseq | mse</td>
+      <td>baseline_plus_unconditional_all | mse</td>
+      <td>0.053</td>
+      <td>0.021</td>
+      <td>0.084</td>
+      <td>57</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>all</td>
+      <td>blosum_pseudoseq | mse</td>
+      <td>blosum_pseudoseq | censored_hinge</td>
+      <td>0.005</td>
+      <td>-0.016</td>
+      <td>0.025</td>
+      <td>44</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>all</td>
+      <td>blosum_pseudoseq | mse</td>
+      <td>blosum_pseudoseq | ranking</td>
+      <td>0.052</td>
+      <td>0.030</td>
+      <td>0.074</td>
+      <td>61</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>all</td>
+      <td>blosum_pseudoseq | ranking</td>
+      <td>baseline_plus_conditional_all | ranking</td>
+      <td>0.031</td>
+      <td>0.007</td>
+      <td>0.056</td>
+      <td>46</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>all</td>
+      <td>blosum_pseudoseq | ranking</td>
+      <td>baseline_plus_unconditional_all | ranking</td>
+      <td>0.034</td>
+      <td>0.012</td>
+      <td>0.059</td>
+      <td>49</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>all</td>
+      <td>ligandmpnn_unconditional | zero_shot</td>
+      <td>ligandmpnn_conditional | zero_shot</td>
+      <td>0.003</td>
+      <td>-0.002</td>
+      <td>0.008</td>
+      <td>51</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>all</td>
+      <td>baseline_plus_unconditional_all | mse</td>
+      <td>baseline_plus_conditional_all | mse</td>
+      <td>0.017</td>
+      <td>-0.005</td>
+      <td>0.043</td>
+      <td>41</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>all</td>
+      <td>baseline_plus_unconditional_all | ranking</td>
+      <td>baseline_plus_conditional_all | ranking</td>
+      <td>-0.003</td>
+      <td>-0.021</td>
+      <td>0.015</td>
+      <td>34</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>nonzero</td>
+      <td>blosum_pseudoseq | mse</td>
+      <td>baseline_plus_conditional_all | mse</td>
+      <td>0.043</td>
+      <td>0.022</td>
+      <td>0.066</td>
+      <td>53</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>nonzero</td>
+      <td>blosum_pseudoseq | mse</td>
+      <td>baseline_plus_unconditional_all | mse</td>
+      <td>0.041</td>
+      <td>0.019</td>
+      <td>0.065</td>
+      <td>53</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>nonzero</td>
+      <td>blosum_pseudoseq | mse</td>
+      <td>blosum_pseudoseq | censored_hinge</td>
+      <td>0.005</td>
+      <td>-0.014</td>
+      <td>0.022</td>
+      <td>48</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>nonzero</td>
+      <td>blosum_pseudoseq | mse</td>
+      <td>blosum_pseudoseq | ranking</td>
+      <td>0.037</td>
+      <td>0.015</td>
+      <td>0.058</td>
+      <td>57</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>nonzero</td>
+      <td>blosum_pseudoseq | ranking</td>
+      <td>baseline_plus_conditional_all | ranking</td>
+      <td>0.024</td>
+      <td>-0.001</td>
+      <td>0.048</td>
+      <td>46</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>nonzero</td>
+      <td>blosum_pseudoseq | ranking</td>
+      <td>baseline_plus_unconditional_all | ranking</td>
+      <td>0.029</td>
+      <td>0.009</td>
+      <td>0.049</td>
+      <td>51</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>nonzero</td>
+      <td>ligandmpnn_unconditional | zero_shot</td>
+      <td>ligandmpnn_conditional | zero_shot</td>
+      <td>-0.005</td>
+      <td>-0.012</td>
+      <td>0.001</td>
+      <td>39</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>nonzero</td>
+      <td>baseline_plus_unconditional_all | mse</td>
+      <td>baseline_plus_conditional_all | mse</td>
+      <td>0.002</td>
+      <td>-0.015</td>
+      <td>0.019</td>
+      <td>38</td>
+      <td>75</td>
+    </tr>
+    <tr>
+      <td>nonzero</td>
+      <td>baseline_plus_unconditional_all | ranking</td>
+      <td>baseline_plus_conditional_all | ranking</td>
+      <td>-0.004</td>
+      <td>-0.021</td>
+      <td>0.012</td>
+      <td>34</td>
+      <td>75</td>
+    </tr>
+  </tbody>
+</table><p>Intervals are descriptive 95% percentile intervals from 5,000 paired bootstrap resamples of alleles. They do not include retraining-seed uncertainty, account for allele relatedness or overlapping training folds, or correct for multiple comparisons. They should not be read as confirmatory significance tests. No ablation was selected to replace the combined-feature primary result.</p><h2>Secondary endpoints</h2><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Model</th>
+      <th>Loss</th>
+      <th>Pearson log · all</th>
+      <th>Pearson log · nonzero</th>
+      <th>AUC &gt;2h · all</th>
+      <th>AUC &gt;2h · nonzero</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Structural score · independent</td>
+      <td>zero_shot</td>
+      <td>0.127</td>
+      <td>0.126</td>
+      <td>0.576</td>
+      <td>0.567</td>
+    </tr>
+    <tr>
+      <td>Structural score · autoregressive</td>
+      <td>zero_shot</td>
+      <td>0.134</td>
+      <td>0.124</td>
+      <td>0.576</td>
+      <td>0.565</td>
+    </tr>
+    <tr>
+      <td>BLOSUM + pseudosequence</td>
+      <td>mse</td>
+      <td>0.418</td>
+      <td>0.402</td>
+      <td>0.737</td>
+      <td>0.711</td>
+    </tr>
+    <tr>
+      <td>Baseline + independent features</td>
+      <td>mse</td>
+      <td>0.479</td>
+      <td>0.453</td>
+      <td>0.761</td>
+      <td>0.733</td>
+    </tr>
+    <tr>
+      <td>Baseline + autoregressive features</td>
+      <td>mse</td>
+      <td>0.497</td>
+      <td>0.459</td>
+      <td>0.771</td>
+      <td>0.736</td>
+    </tr>
+    <tr>
+      <td>BLOSUM + pseudosequence</td>
+      <td>ranking</td>
+      <td>0.467</td>
+      <td>0.438</td>
+      <td>0.762</td>
+      <td>0.730</td>
+    </tr>
+    <tr>
+      <td>Baseline + independent features</td>
+      <td>ranking</td>
+      <td>0.497</td>
+      <td>0.477</td>
+      <td>0.773</td>
+      <td>0.742</td>
+    </tr>
+    <tr>
+      <td>Baseline + autoregressive features</td>
+      <td>ranking</td>
+      <td>0.502</td>
+      <td>0.470</td>
+      <td>0.774</td>
+      <td>0.741</td>
+    </tr>
+  </tbody>
+</table><p>These are also unweighted within-allele means. AUC excludes alleles without both threshold classes in the evaluated subset; exact eligibility counts are in results.csv. Structural likelihoods and ranking outputs are uncalibrated scores, not predicted hours.</p><h2>What changed with the loss</h2><p>Pairwise ranking changes the label-only baseline from 0.423/0.409 to 0.475/0.446 (all/nonzero macro Spearman). The one-sided censoring surrogate gives 0.428/0.414. These objective comparisons use the same representation and fixed training budget. The assumed zero threshold remains unverified.</p><p>Random test rows reuse training peptides in 92.6% of cases. Nonetheless, this particular random split does not give higher mean per-allele performance than the peptide-disjoint split. The result demonstrates overlap, not a measured causal inflation in accuracy; the test compositions and eligible allele counts differ.</p>

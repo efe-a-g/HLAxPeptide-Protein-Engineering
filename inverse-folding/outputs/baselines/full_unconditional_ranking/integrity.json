@@ -1,0 +1,8 @@
+{
+  "all_split_manifests_match": true,
+  "finite_predictions": true,
+  "unique_keys": true,
+  "all75_loao": true,
+  "n_loao_rows": 28166,
+  "exploratory": true
+}

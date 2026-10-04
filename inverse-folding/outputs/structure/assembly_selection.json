@@ -1,0 +1,11 @@
+{
+  "predeclared_rule": "Choose truncated only if mean absolute ensemble score difference <0.02 log units; otherwise full. No target values used.",
+  "mean_absolute_logp_difference": 0.016137097030878067,
+  "max_absolute_logp_difference": 0.06281399726867676,
+  "score_correlation": 0.9983185056458065,
+  "truncated_runtime_seconds": 46.2,
+  "full_runtime_seconds": 88.4,
+  "n": 500,
+  "selected_assembly": "truncated",
+  "labels_used_for_selection": false
+}

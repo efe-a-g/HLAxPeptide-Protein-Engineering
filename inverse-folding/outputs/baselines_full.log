@@ -1,0 +1,617 @@
+{"fold_index": 1, "n_folds": 77, "split": "random", "fold": "holdout", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 1, "n_folds": 77, "split": "random", "fold": "holdout", "representation": "pwm", "loss": "reference"}
+{"fold_index": 1, "n_folds": 77, "split": "random", "fold": "holdout", "representation": "allele_embedding", "loss": "mse", "seconds": 0.5452836249023676, "last_batch_loss": 4.093951225280762, "optimizer_steps": 460, "n_parameters": 18145}
+{"fold_index": 1, "n_folds": 77, "split": "random", "fold": "holdout", "representation": "allele_embedding", "loss": "censored_hinge", "seconds": 0.6057761670090258, "last_batch_loss": 4.048490047454834, "optimizer_steps": 460, "n_parameters": 18145}
+{"fold_index": 1, "n_folds": 77, "split": "random", "fold": "holdout", "representation": "allele_embedding", "loss": "ranking", "seconds": 2.061169292079285, "last_batch_loss": 0.6310920119285583, "optimizer_steps": 443, "n_parameters": 18145}
+{"fold_index": 1, "n_folds": 77, "split": "random", "fold": "holdout", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.275185083039105, "last_batch_loss": 1.7184330224990845, "optimizer_steps": 460, "n_parameters": 57217}
+{"fold_index": 1, "n_folds": 77, "split": "random", "fold": "holdout", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.0261995000764728, "last_batch_loss": 2.443234920501709, "optimizer_steps": 460, "n_parameters": 57217}
+{"fold_index": 1, "n_folds": 77, "split": "random", "fold": "holdout", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 2.430984999984503, "last_batch_loss": 0.30405643582344055, "optimizer_steps": 442, "n_parameters": 57217}
+{"fold_index": 2, "n_folds": 77, "split": "peptide_disjoint", "fold": "holdout", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 2, "n_folds": 77, "split": "peptide_disjoint", "fold": "holdout", "representation": "pwm", "loss": "reference"}
+{"fold_index": 2, "n_folds": 77, "split": "peptide_disjoint", "fold": "holdout", "representation": "allele_embedding", "loss": "mse", "seconds": 0.5650615831837058, "last_batch_loss": 1.3548921346664429, "optimizer_steps": 440, "n_parameters": 18145}
+{"fold_index": 2, "n_folds": 77, "split": "peptide_disjoint", "fold": "holdout", "representation": "allele_embedding", "loss": "censored_hinge", "seconds": 0.5613053748384118, "last_batch_loss": 0.9935218095779419, "optimizer_steps": 440, "n_parameters": 18145}
+{"fold_index": 2, "n_folds": 77, "split": "peptide_disjoint", "fold": "holdout", "representation": "allele_embedding", "loss": "ranking", "seconds": 2.16238670819439, "last_batch_loss": 0.42668262124061584, "optimizer_steps": 440, "n_parameters": 18145}
+{"fold_index": 2, "n_folds": 77, "split": "peptide_disjoint", "fold": "holdout", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.0623742919415236, "last_batch_loss": 1.484897494316101, "optimizer_steps": 440, "n_parameters": 57217}
+{"fold_index": 2, "n_folds": 77, "split": "peptide_disjoint", "fold": "holdout", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.026468292111531, "last_batch_loss": 1.0302878618240356, "optimizer_steps": 440, "n_parameters": 57217}
+{"fold_index": 2, "n_folds": 77, "split": "peptide_disjoint", "fold": "holdout", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 2.5735622090287507, "last_batch_loss": 0.4435092508792877, "optimizer_steps": 440, "n_parameters": 57217}
+{"fold_index": 3, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*01:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 3, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*01:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 3, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*01:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 3, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*01:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 3, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*01:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 3, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*01:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.2955716669093817, "last_batch_loss": 1.558772087097168, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 3, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*01:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.205713416915387, "last_batch_loss": 1.0148075819015503, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 3, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*01:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.0732246660627425, "last_batch_loss": 0.3960641324520111, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 4, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 4, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 4, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 4, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 4, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 4, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.2060268339700997, "last_batch_loss": 1.5557763576507568, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 4, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.2235317500308156, "last_batch_loss": 1.0147178173065186, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 4, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.2533805831335485, "last_batch_loss": 0.35676389932632446, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 5, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:03", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 5, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:03", "representation": "pwm", "loss": "reference"}
+{"fold_index": 5, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:03", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 5, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:03", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 5, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:03", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 5, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:03", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.1503058751113713, "last_batch_loss": 1.2125294208526611, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 5, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:03", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.3169538339134306, "last_batch_loss": 0.9128779768943787, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 5, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:03", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.181724708992988, "last_batch_loss": 0.47688889503479004, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 6, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:05", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 6, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:05", "representation": "pwm", "loss": "reference"}
+{"fold_index": 6, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:05", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 6, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:05", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 6, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:05", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 6, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:05", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.3069839999079704, "last_batch_loss": 1.5253981351852417, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 6, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:05", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.3447051248513162, "last_batch_loss": 0.9703565239906311, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 6, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:05", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.1826127080712467, "last_batch_loss": 0.44475868344306946, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 7, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:10", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 7, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:10", "representation": "pwm", "loss": "reference"}
+{"fold_index": 7, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:10", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 7, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:10", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 7, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:10", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 7, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:10", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.1019473338965327, "last_batch_loss": 1.7102203369140625, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 7, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:10", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.2648887080140412, "last_batch_loss": 1.131252646446228, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 7, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:10", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.0087861251085997, "last_batch_loss": 0.40905576944351196, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 8, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:11", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 8, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:11", "representation": "pwm", "loss": "reference"}
+{"fold_index": 8, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:11", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 8, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:11", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 8, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:11", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 8, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:11", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.0591350418981165, "last_batch_loss": 1.5597872734069824, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 8, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:11", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.058892667060718, "last_batch_loss": 1.0470473766326904, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 8, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:11", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 2.9681390409823507, "last_batch_loss": 0.353957861661911, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 9, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:12", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 9, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:12", "representation": "pwm", "loss": "reference"}
+{"fold_index": 9, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:12", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 9, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:12", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 9, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:12", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 9, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:12", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.065584332915023, "last_batch_loss": 1.4133365154266357, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 9, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:12", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.147394249914214, "last_batch_loss": 0.9673042893409729, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 9, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:12", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 2.969386500073597, "last_batch_loss": 0.4283323287963867, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 10, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:16", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 10, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:16", "representation": "pwm", "loss": "reference"}
+{"fold_index": 10, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:16", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 10, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:16", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 10, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:16", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 10, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:16", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.0519806251395494, "last_batch_loss": 1.222692608833313, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 10, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:16", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.2010606250260025, "last_batch_loss": 0.7435149550437927, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 10, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:16", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.35364424996078, "last_batch_loss": 0.5246302485466003, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 11, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:19", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 11, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:19", "representation": "pwm", "loss": "reference"}
+{"fold_index": 11, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:19", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 11, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:19", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 11, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:19", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 11, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:19", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.4641845419537276, "last_batch_loss": 1.549055576324463, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 11, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:19", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.41894791694358, "last_batch_loss": 1.0954973697662354, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 11, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:19", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.1099061670247465, "last_batch_loss": 0.37388598918914795, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 12, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:50", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 12, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:50", "representation": "pwm", "loss": "reference"}
+{"fold_index": 12, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:50", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 12, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:50", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 12, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:50", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 12, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:50", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.1924804579466581, "last_batch_loss": 1.5820530652999878, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 12, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:50", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.2375729579944164, "last_batch_loss": 1.0340683460235596, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 12, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*02:50", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.059461875120178, "last_batch_loss": 0.4254720211029053, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 13, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*03:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 13, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*03:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 13, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*03:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 13, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*03:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 13, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*03:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 13, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*03:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.3451465000398457, "last_batch_loss": 1.5977225303649902, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 13, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*03:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.410209916997701, "last_batch_loss": 0.9395374655723572, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 13, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*03:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.213118250016123, "last_batch_loss": 0.37554481625556946, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 14, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*11:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 14, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*11:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 14, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*11:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 14, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*11:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 14, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*11:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 14, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*11:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.3632569171022624, "last_batch_loss": 1.508463740348816, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 14, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*11:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.3025817500893027, "last_batch_loss": 1.0003918409347534, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 14, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*11:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.1535267080180347, "last_batch_loss": 0.4093888998031616, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 15, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*23:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 15, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*23:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 15, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*23:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 15, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*23:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 15, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*23:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 15, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*23:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.3878682078793645, "last_batch_loss": 1.8734022378921509, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 15, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*23:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.3703827080316842, "last_batch_loss": 1.2274730205535889, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 15, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*23:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.2251867081504315, "last_batch_loss": 0.40584421157836914, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 16, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:02", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 16, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:02", "representation": "pwm", "loss": "reference"}
+{"fold_index": 16, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:02", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 16, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:02", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 16, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:02", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 16, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:02", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.2657020420301706, "last_batch_loss": 1.2633357048034668, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 16, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:02", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.3928881250321865, "last_batch_loss": 0.8712741732597351, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 16, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:02", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 2.4991439159493893, "last_batch_loss": 0.41272473335266113, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 17, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:03", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 17, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:03", "representation": "pwm", "loss": "reference"}
+{"fold_index": 17, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:03", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 17, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:03", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 17, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:03", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 17, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:03", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 0.8330162079073489, "last_batch_loss": 2.873225450515747, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 17, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:03", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 0.9239135831594467, "last_batch_loss": 2.047194242477417, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 17, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:03", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 2.2708895839750767, "last_batch_loss": 0.1993708312511444, "optimizer_steps": 544, "n_parameters": 57217}
+{"fold_index": 18, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:07", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 18, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:07", "representation": "pwm", "loss": "reference"}
+{"fold_index": 18, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:07", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 18, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:07", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 18, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:07", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 18, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:07", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 0.7503406249452382, "last_batch_loss": 1.4205348491668701, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 18, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:07", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 0.7797223338857293, "last_batch_loss": 1.0988795757293701, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 18, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:07", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 2.4094418750610203, "last_batch_loss": 0.3909401297569275, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 19, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:19", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 19, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:19", "representation": "pwm", "loss": "reference"}
+{"fold_index": 19, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:19", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 19, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:19", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 19, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:19", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 19, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:19", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 0.8516807921696454, "last_batch_loss": 1.4795734882354736, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 19, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:19", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 0.8400421671103686, "last_batch_loss": 0.9542094469070435, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 19, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*24:19", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 2.369501416105777, "last_batch_loss": 0.37531113624572754, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 20, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*25:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 20, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*25:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 20, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*25:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 20, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*25:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 20, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*25:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 20, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*25:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 0.8117973750922829, "last_batch_loss": 1.326268196105957, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 20, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*25:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 0.8524203330744058, "last_batch_loss": 0.8992116451263428, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 20, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*25:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 2.4244074169546366, "last_batch_loss": 0.39529043436050415, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 21, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 21, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 21, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 21, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 21, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 21, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 0.7933012498542666, "last_batch_loss": 1.4414358139038086, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 21, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 0.8558760830201209, "last_batch_loss": 0.952990710735321, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 21, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 2.352470791898668, "last_batch_loss": 0.3799208104610443, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 22, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:02", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 22, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:02", "representation": "pwm", "loss": "reference"}
+{"fold_index": 22, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:02", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 22, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:02", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 22, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:02", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 22, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:02", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 0.8312532498966902, "last_batch_loss": 1.4340229034423828, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 22, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:02", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 0.8616922500077635, "last_batch_loss": 0.9631022214889526, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 22, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:02", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 2.3360725841484964, "last_batch_loss": 0.4602619409561157, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 23, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:03", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 23, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:03", "representation": "pwm", "loss": "reference"}
+{"fold_index": 23, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:03", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 23, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:03", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 23, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:03", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 23, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:03", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 0.8785254168324172, "last_batch_loss": 1.517901062965393, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 23, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:03", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 0.923567958874628, "last_batch_loss": 0.9346879124641418, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 23, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*26:03", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 2.760048290947452, "last_batch_loss": 0.43676862120628357, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 24, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*29:02", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 24, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*29:02", "representation": "pwm", "loss": "reference"}
+{"fold_index": 24, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*29:02", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 24, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*29:02", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 24, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*29:02", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 24, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*29:02", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 0.745744040934369, "last_batch_loss": 1.2958534955978394, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 24, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*29:02", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 0.7596686671022326, "last_batch_loss": 0.8313228487968445, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 24, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*29:02", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 2.149604249978438, "last_batch_loss": 0.37829503417015076, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 25, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*30:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 25, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*30:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 25, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*30:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 25, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*30:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 25, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*30:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 25, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*30:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 0.850544709013775, "last_batch_loss": 1.3819942474365234, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 25, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*30:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 0.8952399580739439, "last_batch_loss": 1.0396270751953125, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 25, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*30:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.045740540837869, "last_batch_loss": 0.3432243764400482, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 26, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*30:02", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 26, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*30:02", "representation": "pwm", "loss": "reference"}
+{"fold_index": 26, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*30:02", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 26, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*30:02", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 26, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*30:02", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 26, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*30:02", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.3641055829357356, "last_batch_loss": 1.4680005311965942, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 26, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*30:02", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.3843414159491658, "last_batch_loss": 0.9105711579322815, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 26, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*30:02", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.459829166997224, "last_batch_loss": 0.3519551455974579, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 27, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*31:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 27, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*31:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 27, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*31:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 27, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*31:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 27, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*31:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 27, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*31:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.2451665829867125, "last_batch_loss": 1.6482032537460327, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 27, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*31:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.297527875052765, "last_batch_loss": 1.24777090549469, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 27, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*31:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.065441041951999, "last_batch_loss": 0.42514875531196594, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 28, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*32:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 28, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*32:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 28, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*32:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 28, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*32:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 28, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*32:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 28, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*32:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.2570269578136504, "last_batch_loss": 1.5398287773132324, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 28, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*32:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.3331319580320269, "last_batch_loss": 1.0846043825149536, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 28, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*32:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.1775814171414822, "last_batch_loss": 0.39132148027420044, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 29, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*32:07", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 29, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*32:07", "representation": "pwm", "loss": "reference"}
+{"fold_index": 29, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*32:07", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 29, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*32:07", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 29, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*32:07", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 29, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*32:07", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.2488763330038637, "last_batch_loss": 1.4457212686538696, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 29, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*32:07", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.250728707993403, "last_batch_loss": 0.9236668348312378, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 29, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*32:07", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.1214653342030942, "last_batch_loss": 0.3794589042663574, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 30, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*33:03", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 30, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*33:03", "representation": "pwm", "loss": "reference"}
+{"fold_index": 30, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*33:03", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 30, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*33:03", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 30, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*33:03", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 30, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*33:03", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.2454803329892457, "last_batch_loss": 1.6381003856658936, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 30, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*33:03", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.2082642081659287, "last_batch_loss": 0.9446730613708496, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 30, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*33:03", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.1283694580197334, "last_batch_loss": 0.46789032220840454, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 31, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*43:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 31, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*43:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 31, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*43:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 31, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*43:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 31, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*43:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 31, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*43:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.3248652080073953, "last_batch_loss": 1.3839240074157715, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 31, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*43:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.3400814589112997, "last_batch_loss": 1.0467698574066162, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 31, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*43:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.209222709061578, "last_batch_loss": 0.3930765986442566, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 32, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*66:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 32, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*66:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 32, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*66:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 32, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*66:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 32, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*66:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 32, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*66:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.217086749849841, "last_batch_loss": 1.7980376482009888, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 32, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*66:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.2739853339735419, "last_batch_loss": 0.9727932214736938, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 32, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*66:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.057081416947767, "last_batch_loss": 0.42810526490211487, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 33, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 33, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 33, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 33, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 33, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 33, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.2378509580157697, "last_batch_loss": 1.5438222885131836, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 33, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.3306844581384212, "last_batch_loss": 1.0976325273513794, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 33, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.093766374979168, "last_batch_loss": 0.44722941517829895, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 34, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:02", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 34, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:02", "representation": "pwm", "loss": "reference"}
+{"fold_index": 34, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:02", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 34, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:02", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 34, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:02", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 34, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:02", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.28245645808056, "last_batch_loss": 1.4934519529342651, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 34, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:02", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.3117597079835832, "last_batch_loss": 1.0253427028656006, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 34, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:02", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.3933983750175685, "last_batch_loss": 0.42138370871543884, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 35, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:23", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 35, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:23", "representation": "pwm", "loss": "reference"}
+{"fold_index": 35, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:23", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 35, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:23", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 35, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:23", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 35, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:23", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.190144499996677, "last_batch_loss": 1.260103702545166, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 35, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:23", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.269181292038411, "last_batch_loss": 0.8336995244026184, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 35, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*68:23", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.19602158293128, "last_batch_loss": 0.5337862372398376, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 36, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*69:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 36, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*69:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 36, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*69:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 36, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*69:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 36, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*69:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 36, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*69:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.2924794999416918, "last_batch_loss": 1.2994372844696045, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 36, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*69:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.2884102500975132, "last_batch_loss": 0.9143775105476379, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 36, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*69:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.13633995805867, "last_batch_loss": 0.37759509682655334, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 37, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*74:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 37, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*74:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 37, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*74:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 37, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*74:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 37, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*74:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 37, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*74:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.2878552090842277, "last_batch_loss": 1.649562954902649, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 37, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*74:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.304309083148837, "last_batch_loss": 1.033095359802246, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 37, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*74:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.083763833157718, "last_batch_loss": 0.41514670848846436, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 38, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*80:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 38, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*80:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 38, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*80:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 38, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*80:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 38, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*80:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 38, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*80:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.2320550840813667, "last_batch_loss": 1.8107573986053467, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 38, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*80:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.2509655838366598, "last_batch_loss": 1.1492031812667847, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 38, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-A*80:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.296443708939478, "last_batch_loss": 0.4011600613594055, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 39, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*07:02", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 39, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*07:02", "representation": "pwm", "loss": "reference"}
+{"fold_index": 39, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*07:02", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 39, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*07:02", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 39, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*07:02", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 39, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*07:02", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.6028014170005918, "last_batch_loss": 1.6946204900741577, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 39, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*07:02", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.5866920840926468, "last_batch_loss": 1.1157732009887695, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 39, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*07:02", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.467832291033119, "last_batch_loss": 0.4188043475151062, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 40, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*08:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 40, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*08:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 40, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*08:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 40, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*08:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 40, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*08:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 40, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*08:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.7060347080696374, "last_batch_loss": 1.5453450679779053, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 40, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*08:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.7060262500308454, "last_batch_loss": 1.1429334878921509, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 40, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*08:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 4.094512541079894, "last_batch_loss": 0.550370991230011, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 41, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*08:03", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 41, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*08:03", "representation": "pwm", "loss": "reference"}
+{"fold_index": 41, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*08:03", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 41, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*08:03", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 41, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*08:03", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 41, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*08:03", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 2.2627404588274658, "last_batch_loss": 1.6579607725143433, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 41, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*08:03", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.7296433749143034, "last_batch_loss": 1.1000382900238037, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 41, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*08:03", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.376568333012983, "last_batch_loss": 0.38862577080726624, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 42, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*13:02", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 42, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*13:02", "representation": "pwm", "loss": "reference"}
+{"fold_index": 42, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*13:02", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 42, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*13:02", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 42, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*13:02", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 42, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*13:02", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.2686176248826087, "last_batch_loss": 1.639369249343872, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 42, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*13:02", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.2815188330132514, "last_batch_loss": 1.1688705682754517, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 42, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*13:02", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.3520565000362694, "last_batch_loss": 0.4163369834423065, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 43, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*14:01(C67S)", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 43, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*14:01(C67S)", "representation": "pwm", "loss": "reference"}
+{"fold_index": 43, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*14:01(C67S)", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 43, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*14:01(C67S)", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 43, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*14:01(C67S)", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 43, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*14:01(C67S)", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.3867574587929994, "last_batch_loss": 1.546843409538269, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 43, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*14:01(C67S)", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.343561250017956, "last_batch_loss": 0.9970670342445374, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 43, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*14:01(C67S)", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.2396204581018537, "last_batch_loss": 0.46518465876579285, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 44, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*14:02(C67S)", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 44, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*14:02(C67S)", "representation": "pwm", "loss": "reference"}
+{"fold_index": 44, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*14:02(C67S)", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 44, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*14:02(C67S)", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 44, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*14:02(C67S)", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 44, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*14:02(C67S)", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.4875107919797301, "last_batch_loss": 2.1523051261901855, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 44, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*14:02(C67S)", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.3770136658567935, "last_batch_loss": 1.194460153579712, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 44, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*14:02(C67S)", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.3988785420078784, "last_batch_loss": 0.4768119156360626, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 45, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 45, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 45, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 45, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 45, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 45, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.423320832895115, "last_batch_loss": 1.5507242679595947, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 45, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.4828915419057012, "last_batch_loss": 1.002455234527588, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 45, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.238008625106886, "last_batch_loss": 0.4346432387828827, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 46, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:02", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 46, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:02", "representation": "pwm", "loss": "reference"}
+{"fold_index": 46, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:02", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 46, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:02", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 46, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:02", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 46, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:02", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.2530483331065625, "last_batch_loss": 1.4091323614120483, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 46, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:02", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.303440083982423, "last_batch_loss": 0.9226242303848267, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 46, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:02", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.1749708340503275, "last_batch_loss": 0.38754573464393616, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 47, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:10", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 47, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:10", "representation": "pwm", "loss": "reference"}
+{"fold_index": 47, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:10", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 47, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:10", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 47, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:10", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 47, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:10", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.3626535839866847, "last_batch_loss": 1.3822071552276611, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 47, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:10", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.424468790879473, "last_batch_loss": 1.004238486289978, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 47, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:10", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.1805006249342114, "last_batch_loss": 0.5317532420158386, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 48, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:17", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 48, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:17", "representation": "pwm", "loss": "reference"}
+{"fold_index": 48, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:17", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 48, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:17", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 48, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:17", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 48, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:17", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.262772958027199, "last_batch_loss": 1.4358614683151245, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 48, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:17", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.3614138748962432, "last_batch_loss": 1.0306007862091064, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 48, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*15:17", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 2.535294083179906, "last_batch_loss": 0.4166025221347809, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 49, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*18:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 49, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*18:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 49, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*18:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 49, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*18:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 49, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*18:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 49, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*18:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.3603700830135494, "last_batch_loss": 1.6761693954467773, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 49, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*18:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.4793268339708447, "last_batch_loss": 1.2342959642410278, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 49, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*18:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.53357629198581, "last_batch_loss": 0.35383403301239014, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 50, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:02", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 50, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:02", "representation": "pwm", "loss": "reference"}
+{"fold_index": 50, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:02", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 50, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:02", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 50, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:02", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 50, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:02", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.385468834079802, "last_batch_loss": 1.3799221515655518, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 50, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:02", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.4967064578086138, "last_batch_loss": 1.0428825616836548, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 50, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:02", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.6627186669502407, "last_batch_loss": 0.48242759704589844, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 51, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:03", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 51, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:03", "representation": "pwm", "loss": "reference"}
+{"fold_index": 51, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:03", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 51, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:03", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 51, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:03", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 51, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:03", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.350425000069663, "last_batch_loss": 1.6605998277664185, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 51, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:03", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.4930373749230057, "last_batch_loss": 1.1007825136184692, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 51, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:03", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.1198614998720586, "last_batch_loss": 0.43787646293640137, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 52, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:05", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 52, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:05", "representation": "pwm", "loss": "reference"}
+{"fold_index": 52, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:05", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 52, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:05", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 52, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:05", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 52, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:05", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.2918599161785096, "last_batch_loss": 1.35825514793396, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 52, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:05", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.3312394579406828, "last_batch_loss": 1.116133689880371, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 52, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:05", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.1248706250917166, "last_batch_loss": 0.48011282086372375, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 53, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:20", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 53, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:20", "representation": "pwm", "loss": "reference"}
+{"fold_index": 53, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:20", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 53, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:20", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 53, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:20", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 53, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:20", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.562646749895066, "last_batch_loss": 1.483405351638794, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 53, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:20", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.544038041960448, "last_batch_loss": 0.9367639422416687, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 53, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*27:20", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.519997749943286, "last_batch_loss": 0.4776615798473358, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 54, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 54, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 54, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 54, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 54, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 54, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.5668492920231074, "last_batch_loss": 1.635131597518921, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 54, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.631424207938835, "last_batch_loss": 1.0979903936386108, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 54, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 5.158972332952544, "last_batch_loss": 0.44956743717193604, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 55, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:03", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 55, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:03", "representation": "pwm", "loss": "reference"}
+{"fold_index": 55, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:03", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 55, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:03", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 55, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:03", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 55, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:03", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 2.6465456248261034, "last_batch_loss": 1.6640883684158325, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 55, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:03", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 2.5845434160437435, "last_batch_loss": 1.1667813062667847, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 55, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:03", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 4.618020416004583, "last_batch_loss": 0.3369668126106262, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 56, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:08", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 56, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:08", "representation": "pwm", "loss": "reference"}
+{"fold_index": 56, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:08", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 56, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:08", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 56, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:08", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 56, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:08", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 2.6010752499569207, "last_batch_loss": 1.7048466205596924, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 56, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:08", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 2.6773080839775503, "last_batch_loss": 1.0699167251586914, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 56, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*35:08", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 4.82025562482886, "last_batch_loss": 0.411751389503479, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 57, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 57, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 57, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 57, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 57, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 57, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 2.5140804999973625, "last_batch_loss": 1.4826244115829468, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 57, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 2.1583315001334995, "last_batch_loss": 0.9691319465637207, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 57, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 4.079649958061054, "last_batch_loss": 0.3852415978908539, "optimizer_steps": 540, "n_parameters": 57217}
+{"fold_index": 58, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:02", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 58, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:02", "representation": "pwm", "loss": "reference"}
+{"fold_index": 58, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:02", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 58, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:02", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 58, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:02", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 58, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:02", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.6614016250241548, "last_batch_loss": 1.4227038621902466, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 58, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:02", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.8629127088934183, "last_batch_loss": 1.1218091249465942, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 58, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:02", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.9300945000723004, "last_batch_loss": 0.6201478242874146, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 59, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:06(C67S)", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 59, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:06(C67S)", "representation": "pwm", "loss": "reference"}
+{"fold_index": 59, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:06(C67S)", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 59, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:06(C67S)", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 59, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:06(C67S)", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 59, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:06(C67S)", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.8829594999551773, "last_batch_loss": 1.7433686256408691, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 59, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:06(C67S)", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.8883424999658018, "last_batch_loss": 1.147971749305725, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 59, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:06(C67S)", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.8656602080445737, "last_batch_loss": 0.49378034472465515, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 60, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:10", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 60, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:10", "representation": "pwm", "loss": "reference"}
+{"fold_index": 60, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:10", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 60, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:10", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 60, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:10", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 60, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:10", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 2.63086612499319, "last_batch_loss": 2.0980796813964844, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 60, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:10", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 2.2309977498371154, "last_batch_loss": 1.3052620887756348, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 60, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*39:10", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 4.066553041804582, "last_batch_loss": 0.4843583405017853, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 61, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*40:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 61, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*40:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 61, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*40:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 61, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*40:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 61, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*40:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 61, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*40:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 2.25505887507461, "last_batch_loss": 1.7607401609420776, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 61, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*40:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.940704750129953, "last_batch_loss": 1.1629374027252197, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 61, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*40:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.7775375419296324, "last_batch_loss": 0.3480631709098816, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 62, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*40:02", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 62, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*40:02", "representation": "pwm", "loss": "reference"}
+{"fold_index": 62, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*40:02", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 62, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*40:02", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 62, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*40:02", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 62, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*40:02", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 2.712719124974683, "last_batch_loss": 1.4514151811599731, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 62, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*40:02", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 2.280310041969642, "last_batch_loss": 1.0693913698196411, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 62, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*40:02", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 4.217465083114803, "last_batch_loss": 0.385248601436615, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 63, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*41:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 63, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*41:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 63, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*41:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 63, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*41:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 63, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*41:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 63, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*41:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 2.271744875004515, "last_batch_loss": 1.449440836906433, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 63, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*41:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.9791158339940012, "last_batch_loss": 1.0380936861038208, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 63, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*41:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 7.622734499862418, "last_batch_loss": 0.40206122398376465, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 64, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*42:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 64, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*42:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 64, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*42:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 64, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*42:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 64, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*42:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 64, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*42:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.9522653329186141, "last_batch_loss": 1.9712419509887695, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 64, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*42:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.9606469159480184, "last_batch_loss": 1.18756103515625, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 64, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*42:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 4.080792083172128, "last_batch_loss": 0.41485196352005005, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 65, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*42:02", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 65, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*42:02", "representation": "pwm", "loss": "reference"}
+{"fold_index": 65, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*42:02", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 65, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*42:02", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 65, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*42:02", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 65, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*42:02", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.7445451659150422, "last_batch_loss": 1.1889675855636597, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 65, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*42:02", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 2.2457820421550423, "last_batch_loss": 0.8635563850402832, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 65, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*42:02", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.986670625163242, "last_batch_loss": 0.3641073405742645, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 66, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*44:05", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 66, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*44:05", "representation": "pwm", "loss": "reference"}
+{"fold_index": 66, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*44:05", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 66, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*44:05", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 66, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*44:05", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 66, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*44:05", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.9283665420953184, "last_batch_loss": 1.2515021562576294, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 66, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*44:05", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.9053617080207914, "last_batch_loss": 0.8324710130691528, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 66, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*44:05", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 4.038016832899302, "last_batch_loss": 0.499973863363266, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 67, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*45:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 67, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*45:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 67, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*45:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 67, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*45:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 67, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*45:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 67, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*45:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.7948404578492045, "last_batch_loss": 1.5180127620697021, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 67, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*45:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 2.07715225010179, "last_batch_loss": 1.1643239259719849, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 67, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*45:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.8385484158061445, "last_batch_loss": 0.3241509199142456, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 68, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*46:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 68, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*46:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 68, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*46:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 68, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*46:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 68, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*46:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 68, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*46:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.9972275409381837, "last_batch_loss": 0.9351187348365784, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 68, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*46:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 2.0951925001572818, "last_batch_loss": 0.6735536456108093, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 68, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*46:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.972377333091572, "last_batch_loss": 0.3551941215991974, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 69, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*51:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 69, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*51:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 69, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*51:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 69, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*51:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 69, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*51:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 69, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*51:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.6384860419202596, "last_batch_loss": 1.6364555358886719, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 69, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*51:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.9362950408831239, "last_batch_loss": 1.13029944896698, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 69, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*51:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.771805625176057, "last_batch_loss": 0.39290088415145874, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 70, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*54:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 70, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*54:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 70, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*54:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 70, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*54:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 70, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*54:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 70, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*54:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 2.1374002499505877, "last_batch_loss": 1.456639289855957, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 70, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*54:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.8738042500335723, "last_batch_loss": 0.9167395234107971, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 70, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*54:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.82993633300066, "last_batch_loss": 0.3592407703399658, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 71, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*55:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 71, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*55:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 71, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*55:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 71, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*55:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 71, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*55:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 71, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*55:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.7745037919376045, "last_batch_loss": 1.4333293437957764, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 71, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*55:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.9485479169525206, "last_batch_loss": 0.9177700877189636, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 71, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*55:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.9831341670360416, "last_batch_loss": 0.33949151635169983, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 72, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*56:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 72, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*56:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 72, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*56:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 72, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*56:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 72, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*56:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 72, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*56:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.7524327500723302, "last_batch_loss": 1.1786586046218872, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 72, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*56:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.6311499590519816, "last_batch_loss": 0.894329845905304, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 72, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*56:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 4.245116000063717, "last_batch_loss": 0.3957742154598236, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 73, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 73, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 73, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 73, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 73, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 73, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.8529143331106752, "last_batch_loss": 1.6244159936904907, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 73, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.5907255408819765, "last_batch_loss": 1.0093610286712646, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 73, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 4.089353833114728, "last_batch_loss": 0.5680124163627625, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 74, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:02", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 74, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:02", "representation": "pwm", "loss": "reference"}
+{"fold_index": 74, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:02", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 74, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:02", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 74, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:02", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 74, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:02", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.8555111249443144, "last_batch_loss": 1.4263622760772705, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 74, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:02", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.8019345421344042, "last_batch_loss": 0.9991997480392456, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 74, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:02", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.777171499794349, "last_batch_loss": 0.4752078652381897, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 75, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:03", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 75, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:03", "representation": "pwm", "loss": "reference"}
+{"fold_index": 75, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:03", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 75, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:03", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 75, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:03", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 75, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:03", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.7832653750665486, "last_batch_loss": 1.507401466369629, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 75, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:03", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.693843208020553, "last_batch_loss": 0.9587365388870239, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 75, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*57:03", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.750436999835074, "last_batch_loss": 0.3961659073829651, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 76, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*58:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 76, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*58:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 76, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*58:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 76, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*58:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 76, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*58:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 76, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*58:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.535886999918148, "last_batch_loss": 1.8335227966308594, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 76, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*58:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.872410791926086, "last_batch_loss": 1.5233644247055054, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 76, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*58:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.7731374171562493, "last_batch_loss": 0.389470636844635, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 77, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*81:01", "representation": "allele_mean", "loss": "reference"}
+{"fold_index": 77, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*81:01", "representation": "pwm", "loss": "reference"}
+{"fold_index": 77, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*81:01", "representation": "allele_embedding", "loss": "mse"}
+{"fold_index": 77, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*81:01", "representation": "allele_embedding", "loss": "censored_hinge"}
+{"fold_index": 77, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*81:01", "representation": "allele_embedding", "loss": "ranking"}
+{"fold_index": 77, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*81:01", "representation": "blosum_pseudoseq", "loss": "mse", "seconds": 1.698741250205785, "last_batch_loss": 1.5196752548217773, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 77, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*81:01", "representation": "blosum_pseudoseq", "loss": "censored_hinge", "seconds": 1.786186333047226, "last_batch_loss": 1.265117883682251, "optimizer_steps": 560, "n_parameters": 57217}
+{"fold_index": 77, "n_folds": 77, "split": "leave_one_allele_out", "fold": "HLA-B*81:01", "representation": "blosum_pseudoseq", "loss": "ranking", "seconds": 3.9463587920181453, "last_batch_loss": 0.3654068112373352, "optimizer_steps": 560, "n_parameters": 57217}
+Completed full: 315760 prediction rows saved to outputs/baselines/full/predictions.csv.gz
