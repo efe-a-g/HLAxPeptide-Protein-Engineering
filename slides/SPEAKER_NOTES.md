@@ -3,7 +3,7 @@
 Deck: `foundation_model_routes_deck.html` (self-contained reveal.js; arrow keys to advance,
 **down arrow** on slide 2 for the two backup tables, `F` for fullscreen, `O` for overview).
 
-Three slides. Route names on the slides are *using peptide shape embedding* and *using confidence
+Two slides. Route names on the slides are *using peptide shape embedding* and *using confidence
 matrix*. If asked: the shape embedding describes the HLA groove, not the peptide — the peptide side
 is encoded exactly as the baseline does.
 
