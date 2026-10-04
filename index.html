@@ -64,6 +64,19 @@ h2{font-size:clamp(26px,3.5vw,54px);line-height:1.08;font-weight:800;letter-spac
 .callout .big{font-size:clamp(40px,6vw,92px);font-weight:800;letter-spacing:-.04em;line-height:1}
 .callout .t{font-size:clamp(13px,1.4vw,21px);color:var(--ink2);margin-top:1vh;line-height:1.4}
 .callout + .callout{margin-top:2vh}
+.pairs{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:2.6vh 1.6vw}
+.pairs h3{font-size:clamp(14px,1.55vw,23px);font-weight:700;letter-spacing:-.01em}
+.pairs .q{font-size:clamp(11px,1.1vw,16px);color:var(--ink2);margin:.5vh 0 2vh;line-height:1.4}
+.prow{display:grid;grid-template-columns:auto 1fr;column-gap:1vw;align-items:center;margin-bottom:2vh}
+.prow .pct{font-size:clamp(24px,3.1vw,48px);font-weight:800;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums;min-width:5.4ch}
+.prow .meta{font-size:clamp(11px,1.05vw,15px);color:var(--ink2)}
+.prow .meta b{color:var(--ink)}
+.ptrack{height:1.1vh;min-height:6px;background:var(--panel2);border-radius:99px;position:relative;margin-top:.8vh}
+.ptrack i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:var(--c);width:0;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.slide.on .ptrack i{width:var(--w)}
+.pscale{display:flex;justify-content:space-between;font-size:clamp(9px,.95vw,13px);color:var(--muted);margin:-.6vh 0 1.2vh}
+.pnote{font-size:clamp(9px,.95vw,13px);color:var(--muted);line-height:1.4}
+
 .axis{display:flex;justify-content:space-between;font-size:clamp(10px,1vw,14px);color:var(--muted);margin-top:.8vh}
 .note{font-size:clamp(10px,1vw,14px);color:var(--muted);margin-top:2vh}
 svg text{font-family:inherit}
@@ -149,11 +162,16 @@ svg text{font-family:inherit}
       <div class="axis"><span>0</span><span>mean within-allele Spearman →</span><span>0.6</span></div>
     </div>
     <div>
-      <div class="callout"><div class="big" style="color:var(--ind)" id="gain1">+0.053</div><div class="t">independent features over baseline<br><span style="color:var(--muted)" id="ci1">95% CI 0.021 – 0.084 · 57 / 75 alleles improved</span></div></div>
-      <div class="callout"><div class="big" style="color:var(--ar)" id="gain2">+0.070</div><div class="t">autoregressive features over baseline<br><span style="color:var(--muted)" id="ci2">95% CI 0.045 – 0.097 · 59 / 75 alleles improved</span></div></div>
+      <div class="pairs">
+        <h3>How often is a pair ranked correctly?</h3>
+        <div class="q">Take two peptides for the same unseen allele: how often does the model rank the more stable one higher?</div>
+        <div id="pairRows"></div>
+        <div class="pscale"><span>50% = coin flip</span><span>70%</span></div>
+        <div class="pnote">Converted from Spearman ρ assuming roughly normal data: P(correct) = ½ + arcsin(ρ)/π.</div>
+      </div>
     </div>
   </div>
-  <p class="note">Unweighted mean of per-allele Spearman, 75 leave-one-allele-out folds. Intervals: descriptive paired bootstrap over alleles.</p>
+  <p class="note">Unweighted mean of per-allele Spearman over 75 leave-one-allele-out folds. Pair-ranking accuracy is derived from these Spearman values.</p>
 </section>
 
 <!-- 4 · PER-ALLELE SCATTER -->
@@ -221,7 +239,12 @@ bars.innerHTML=rows.map(r=>`<div class="row"><div class="lab"><div>${r[1]}</div>
 function setSubset(k){
   const m=M[k];
   rows.forEach(r=>{const f=document.getElementById('f_'+r[0]);f.style.setProperty('--w',(m[r[0]]/0.6*100)+'%');f.textContent=m[r[0]].toFixed(3)});
-  gain1.textContent=m.g1;ci1.textContent=m.c1;gain2.textContent=m.g2;ci2.textContent=m.c2;
+  const P=r=>0.5+Math.asin(r)/Math.PI, p0=P(m.base);
+  document.getElementById('pairRows').innerHTML=rows.map(r=>{
+    const p=P(m[r[0]]), d=(p-p0)*100;
+    const nm={zs:'Zero-shot IF',base:'Baseline',ind:'+ IF independent',ar:'+ IF autoregressive'}[r[0]];
+    const meta=(r[0]==='ind'||r[0]==='ar')?`${nm} · <b>${d>=0?'+':''}${d.toFixed(1)} pts</b>`:nm;
+    return `<div class="prow"><div class="pct" style="color:${r[3]}">${(p*100).toFixed(1)}%</div><div><div class="meta">${meta}</div><div class="ptrack"><i style="--c:${r[3]};--w:${(p-0.5)/0.2*100}%"></i></div></div></div>`}).join('');
 }
 setSubset('all');
 document.querySelectorAll('#subsetToggle button').forEach(b=>b.onclick=()=>{
