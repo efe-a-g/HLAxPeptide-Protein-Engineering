@@ -3,7 +3,11 @@
 Deck: `foundation_model_routes_deck.html` (self-contained reveal.js; arrow keys to advance,
 **down arrow** on slide 2 for the two backup tables, `F` for fullscreen, `O` for overview).
 
-## Slide 1 — the two routes
+Three slides. Route names on the slides are *using peptide shape embedding* and *using confidence
+matrix*. If asked: the shape embedding describes the HLA groove, not the peptide — the peptide side
+is encoded exactly as the baseline does.
+
+## Slide 1 — the two approaches (merged: cartoons on top, pipeline written beneath)
 - Data: Rasmussen et al., 28,166 measurements, 75 alleles, all 9-mers. Target s = 2^(-1 h / t-half).
 - Route A (`dev` branch, entries 0-10): Boltz-2 folds the HLA alpha1/alpha2 domain alone (182 aa);
   the trunk representation is pooled over the B- and F-pocket residues into 768 dims and swapped in
@@ -14,7 +18,7 @@ Deck: `foundation_model_routes_deck.html` (self-contained reveal.js; arrow keys 
 - The graphic's Route B peptide is drawn with one low-confidence residue because that is the
   mechanism being tested: the strongest single feature was the *minimum* per-residue pLDDT.
 
-## Slide 2 — the 3D cartoons
+## Slide 1, the cartoons
 - Left: the alpha1/alpha2 groove on its own, which is literally all Route A ever folded (182 aa).
 - Right: the native trimer with the 9-mer in the groove, which is what Route B folded 1,430 times.
 - Structure is 1M6O (HLA-B*44:02 + 9-mer) from the repo's reference set — an experimental crystal
@@ -22,7 +26,7 @@ Deck: `foundation_model_routes_deck.html` (self-contained reveal.js; arrow keys 
 - The paler peptide residue is decorative, echoing the mechanism: the best single feature was the
   *minimum* per-residue pLDDT, i.e. the worst-placed residue, not the average.
 
-## Slide 3 — against the benchmark
+## Slide 2 — against the benchmark
 - Metric: mean per-allele Spearman. BLOSUM baseline 0.4626 +/- 0.0379 (5 seeds).
   Peptide-only null 0.3045 — throws the HLA away entirely.
 - Route A best arm: ESM-2 peptide + Boltz pockets, 0.4206. Every embedding arm lost, all
@@ -36,7 +40,7 @@ Deck: `foundation_model_routes_deck.html` (self-contained reveal.js; arrow keys 
 - Absolute hours (backup slide): best model MAE 3.07 h vs 3.10 h for "predict the training-allele
   median"; RMSE 7.72 h vs 5.04 h, i.e. 53 % worse. MAE alone would have looked like a working model.
 
-## Slide 4 — why, and the keeper
+## Slide 3 — why, and the keeper
 - Route A: the pooled pocket positions overlap heavily with the 34 NetMHCpan pseudosequence
   positions, so the embedding re-describes ground BLOSUM already covers. Frozen and per-allele it is
   75 vectors for 28,166 rows — no peptide information at all. Mean-pooled ESM-2 on the HLA side
