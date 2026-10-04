@@ -5,13 +5,12 @@ CSS/JS, the theme fonts, 3Dmol.js 2.5.5, the structure coordinates and both figu
 data URIs, so it opens from `file://` with no server and no network. Arrow keys advance; `down` on
 slide 2 reveals the two backup tables; `F` fullscreen, `O` overview.
 
-Three slides:
+Two slides:
 
 1. **Approaches with structural foundational models that did not perform better** — two columns,
    each with a spinning 3D cartoon of what that route actually folded, then the route's pipeline
    written out beneath it. Left: *using peptide shape embedding*. Right: *using confidence matrix*.
 2. Both routes on one bar chart against the benchmark, with the full arm tables as sub-slides.
-3. Why each closed, plus the few-allele inflation result.
 
 A naming note for whoever presents it: the left route's embedding describes the **HLA groove**, not
 the peptide — the peptide is encoded exactly as the baseline does. The slide name is the one the
@@ -30,9 +29,12 @@ team chose; the step list under it is precise.
 
 ## Files
 
-- `figures/fig_benchmark.svg`, `figures/fig_shrinkage.svg` — produced by
+- `figures/fig_benchmark.svg` — the bar chart on slide 2, produced by
   `python/build_result_figures.py` (run from a checkout with both branches' outputs on disk;
   paths at the top of the script)
+- `figures/fig_shrinkage.svg` — the few-allele inflation chart (0.29 on 6 alleles, 0.18 on 14,
+  0.10 on all 67). **No longer in the deck**; the discussion slide it belonged to was dropped.
+  Kept here because it is the result most worth keeping, and the speaker notes still cover it.
 - `figures/fig_pipeline.svg` / `.png` — the hand-authored two-lane pipeline diagram. **No longer in
   the deck** (its content moved into the columns of slide 1); kept as a standalone diagram.
 - `structures`: the 3D panels use the protein atoms of

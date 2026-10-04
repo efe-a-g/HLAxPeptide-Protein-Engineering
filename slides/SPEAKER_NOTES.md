@@ -40,7 +40,8 @@ is encoded exactly as the baseline does.
 - Absolute hours (backup slide): best model MAE 3.07 h vs 3.10 h for "predict the training-allele
   median"; RMSE 7.72 h vs 5.04 h, i.e. 53 % worse. MAE alone would have looked like a working model.
 
-## Slide 3 — why, and the keeper
+## Dropped from the deck, keep in your head — why, and the keeper
+(the discussion slide was removed; raise these in Q&A or verbally)
 - Route A: the pooled pocket positions overlap heavily with the 34 NetMHCpan pseudosequence
   positions, so the embedding re-describes ground BLOSUM already covers. Frozen and per-allele it is
   75 vectors for 28,166 rows — no peptide information at all. Mean-pooled ESM-2 on the HLA side
