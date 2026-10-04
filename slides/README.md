@@ -5,8 +5,15 @@ CSS/JS, the white theme (with its fonts) and all three figures are inlined as da
 opens from `file://` with no server and no network. Arrow keys advance; `down` on slide 2 reveals
 the two backup tables; `F` fullscreen, `O` overview.
 
-Three slides: (1) the pipeline graphic, (2) both routes against the common benchmark, (3) why each
-closed plus the few-allele inflation result.
+Four slides: (1) the pipeline graphic, (2) two spinning 3D cartoons of what each route is actually
+shown, (3) both routes against the common benchmark, (4) why each closed plus the few-allele
+inflation result.
+
+The 3D slide embeds 3Dmol.js 2.5.5 (inlined) and the protein atoms of
+`outputs/report/structures/1M6O.pdb` from `foundation-models-testing` -- chain A trimmed to
+residues 1-182 for the Route A panel (the alpha1/alpha2 construct that was folded), all three
+chains for Route B. Peptide in amber, one residue paler to echo the low-confidence residue in the
+pipeline graphic. Nothing on that slide is a prediction.
 
 ## Where the numbers come from
 
