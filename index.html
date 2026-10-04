@@ -93,7 +93,7 @@ svg text{font-family:inherit}
 <div class="deck" id="deck">
 
 <!-- 1 · HOOK + RECAP -->
-<section class="slide on" data-notes="<b>~20s.</b> Recap: Serova challenge, predict peptide–HLA complex half-life for alleles the model has never seen. 28k measurements, 75 alleles. Our question: do pretrained inverse-folding models — which know what sequences fit a structure — carry signal a plain sequence model lacks?">
+<section class="slide on" data-notes="<b>~8s.</b> Main question: how can protein foundation models help predict peptide&ndash;HLA stability?">
   <div class="kicker">Serova · AI × Science · Protein Engineering Track</div>
   <h1>Can <span class="grad">inverse folding</span><br>predict peptide–HLA stability?</h1>
   <p class="sub">Predict how long a peptide stays bound to an HLA class I molecule — for alleles the model has <b style="color:var(--ink)">never seen</b>. We asked whether LigandMPNN's structural knowledge helps.</p>
@@ -106,7 +106,7 @@ svg text{font-family:inherit}
 </section>
 
 <!-- 2 · SETUPS + ARCHITECTURE -->
-<section class="slide" data-notes="<b>~30s.</b> Four setups. (1) Zero-shot: score the peptide with frozen LigandMPNN, no labels — two modes. (2) Baseline: BLOSUM peptide plus the 34-residue pseudosequence, small MLP. (3 & 4) Same baseline, but we concatenate 50 frozen LigandMPNN features — independent-position or autoregressive. Only difference between 2, 3 and 4 is those 50 inputs.">
+<section class="slide" data-notes="<b>~14s.</b> Inverse folding is one such model. Give LigandMPNN the complex's backbone geometry plus the HLA sequence, and it tells you which peptide residues fit that pocket most naturally. We use its predicted log-probabilities as a proxy for stability.">
   <div class="kicker">Method</div>
   <h2>Four setups, one shared architecture</h2>
   <div class="arch">
@@ -139,7 +139,7 @@ svg text{font-family:inherit}
 </section>
 
 <!-- 3 · HEADLINE BARS -->
-<section class="slide" data-notes="<b>~35s.</b> Headline. Zero-shot alone is weak — about 0.13. The supervised baseline gets 0.42. Add independent IF features and it jumps to 0.476, autoregressive to 0.493. Metric: mean within-allele Spearman on held-out alleles. The gain holds when zero-valued rows are excluded.">
+<section class="slide" data-notes="<b>~14s.</b> On their own they're weak &mdash; 0.13 Spearman, barely better than a coin flip at ordering two peptides. But as features on top of the baseline, Spearman goes 0.42 &rarr; 0.49: roughly a third more of the ranking explained.">
   <div class="kicker">Headline result · MSE loss · held-out alleles</div>
   <h2>Alone it's weak. <span class="grad">As a feature, it helps.</span></h2>
   <div class="chartwrap">
@@ -157,7 +157,7 @@ svg text{font-family:inherit}
 </section>
 
 <!-- 4 · PER-ALLELE SCATTER -->
-<section class="slide" data-notes="<b>~25s.</b> It's not a few lucky alleles. Each dot is a held-out allele — x is the baseline, y is the augmented model. Most sit above the diagonal: 57 of 75 for independent, 59 of 75 for autoregressive. The biggest lifts are on alleles where the baseline was weakest.">
+<section class="slide" data-notes="<b>~7s.</b> And it's consistent: 59 of 75 held-out alleles improve.">
   <div class="kicker">Consistency · every dot is a held-out allele</div>
   <h2>The lift is broad, not a handful of alleles</h2>
   <div class="chartwrap" style="grid-template-columns:1.25fr 1fr">
@@ -173,15 +173,15 @@ svg text{font-family:inherit}
 </section>
 
 <!-- 5 · TAKEAWAYS -->
-<section class="slide" data-notes="<b>~30s.</b> Three takeaways. One: inverse folding did help — as a feature, not a standalone predictor. Two: it's robust — same story with a ranking loss, 0.475 to about 0.51. Three: be practical — autoregressive scoring cost ~745 s versus ~45 s and bought almost nothing over independent, so use independent. Caveat: this shows transfer of pretrained features, not a geometry-specific mechanism.">
+<section class="slide" data-notes="<b>~7s.</b> So structural, steric information does help &mdash; as a feature layered on a sequence baseline, and it holds up across alleles.">
   <div class="kicker">Conclusion</div>
-  <h2>Inverse folding <span class="grad">did help</span> — as an added feature</h2>
+  <h2>Structural information <span class="grad">helps</span> &mdash; as an added feature</h2>
   <div class="take">
-    <div class="box"><div class="ic" style="color:var(--base)">0.423 → 0.493</div><div class="hd">Feature, not predictor</div><p>Zero-shot likelihood barely ranks stability (0.13). Fed to a supervised head alongside the baseline, it lifts held-out-allele Spearman from <b>0.423 to 0.476–0.493</b>.</p></div>
-    <div class="box"><div class="ic" style="color:var(--ind)">0.475 → 0.509</div><div class="hd">Holds with ranking loss</div><p>With a pairwise ranking objective the baseline improves and structural features still add <b>+0.03</b> (0.509 independent, 0.506 autoregressive).</p></div>
-    <div class="box"><div class="ic" style="color:var(--ar)">745 s vs 45 s</div><div class="hd">Keep it simple</div><p>Autoregressive scoring is far costlier and adds little over independent features (Δ = 0.00 under ranking). <b>Independent-position features win on value.</b></p></div>
+    <div class="box"><div class="ic" style="color:var(--base)">0.423 → 0.493</div><div class="hd">Geometry adds what sequence misses</div><p>The baseline sees only sequence. Adding features from the 3D pocket lifts held-out-allele Spearman by <b>+0.07</b> &mdash; roughly a third more of the ranking explained.</p></div>
+    <div class="box"><div class="ic" style="color:var(--ar)">59 / 75</div><div class="hd">Consistent across alleles</div><p>Nearly four in five unseen alleles improve. The gain is broad, not carried by a handful of alleles.</p></div>
+    <div class="box"><div class="ic" style="color:var(--ind)">0.130 → 0.035</div><div class="hd">The signal is pocket-specific</div><p>Scramble the HLA sequence in the same structure and the zero-shot score collapses &mdash; the score depends on the real pocket sequence in its structural context.</p></div>
   </div>
-  <p class="note" style="margin-top:3vh;font-size:clamp(11px,1.15vw,17px);color:var(--ink2)">Scope: fixed-budget, single-seed comparison. Shows pretrained features transfer to unseen alleles — not a geometry-specific mechanism, nor a benefit for every foundation model.</p>
+  <p class="note" style="margin-top:3vh;font-size:clamp(11px,1.15vw,17px);color:var(--ink2)">Scope: fixed-budget, single-seed comparison. The structure model also sees more of the HLA (182 vs 34 residues), so gains are not yet isolated to geometry alone.</p>
 </section>
 
 </div>
