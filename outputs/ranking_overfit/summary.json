@@ -1,0 +1,56 @@
+{
+  "seeds": [
+    42,
+    1,
+    2,
+    3,
+    4
+  ],
+  "variants": [
+    {
+      "variant": "A baseline",
+      "final_test_scc": 0.40910092438307866,
+      "final_test_scc_sd": 0.012741316373688298,
+      "final_train_scc": 0.772761684730063,
+      "peak_test_scc": 0.41710079431077113,
+      "peak_epoch": 75,
+      "gap": 0.36366076034698436
+    },
+    {
+      "variant": "B linear MSE",
+      "final_test_scc": 0.41837312442017804,
+      "final_test_scc_sd": 0.014176256631296477,
+      "final_train_scc": 0.7330777936027009,
+      "peak_test_scc": 0.41990236445650836,
+      "peak_epoch": 85,
+      "gap": 0.3147046691825228
+    },
+    {
+      "variant": "C centered MSE",
+      "final_test_scc": 0.4297540538491651,
+      "final_test_scc_sd": 0.010371345116136363,
+      "final_train_scc": 0.730183428854924,
+      "peak_test_scc": 0.4299308126825247,
+      "peak_epoch": 80,
+      "gap": 0.30042937500575895
+    },
+    {
+      "variant": "D centered+rank",
+      "final_test_scc": 0.42861498056490654,
+      "final_test_scc_sd": 0.017155415036941117,
+      "final_train_scc": 0.8096233425223112,
+      "peak_test_scc": 0.4298578622273945,
+      "peak_epoch": 75,
+      "gap": 0.3810083619574046
+    },
+    {
+      "variant": "E sigmoid squeezed",
+      "final_test_scc": 0.42642422652131523,
+      "final_test_scc_sd": 0.007368076799159221,
+      "final_train_scc": 0.7185220135334056,
+      "peak_test_scc": 0.42642422652131523,
+      "peak_epoch": 90,
+      "gap": 0.2920977870120904
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "seeds": [
+    42,
+    1,
+    2
+  ],
+  "arms": [
+    {
+      "arm": "baseline+logp9",
+      "input_dim": 869,
+      "selected_epoch": 400,
+      "mean_of_seeds": 0.45325318961374483,
+      "sd_of_seeds": 0.012732209358276014,
+      "ensemble": 0.4760354835460225,
+      "train_scc": 0.8194544555142675,
+      "gap": 0.3662012659005227
+    }
+  ]
+}

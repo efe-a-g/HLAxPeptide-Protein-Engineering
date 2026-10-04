@@ -1,0 +1,9 @@
+{
+  "mean_allele_scc": 0.3988851273017192,
+  "mean_allele_pcc": 0.3980924189090729,
+  "median_allele_scc": 0.373986731023079,
+  "global_scc": 0.5306353512173491,
+  "n_alleles_scored": 16,
+  "null_peptide_only_scc": 0.29623127164145135,
+  "lift_over_null": 0.10265385566026786
+}

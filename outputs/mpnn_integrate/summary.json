@@ -1,0 +1,67 @@
+{
+  "seeds": [
+    42
+  ],
+  "arms": [
+    {
+      "arm": "baseline",
+      "input_dim": 860,
+      "selected_epoch": 420,
+      "mean_of_seeds": 0.4687481690769193,
+      "sd_of_seeds": 0.0,
+      "ensemble": 0.4687481690769193,
+      "train_scc": 0.815600609237548,
+      "gap": 0.34685244016062866
+    },
+    {
+      "arm": "mpnn_only",
+      "input_dim": 50,
+      "selected_epoch": 340,
+      "mean_of_seeds": 0.2143449037089179,
+      "sd_of_seeds": 0.0,
+      "ensemble": 0.2143449037089179,
+      "train_scc": 0.49340148703269615,
+      "gap": 0.27905658332377825
+    },
+    {
+      "arm": "baseline+logp9",
+      "input_dim": 869,
+      "selected_epoch": 440,
+      "mean_of_seeds": 0.5088234051873981,
+      "sd_of_seeds": 0.0,
+      "ensemble": 0.5088234051873981,
+      "train_scc": 0.826248149970807,
+      "gap": 0.3174247447834089
+    },
+    {
+      "arm": "baseline+mean",
+      "input_dim": 861,
+      "selected_epoch": 380,
+      "mean_of_seeds": 0.48063901882261945,
+      "sd_of_seeds": 0.0,
+      "ensemble": 0.48063901882261945,
+      "train_scc": 0.8228821149562309,
+      "gap": 0.3422430961336114
+    },
+    {
+      "arm": "baseline+anchor",
+      "input_dim": 900,
+      "selected_epoch": 260,
+      "mean_of_seeds": 0.43755476869943644,
+      "sd_of_seeds": 0.0,
+      "ensemble": 0.43755476869943644,
+      "train_scc": 0.823596440687369,
+      "gap": 0.3860416719879326
+    },
+    {
+      "arm": "baseline+all",
+      "input_dim": 910,
+      "selected_epoch": 400,
+      "mean_of_seeds": 0.4685041309976251,
+      "sd_of_seeds": 0.0,
+      "ensemble": 0.4685041309976251,
+      "train_scc": 0.835957357836541,
+      "gap": 0.3674532268389159
+    }
+  ]
+}

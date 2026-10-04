@@ -262,12 +262,17 @@ def resolve_device(name):
     return torch.device("cpu")
 
 
-def train_model(X_train, y_train, args):
-    """Train for a fixed number of epochs. No validation set, no early stopping."""
+def train_model(X_train, y_train, args, model=None):
+    """Train for a fixed number of epochs. No validation set, no early stopping.
+
+    Pass `model` to train a different architecture with the same loop and optimiser.
+    """
     device = resolve_device(args.device)
     print(f"[*] Training on {device} for {args.epochs} epochs")
 
-    model = StabilityNet(in_features=X_train.shape[1], hidden_dim=args.hidden_dim).to(device)
+    if model is None:
+        model = StabilityNet(in_features=X_train.shape[1], hidden_dim=args.hidden_dim)
+    model = model.to(device)
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=1e-5)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
@@ -360,6 +365,8 @@ def main():
                    help="Fraction of eligible alleles held out per supertype")
     p.add_argument("--min_measurements", type=int, default=100,
                    help="Alleles with fewer rows are never held out")
+    p.add_argument("--drop_zeros", action="store_true",
+                   help="Remove t_half == 0 rows from train and test after splitting")
     p.add_argument("--hidden_dim", type=int, default=60)
     p.add_argument("--lr", type=float, default=1e-3)
     p.add_argument("--epochs", type=int, default=90,
@@ -391,6 +398,11 @@ def main():
         seed=args.seed,
     )
     train_df, test_df = df.iloc[train_pos], df.iloc[test_pos]
+    if args.drop_zeros:
+        # Applied after the split so the held-out alleles are identical to the baseline run.
+        train_df = train_df[train_df["thalf_hours"] > 0]
+        test_df = test_df[test_df["thalf_hours"] > 0]
+        print(f"[*] Dropped 0 h half-lives: {len(train_df):,} train / {len(test_df):,} test rows")
 
     X_train = encode_sequences(train_df["peptide"].values,
                                train_df["hla_pseudoseq"].values, args.encoding)

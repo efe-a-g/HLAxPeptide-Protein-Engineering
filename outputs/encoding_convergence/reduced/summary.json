@@ -1,0 +1,60 @@
+{
+  "seeds": [
+    42
+  ],
+  "select_seeds": [
+    42
+  ],
+  "val_seed": 7,
+  "max_epochs": 500,
+  "variants": [
+    {
+      "encoding": "group5",
+      "input_dim": 215,
+      "n_params": 13021,
+      "selected_epoch": 360,
+      "mean_of_seeds": 0.3314934740005253,
+      "sd_of_seeds": 0.0,
+      "per_seed": [
+        0.3314934740005253
+      ],
+      "ensemble": 0.3314934740005253,
+      "train_scc": 0.5518025512445418,
+      "stage1_oracle_peak": 0.30809811323547326,
+      "stage1_oracle_epoch": 280,
+      "gap": 0.2203090772440165
+    },
+    {
+      "encoding": "sidney14",
+      "input_dim": 602,
+      "n_params": 36241,
+      "selected_epoch": 240,
+      "mean_of_seeds": 0.3638407159233915,
+      "sd_of_seeds": 0.0,
+      "per_seed": [
+        0.3638407159233915
+      ],
+      "ensemble": 0.3638407159233915,
+      "train_scc": 0.7573485925870888,
+      "stage1_oracle_peak": 0.35053955134081444,
+      "stage1_oracle_epoch": 140,
+      "gap": 0.39350787666369724
+    },
+    {
+      "encoding": "both",
+      "input_dim": 817,
+      "n_params": 49141,
+      "selected_epoch": 220,
+      "mean_of_seeds": 0.38656207772926765,
+      "sd_of_seeds": 0.0,
+      "per_seed": [
+        0.38656207772926765
+      ],
+      "ensemble": 0.38656207772926765,
+      "train_scc": 0.7680584464000673,
+      "stage1_oracle_peak": 0.36416317840771667,
+      "stage1_oracle_epoch": 140,
+      "gap": 0.3814963686707996
+    }
+  ]
+}

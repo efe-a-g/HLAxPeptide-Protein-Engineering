@@ -1,0 +1,15 @@
+allele,P2_pred,P2_known,P2_top1_hit,P9_pred,P9_known,P9_top1_hit
+HLA-A*01:01,LPM,TS,False,YRF,Y,True
+HLA-A*02:01,LMP,LM,True,FLM,VL,False
+HLA-A*03:01,LMF,LVM,True,RYH,KY,False
+HLA-A*11:01,LMF,VTLM,True,RYH,K,False
+HLA-A*24:02,LMF,YF,False,LMF,FLI,True
+HLA-B*07:02,PRA,P,True,LFI,LF,True
+HLA-B*08:01,RPA,K,False,LFM,LF,True
+HLA-B*15:01,LMP,LQM,True,FLY,FY,True
+HLA-B*27:05,LRM,R,False,RLH,KRLF,True
+HLA-B*35:01,PAL,P,True,FYL,YFMLI,True
+HLA-B*44:05,SLE,E,False,FLM,FWY,True
+HLA-B*51:01,PAL,APG,True,LAM,IV,False
+HLA-B*57:01,LPT,ATS,False,FWM,WF,True
+HLA-B*58:01,PLM,ATS,False,FWL,WF,True

@@ -1,0 +1,40 @@
+{
+  "seeds": [
+    42,
+    1,
+    2,
+    3,
+    4
+  ],
+  "select_seeds": [
+    42,
+    1
+  ],
+  "val_seed": 7,
+  "max_epochs": 500,
+  "peptide_only_null": 0.2950486619955155,
+  "baseline_reference": 0.4156,
+  "configs": [
+    {
+      "config": "pssm:rank",
+      "model": "pssm",
+      "target": "rank",
+      "selected_epoch": 220,
+      "val_scc_at_selected": 0.48900826314294366,
+      "stage1_test_at_selected": 0.4385850404159363,
+      "refit_mean_of_seeds": 0.45743055165085594,
+      "refit_sd_of_seeds": 0.007534959187648225,
+      "refit_per_seed": [
+        0.4522436567659149,
+        0.44709753371160843,
+        0.4563716862492169,
+        0.4633060464156259,
+        0.46813383511191387
+      ],
+      "refit_ensemble": 0.47604888930014344,
+      "refit_ensemble_rank": 0.4759429096428529,
+      "stage1_oracle_peak": 0.4476743508665438,
+      "stage1_oracle_epoch": 60
+    }
+  ]
+}

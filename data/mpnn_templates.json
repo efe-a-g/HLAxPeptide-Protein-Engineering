@@ -1,0 +1,86 @@
+[
+ {
+  "name": "3BO8",
+  "allele": "HLA-A*01:01",
+  "pdb": "/tmp/hla_tpl/pdb/3BO8.pdb",
+  "hla_chain": "A",
+  "pep_chain": "C"
+ },
+ {
+  "name": "3D25",
+  "allele": "HLA-A*02:01",
+  "pdb": "/tmp/hla_tpl/pdb/3D25.pdb",
+  "hla_chain": "A",
+  "pep_chain": "C"
+ },
+ {
+  "name": "6JOZ",
+  "allele": "HLA-A*11:01",
+  "pdb": "/tmp/hla_tpl/pdb/6JOZ.pdb",
+  "hla_chain": "A",
+  "pep_chain": "C"
+ },
+ {
+  "name": "3I6L",
+  "allele": "HLA-A*24:02",
+  "pdb": "/tmp/hla_tpl/pdb/3I6L.pdb",
+  "hla_chain": "D",
+  "pep_chain": "F"
+ },
+ {
+  "name": "5WMO",
+  "allele": "HLA-B*07:02",
+  "pdb": "/tmp/hla_tpl/pdb/5WMO.pdb",
+  "hla_chain": "A",
+  "pep_chain": "C"
+ },
+ {
+  "name": "4QRS",
+  "allele": "HLA-B*08:01",
+  "pdb": "/tmp/hla_tpl/pdb/4QRS.pdb",
+  "hla_chain": "A",
+  "pep_chain": "C"
+ },
+ {
+  "name": "1XR9",
+  "allele": "HLA-B*15:01",
+  "pdb": "/tmp/hla_tpl/pdb/1XR9.pdb",
+  "hla_chain": "A",
+  "pep_chain": "C"
+ },
+ {
+  "name": "2A83",
+  "allele": "HLA-B*27:05",
+  "pdb": "/tmp/hla_tpl/pdb/2A83.pdb",
+  "hla_chain": "A",
+  "pep_chain": "C"
+ },
+ {
+  "name": "7M8U",
+  "allele": "HLA-B*35:01",
+  "pdb": "/tmp/hla_tpl/pdb/7M8U.pdb",
+  "hla_chain": "A",
+  "pep_chain": "C"
+ },
+ {
+  "name": "3KPQ",
+  "allele": "HLA-B*44:05",
+  "pdb": "/tmp/hla_tpl/pdb/3KPQ.pdb",
+  "hla_chain": "A",
+  "pep_chain": "C"
+ },
+ {
+  "name": "1E27",
+  "allele": "HLA-B*51:01",
+  "pdb": "/tmp/hla_tpl/pdb/1E27.pdb",
+  "hla_chain": "A",
+  "pep_chain": "C"
+ },
+ {
+  "name": "5VUE",
+  "allele": "HLA-B*57:01",
+  "pdb": "/tmp/hla_tpl/pdb/5VUE.pdb",
+  "hla_chain": "A",
+  "pep_chain": "C"
+ }
+]

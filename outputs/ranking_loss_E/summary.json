@@ -1,0 +1,28 @@
+{
+  "seeds": [
+    42,
+    1,
+    2,
+    3,
+    4
+  ],
+  "margin": 0.05,
+  "min_diff": 0.02,
+  "alleles_per_batch": 4,
+  "truth_between_allele_share": 0.37380194664001465,
+  "variants": [
+    {
+      "variant": "E sigmoid squeezed",
+      "scc_mean": 0.42642422652131523,
+      "scc_sd": 0.007368076799159221,
+      "scc_per_seed": [
+        0.4242771148240185,
+        0.4295400626256075,
+        0.4371327908858009,
+        0.4266794876175888,
+        0.4144916766535603
+      ],
+      "pred_between_allele_share": 0.42313494086265563
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "seeds": [
+    42
+  ],
+  "select_seeds": [
+    42
+  ],
+  "val_seed": 7,
+  "max_epochs": 500,
+  "variants": [
+    {
+      "encoding": "onehot@masked",
+      "input_dim": 440,
+      "n_params": 26521,
+      "selected_epoch": 220,
+      "mean_of_seeds": 0.2720795502771862,
+      "sd_of_seeds": 0.0,
+      "per_seed": [
+        0.2720795502771862
+      ],
+      "ensemble": 0.2720795502771862,
+      "train_scc": 0.39261264208557756,
+      "stage1_oracle_peak": 0.26320929957889594,
+      "stage1_oracle_epoch": 140,
+      "gap": 0.12053309180839133
+    }
+  ]
+}

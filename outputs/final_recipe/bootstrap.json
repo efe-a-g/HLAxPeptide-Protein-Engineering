@@ -1,0 +1,38 @@
+{
+  "n_boot": 10000,
+  "comparisons": [
+    {
+      "candidate": "mlp_raw",
+      "n_alleles": 16,
+      "baseline_mean_scc": 0.4218775909485766,
+      "candidate_mean_scc": 0.5065706203264018,
+      "mean_delta": 0.08469302937782505,
+      "ci95_low": 0.036267408929631956,
+      "ci95_high": 0.13457792530017781,
+      "p_boot_delta_le_0": 0.0003,
+      "n_alleles_improved": 13
+    },
+    {
+      "candidate": "pssm_rank",
+      "n_alleles": 16,
+      "baseline_mean_scc": 0.4218775909485766,
+      "candidate_mean_scc": 0.47604888930014344,
+      "mean_delta": 0.05417129835156684,
+      "ci95_low": 0.0020767581710348635,
+      "ci95_high": 0.10749297440947622,
+      "p_boot_delta_le_0": 0.0207,
+      "n_alleles_improved": 10
+    },
+    {
+      "candidate": "bilinear_rank",
+      "n_alleles": 16,
+      "baseline_mean_scc": 0.4218775909485766,
+      "candidate_mean_scc": 0.5134219374241711,
+      "mean_delta": 0.09154434647559456,
+      "ci95_low": 0.03280933410974996,
+      "ci95_high": 0.1479019925494478,
+      "p_boot_delta_le_0": 0.001,
+      "n_alleles_improved": 11
+    }
+  ]
+}

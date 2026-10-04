@@ -1,0 +1,60 @@
+{
+  "seeds": [
+    42
+  ],
+  "select_seeds": [
+    42
+  ],
+  "val_seed": 7,
+  "max_epochs": 500,
+  "variants": [
+    {
+      "encoding": "pca5",
+      "input_dim": 215,
+      "n_params": 13021,
+      "selected_epoch": 260,
+      "mean_of_seeds": 0.38292612244568175,
+      "sd_of_seeds": 0.0,
+      "per_seed": [
+        0.38292612244568175
+      ],
+      "ensemble": 0.38292612244568175,
+      "train_scc": 0.7258354898798229,
+      "stage1_oracle_peak": 0.3320165876891187,
+      "stage1_oracle_epoch": 100,
+      "gap": 0.3429093674341412
+    },
+    {
+      "encoding": "pca9",
+      "input_dim": 387,
+      "n_params": 23341,
+      "selected_epoch": 160,
+      "mean_of_seeds": 0.41521136006827974,
+      "sd_of_seeds": 0.0,
+      "per_seed": [
+        0.41521136006827974
+      ],
+      "ensemble": 0.41521136006827974,
+      "train_scc": 0.7845884219695137,
+      "stage1_oracle_peak": 0.3655396067324152,
+      "stage1_oracle_epoch": 180,
+      "gap": 0.369377061901234
+    },
+    {
+      "encoding": "pca12",
+      "input_dim": 516,
+      "n_params": 31081,
+      "selected_epoch": 120,
+      "mean_of_seeds": 0.4025755313689893,
+      "sd_of_seeds": 0.0,
+      "per_seed": [
+        0.4025755313689893
+      ],
+      "ensemble": 0.4025755313689893,
+      "train_scc": 0.7997094017622532,
+      "stage1_oracle_peak": 0.3936742708101686,
+      "stage1_oracle_epoch": 120,
+      "gap": 0.3971338703932639
+    }
+  ]
+}

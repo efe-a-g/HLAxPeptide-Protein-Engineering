@@ -1,0 +1,41 @@
+{
+  "seeds": [
+    42,
+    1,
+    2
+  ],
+  "val_seed": 7,
+  "epochs": 300,
+  "variants": [
+    {
+      "target": "raw",
+      "best_val_epoch": 300,
+      "val_scc_at_best": 0.48763691630572653,
+      "test_at_val_selected": 0.4396366186525449,
+      "test_at_90": 0.3668952512737798,
+      "epoch_used_for_90": 90,
+      "oracle_peak_test": 0.4396366186525449,
+      "oracle_peak_epoch": 300,
+      "fit_scc_at_selected": 0.8168527968727739,
+      "lr_at_selected": 0.00020833333333333335,
+      "ensemble_at_val_selected": 0.45321094029182896,
+      "ensemble_rank_at_val_selected": 0.4546884117934168,
+      "ensemble_at_90": 0.37026438219023505
+    },
+    {
+      "target": "rank",
+      "best_val_epoch": 220,
+      "val_scc_at_best": 0.5104747598113368,
+      "test_at_val_selected": 0.4682605619563751,
+      "test_at_90": 0.424685536265373,
+      "epoch_used_for_90": 90,
+      "oracle_peak_test": 0.4682605619563751,
+      "oracle_peak_epoch": 220,
+      "fit_scc_at_selected": 0.8888312049827589,
+      "lr_at_selected": 0.001,
+      "ensemble_at_val_selected": 0.48876190457851953,
+      "ensemble_rank_at_val_selected": 0.48896127642036624,
+      "ensemble_at_90": 0.43289017008671454
+    }
+  ]
+}

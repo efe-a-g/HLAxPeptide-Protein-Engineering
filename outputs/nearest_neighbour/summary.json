@@ -1,0 +1,39 @@
+[
+  {
+    "model": "peptide-mean null (reference)",
+    "scc": 0.2950486619955155,
+    "scc_near": 0.4082535539972961,
+    "scc_far": 0.1494995151360833,
+    "n_alleles": 16
+  },
+  {
+    "model": "NN: joint (allele + peptide)",
+    "scc": 0.4398849654793511,
+    "scc_near": 0.5923491338645395,
+    "scc_far": 0.2438596061269662,
+    "n_alleles": 16,
+    "frac_exact_peptide_match": 0.926241362686807,
+    "mean_allele_dist_of_match": 3.967565788970256,
+    "median_n_tied_neighbours": 1.0
+  },
+  {
+    "model": "NN: allele first, then peptide",
+    "scc": 0.3654156363138124,
+    "scc_near": 0.5313495890907716,
+    "scc_far": 0.1520719827434364,
+    "n_alleles": 16,
+    "frac_exact_peptide_match": 0.6027639402217579,
+    "mean_allele_dist_of_match": 3.152498794793508,
+    "median_n_tied_neighbours": 1.0
+  },
+  {
+    "model": "NN: peptide first, then allele",
+    "scc": 0.44212852810846454,
+    "scc_near": 0.5950633893333168,
+    "scc_far": 0.2454979922479403,
+    "n_alleles": 16,
+    "frac_exact_peptide_match": 0.9733247629760565,
+    "mean_allele_dist_of_match": 4.577213562590391,
+    "median_n_tied_neighbours": 1.0
+  }
+]

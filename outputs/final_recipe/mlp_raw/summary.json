@@ -1,0 +1,40 @@
+{
+  "seeds": [
+    42,
+    1,
+    2,
+    3,
+    4
+  ],
+  "select_seeds": [
+    42,
+    1
+  ],
+  "val_seed": 7,
+  "max_epochs": 500,
+  "peptide_only_null": 0.2950486619955155,
+  "baseline_reference": 0.4156,
+  "configs": [
+    {
+      "config": "mlp:raw",
+      "model": "mlp",
+      "target": "raw",
+      "selected_epoch": 500,
+      "val_scc_at_selected": 0.5133335381646729,
+      "stage1_test_at_selected": 0.4569302550251191,
+      "refit_mean_of_seeds": 0.48041233734722555,
+      "refit_sd_of_seeds": 0.007648570301288011,
+      "refit_per_seed": [
+        0.4700136809464853,
+        0.4930928751986844,
+        0.4831861836004464,
+        0.4766393572795774,
+        0.4791295897109341
+      ],
+      "refit_ensemble": 0.5065706203264018,
+      "refit_ensemble_rank": 0.5059314377761881,
+      "stage1_oracle_peak": 0.45820057870686337,
+      "stage1_oracle_epoch": 240
+    }
+  ]
+}
