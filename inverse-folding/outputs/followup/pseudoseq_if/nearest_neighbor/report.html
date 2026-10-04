@@ -1,0 +1,73 @@
+<!doctype html><meta charset="utf-8"><title>Nearest-neighbour comparison</title>
+<style>body{font:17px/1.6 system-ui;max-width:1100px;margin:40px auto;padding:0 20px;color:#183144}table{border-collapse:collapse;width:100%;margin:24px 0}td,th{padding:10px;border-bottom:1px solid #ccd8df;text-align:left}</style>
+<h1>Nearest-neighbour and neural-model comparison</h1><p>The same 75-fold leave-one-allele-out evaluation for every row. Nearest neighbours always come from another allele. Scores are mean within-allele Spearman, with nonzero and all-half-life metrics separately. Neural-model scores average five seeds; nearest-neighbour models are deterministic.</p><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>model</th>
+      <th>spearman_nonzero</th>
+      <th>spearman_all</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Pseudosequence</td>
+      <td>0.4114</td>
+      <td>0.4272</td>
+    </tr>
+    <tr>
+      <td>Full HLA sequence</td>
+      <td>0.3390</td>
+      <td>0.3462</td>
+    </tr>
+    <tr>
+      <td>Full HLA sequence + inverse folding</td>
+      <td>0.4014</td>
+      <td>0.4198</td>
+    </tr>
+    <tr>
+      <td>Pseudosequence + inverse folding</td>
+      <td>0.4449</td>
+      <td>0.4700</td>
+    </tr>
+    <tr>
+      <td>Full HLA + peptide, 1NN</td>
+      <td>0.3936</td>
+      <td>0.4100</td>
+    </tr>
+    <tr>
+      <td>Full HLA + peptide, tied mean</td>
+      <td>0.4034</td>
+      <td>0.4147</td>
+    </tr>
+    <tr>
+      <td>Full HLA + peptide, normalized 1NN</td>
+      <td>0.3833</td>
+      <td>0.4074</td>
+    </tr>
+    <tr>
+      <td>Full HLA + peptide, normalized tied mean</td>
+      <td>0.3938</td>
+      <td>0.4127</td>
+    </tr>
+    <tr>
+      <td>Pseudosequence + peptide, 1NN</td>
+      <td>0.4099</td>
+      <td>0.4209</td>
+    </tr>
+    <tr>
+      <td>Pseudosequence + peptide, tied mean</td>
+      <td>0.4229</td>
+      <td>0.4269</td>
+    </tr>
+    <tr>
+      <td>Pseudosequence + peptide, normalized 1NN</td>
+      <td>0.4037</td>
+      <td>0.4213</td>
+    </tr>
+    <tr>
+      <td>Pseudosequence + peptide, normalized tied mean</td>
+      <td>0.4186</td>
+      <td>0.4322</td>
+    </tr>
+  </tbody>
+</table><p>Full HLA distance uses 182 residues; pseudosequence distance uses 34 selected residues. Raw distance sums HLA and nine-residue peptide Hamming counts. Normalized distance divides each count by its sequence length. 1NN copies one nearest stability value, taking the first dataset row if tied. Tied mean averages the stability of all equally nearest rows.</p><p>Only the requested pseudosequence lookup was added; full-HLA and neural results are reused. Neither distance weighting nor tie rule was tuned against test labels.</p><p><a href="comparison.csv">Combined CSV table</a> · <a href="neighbors.csv">Full-HLA neighbours</a> · <a href="pseudosequence/neighbors.csv">Pseudosequence neighbours</a> · <a href="pseudosequence/protocol.json">Pseudosequence protocol</a></p>

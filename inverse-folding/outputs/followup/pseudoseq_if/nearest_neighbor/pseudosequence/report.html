@@ -1,0 +1,86 @@
+<!doctype html><meta charset="utf-8"><title>Naive nearest-neighbour baseline</title>
+<style>body{font:17px/1.6 system-ui;max-width:1100px;margin:40px auto;padding:0 20px;color:#183144}table{border-collapse:collapse;width:100%;margin:24px 0}td,th{padding:10px;border-bottom:1px solid #ccd8df;text-align:left}</style>
+<h1>Naive nearest-neighbour stability transfer</h1><p>The same 75-fold leave-one-allele-out evaluation as the neural-network comparison. Each query can use only rows from the other 74 alleles. No model training or distance tuning.</p>
+<p>Raw distance is HLA Hamming + peptide Hamming. The predefined balanced alternative divides by the HLA input length and 9 respectively. Strict 1NN copies the stability of the first closest training row; tie averaging uses the mean of all equally closest rows to remove arbitrary row-order dependence.</p><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>model</th>
+      <th>spearman_nonzero</th>
+      <th>spearman_all</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Pseudosequence</td>
+      <td>0.4114</td>
+      <td>0.4272</td>
+    </tr>
+    <tr>
+      <td>Full HLA sequence</td>
+      <td>0.3390</td>
+      <td>0.3462</td>
+    </tr>
+    <tr>
+      <td>Full HLA sequence + inverse folding</td>
+      <td>0.4014</td>
+      <td>0.4198</td>
+    </tr>
+    <tr>
+      <td>Pseudosequence + inverse folding</td>
+      <td>0.4449</td>
+      <td>0.4700</td>
+    </tr>
+    <tr>
+      <td>Hamming sum, copy one nearest row</td>
+      <td>0.4099</td>
+      <td>0.4209</td>
+    </tr>
+    <tr>
+      <td>Hamming sum, average equally nearest rows</td>
+      <td>0.4229</td>
+      <td>0.4269</td>
+    </tr>
+    <tr>
+      <td>Length-normalized Hamming, copy one nearest row</td>
+      <td>0.4037</td>
+      <td>0.4213</td>
+    </tr>
+    <tr>
+      <td>Length-normalized Hamming, average equally nearest rows</td>
+      <td>0.4186</td>
+      <td>0.4322</td>
+    </tr>
+  </tbody>
+</table><p>Scores are average within-allele Spearman. Neural-network rows average five seed-specific scores; nearest neighbour is deterministic. Nonzero filtering is applied only for test metrics; zero-valued training labels remain eligible.</p><h2>Which neighbours were selected?</h2><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>mode</th>
+      <th>mean_hla_hamming</th>
+      <th>mean_peptide_hamming</th>
+      <th>same_peptide_fraction</th>
+      <th>same_hla_sequence_fraction</th>
+      <th>tied_query_fraction</th>
+      <th>mean_tied_rows</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>balanced</td>
+      <td>3.6747</td>
+      <td>0.2850</td>
+      <td>0.9377</td>
+      <td>0.0262</td>
+      <td>0.2888</td>
+      <td>1.5558</td>
+    </tr>
+    <tr>
+      <td>raw</td>
+      <td>2.9825</td>
+      <td>0.6748</td>
+      <td>0.8604</td>
+      <td>0.0267</td>
+      <td>0.3306</td>
+      <td>1.8622</td>
+    </tr>
+  </tbody>
+</table><p>Completed in 6.7 seconds locally. Shared peptides across alleles are allowed in this evaluation; the exact-peptide fraction above quantifies this source of label transfer. This baseline does not isolate a foundation-model mechanism.</p><p><a href="comparison.csv">Scores CSV</a> · <a href="neighbors.csv">Every selected neighbour</a> · <a href="protocol.json">Protocol and checks</a></p>

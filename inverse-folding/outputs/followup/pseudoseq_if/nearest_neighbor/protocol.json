@@ -1,0 +1,17 @@
+{
+  "split": "75-fold leave-one-allele-out; every candidate row from another allele",
+  "rows": 28166,
+  "unique_peptides": 5633,
+  "raw_distance": "Hamming(full 182-residue HLA) + Hamming(9-residue peptide)",
+  "balanced_distance": "Hamming(HLA)/182 + Hamming(peptide)/9",
+  "one_neighbor_tie_rule": "First training row in original dataset order; independent of target",
+  "tie_mean_rule": "Arithmetic mean stability in hours across every equally nearest training row",
+  "training_zeros_retained": true,
+  "nonzero_filter": "Test metric only",
+  "metric": "Mean within-allele Spearman; constant prediction gets zero, matching existing reports",
+  "no_tuning_or_model_training": true,
+  "exact_test_coverage": true,
+  "no_heldout_allele_neighbors": true,
+  "elapsed_seconds": 6.350742165930569,
+  "memory_note": "Peptide distance cache uses about 32 MB; candidate distances are computed in 128-row batches."
+}

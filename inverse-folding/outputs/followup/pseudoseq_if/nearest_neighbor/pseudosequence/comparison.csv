@@ -1,0 +1,9 @@
+model,spearman_nonzero,spearman_all
+Pseudosequence,0.4113815488408351,0.4271561907472777
+Full HLA sequence,0.3389769484535356,0.3462445626954452
+Full HLA sequence + inverse folding,0.401446441417624,0.419780466676403
+Pseudosequence + inverse folding,0.4448534148996718,0.4699604056997614
+"Hamming sum, copy one nearest row",0.40988134711427576,0.4209499724248033
+"Hamming sum, average equally nearest rows",0.42294607718853305,0.42685961067497524
+"Length-normalized Hamming, copy one nearest row",0.4037143981019108,0.4212523812664485
+"Length-normalized Hamming, average equally nearest rows",0.41855113518142856,0.432185290397089

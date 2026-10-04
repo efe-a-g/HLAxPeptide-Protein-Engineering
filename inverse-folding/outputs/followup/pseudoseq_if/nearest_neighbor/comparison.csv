@@ -1,0 +1,13 @@
+model,spearman_nonzero,spearman_all
+Pseudosequence,0.4113815488408351,0.4271561907472777
+Full HLA sequence,0.3389769484535356,0.3462445626954452
+Full HLA sequence + inverse folding,0.401446441417624,0.419780466676403
+Pseudosequence + inverse folding,0.4448534148996718,0.4699604056997614
+"Full HLA + peptide, 1NN",0.3936119749898421,0.410027416937362
+"Full HLA + peptide, tied mean",0.4033710991284016,0.4147052110809424
+"Full HLA + peptide, normalized 1NN",0.3833428833011145,0.4073944496944727
+"Full HLA + peptide, normalized tied mean",0.3937927002719543,0.4126783531380069
+"Pseudosequence + peptide, 1NN",0.4098813471142757,0.4209499724248033
+"Pseudosequence + peptide, tied mean",0.422946077188533,0.4268596106749752
+"Pseudosequence + peptide, normalized 1NN",0.4037143981019108,0.4212523812664485
+"Pseudosequence + peptide, normalized tied mean",0.4185511351814285,0.432185290397089

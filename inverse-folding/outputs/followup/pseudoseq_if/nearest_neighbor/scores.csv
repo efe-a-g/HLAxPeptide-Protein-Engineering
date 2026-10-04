@@ -1,0 +1,5 @@
+method,all,nonzero,model
+raw_1nn,0.41002741693736205,0.3936119749898421,"Hamming sum, copy one nearest row"
+raw_tie_mean,0.4147052110809424,0.40337109912840163,"Hamming sum, average equally nearest rows"
+balanced_1nn,0.40739444969447275,0.3833428833011145,"Length-normalized Hamming, copy one nearest row"
+balanced_tie_mean,0.41267835313800694,0.39379270027195434,"Length-normalized Hamming, average equally nearest rows"

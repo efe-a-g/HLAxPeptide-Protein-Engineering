@@ -1,0 +1,9 @@
+{
+  "points": 75,
+  "difference": "baseline_spearman - nn_spearman",
+  "trendline": "Unweighted ordinary least squares across alleles",
+  "slope": 0.020821772296601673,
+  "intercept": -0.09035804913154029,
+  "r_squared": 0.13494419177852032,
+  "mean_difference": 0.01776957385099316
+}
